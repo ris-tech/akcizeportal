@@ -31,5 +31,5 @@ class KlientiController extends Controller
     public function create(): View
     {
         return view('klienti.create');
-    }
+    } 
 }
