@@ -6,7 +6,7 @@
             <h2>Novi korisnik</h2>
     </div>
     <div class="col-lg-2 text-end">
-        <a class="btn btn-outline-secondary" href="{{ route('roles.index') }}"> Nazad</a>
+        <a class="btn btn-outline-secondary" href="{{ route('klienti.index') }}"> Nazad</a>
     </div>
 </div>
 <hr>
