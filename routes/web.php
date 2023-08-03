@@ -6,7 +6,10 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\KlientiController;
+use App\Http\Controllers\KlijentiController;
+use App\Http\Controllers\KnjigovodjaController;
+use App\Http\Controllers\BankeController;
+use App\Http\Controllers\PoreskaFilijalaController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -30,5 +33,8 @@ Route::get('/profile', [ProfileController::class, 'edit'])->name('edit');
 Route::group(['middleware' => ['auth']], function() {
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
-    Route::resource('klienti', KlientiController::class);
+    Route::resource('klijenti', KlijentiController::class);
+    Route::resource('knjigovodja', KnjigovodjaController::class);
+    Route::resource('banke', BankeController::class);
+    Route::resource('poreskafilijala', PoreskaFilijalaController::class);
 });

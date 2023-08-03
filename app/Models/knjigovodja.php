@@ -5,16 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class poreska_inspektor extends Model
+class knjigovodja extends Model
 {
     use HasFactory;
-    protected $table = "poreska_inspektor";
+    protected $table = "knjigovodja";
     protected $fillable = [
-        'pol',
-        'ime',
-        'prezime',
+        'naziv',
+        'ulica',
+        'broj_ulice',
+        'postanski_broj',
+        'mesto',
         'telefon',
         'email',
-        'poreska_filijala_id ',
     ];
 }
