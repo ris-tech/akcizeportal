@@ -1,0 +1,80 @@
+page {
+    background: white;
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 0.5cm;
+    box-shadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
+    padding: 2.2cm;
+    font-size: 12pt;
+    line-height: 115%;
+    font-family: "Arial Narrow";
+}
+page[size="A4"] {
+    width: 21cm;
+    height: 29.7cm;
+}
+page[size="A4"][layout="landscape"] {
+    width: 29.7cm;
+    height: 21cm;
+}
+page[size="A3"] {
+    width: 29.7cm;
+    height: 42cm;
+}
+page[size="A3"][layout="landscape"] {
+    width: 42cm;
+    height: 29.7cm;
+}
+page[size="A5"] {
+    width: 14.8cm;
+    height: 21cm;
+}
+page[size="A5"][layout="landscape"] {
+    width: 21cm;
+    height: 14.8cm;
+}
+@media print {
+    body,
+    page {
+        background: white;
+        margin: 0;
+        box-shadow: 0;
+    }
+}
+
+@font-face {
+    font-family: Wingdings;
+    panose-1: 5 0 0 0 0 0 0 0 0 0;
+}
+@font-face {
+    font-family: "Cambria Math";
+    panose-1: 2 4 5 3 5 4 6 3 2 4;
+}
+@font-face {
+    font-family: Calibri;
+    panose-1: 2 15 5 2 2 2 4 3 2 4;
+}
+@font-face {
+    font-family: "Arial Narrow";
+    panose-1: 2 11 6 6 2 2 2 3 2 4;
+}
+
+
+.paragraph {
+    margin-right:1.2cm;
+}
+.paragraph2 {
+    padding: 0 0.6cm 0 0.5cm;
+}
+.ugovor-title {
+    font-size: 18pt;
+    font-weight: bold;
+}
+.ugovor-center {
+    width:100%;
+    text-align: center;
+}
+
+.blocksatz {
+    text-align: justify !important; 
+}
