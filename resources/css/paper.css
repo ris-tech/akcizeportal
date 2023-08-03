@@ -1,0 +1,167 @@
+page {
+    background: white;
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 0.5cm;
+    box-shadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
+    padding: 2.5cm;
+    font-size: 10pt;
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 10pt;
+}
+page[size="A4"] {
+    width: 21cm;
+    height: 29.7cm;
+}
+page[size="A4"][layout="landscape"] {
+    width: 29.7cm;
+    height: 21cm;
+}
+page[size="A3"] {
+    width: 29.7cm;
+    height: 42cm;
+}
+page[size="A3"][layout="landscape"] {
+    width: 42cm;
+    height: 29.7cm;
+}
+page[size="A5"] {
+    width: 14.8cm;
+    height: 21cm;
+}
+page[size="A5"][layout="landscape"] {
+    width: 21cm;
+    height: 14.8cm;
+}
+@media print {
+    body,
+    page {
+        background: white;
+        margin: 0;
+        box-shadow: 0;
+    }
+}
+
+@font-face {
+    font-family: Wingdings;
+    panose-1: 5 0 0 0 0 0 0 0 0 0;
+}
+@font-face {
+    font-family: "Cambria Math";
+    panose-1: 2 4 5 3 5 4 6 3 2 4;
+}
+@font-face {
+    font-family: Calibri;
+    panose-1: 2 15 5 2 2 2 4 3 2 4;
+}
+@font-face {
+    font-family: "Arial Narrow";
+    panose-1: 2 11 6 6 2 2 2 3 2 4;
+}
+@font-face {
+    font-family: "Segoe UI";
+    panose-1: 2 11 5 2 4 2 4 2 2 3;
+}
+/* Style Definitions */
+p.MsoNormal,
+li.MsoNormal,
+div.MsoNormal {
+    margin-top: 0cm;
+    margin-right: 0cm;
+    margin-bottom: 10pt;
+    margin-left: 0cm;
+    line-height: 115%;
+    font-size: 11pt;
+    font-family: "Calibri", sans-serif;
+}
+p.MsoListParagraph,
+li.MsoListParagraph,
+div.MsoListParagraph {
+    margin-top: 0cm;
+    margin-right: 0cm;
+    margin-bottom: 10pt;
+    margin-left: 36pt;
+    line-height: 115%;
+    font-size: 11pt;
+    font-family: "Calibri", sans-serif;
+}
+p.MsoListParagraphCxSpFirst,
+li.MsoListParagraphCxSpFirst,
+div.MsoListParagraphCxSpFirst {
+    margin-top: 0cm;
+    margin-right: 0cm;
+    margin-bottom: 0cm;
+    margin-left: 36pt;
+    line-height: 115%;
+    font-size: 11pt;
+    font-family: "Calibri", sans-serif;
+}
+p.MsoListParagraphCxSpMiddle,
+li.MsoListParagraphCxSpMiddle,
+div.MsoListParagraphCxSpMiddle {
+    margin-top: 0cm;
+    margin-right: 0cm;
+    margin-bottom: 0cm;
+    margin-left: 36pt;
+    line-height: 115%;
+    font-size: 11pt;
+    font-family: "Calibri", sans-serif;
+}
+p.MsoListParagraphCxSpLast,
+li.MsoListParagraphCxSpLast,
+div.MsoListParagraphCxSpLast {
+    margin-top: 0cm;
+    margin-right: 0cm;
+    margin-bottom: 10pt;
+    margin-left: 36pt;
+    line-height: 115%;
+    font-size: 11pt;
+    font-family: "Calibri", sans-serif;
+}
+.MsoChpDefault {
+    font-family: "Calibri", sans-serif;
+}
+.MsoPapDefault {
+    margin-bottom: 10pt;
+    line-height: 115%;
+}
+@page WordSection1 {
+    size: 612pt 792pt;
+    margin: 70.85pt 70.85pt 70.85pt 70.85pt;
+}
+div.WordSection1 {
+    page: WordSection1;
+}
+/* List Definitions */
+ol {
+    margin-bottom: 0cm;
+}
+ul {
+    margin-bottom: 0cm;
+}
+.signature-pad-form {
+    max-width: 300px;
+    margin: 0 auto;
+}
+.signature-pad {
+    cursor: url(pen.png) 1 26, pointer;
+    border: 2px solid var(--primary-color);
+    border-radius: 4px;
+}
+.clear-button {
+    color: var(--primary-color);
+}
+.submit-button {
+    width: 100%;
+    background-color: var(--primary-color);
+    border: none;
+    padding: 0.5rem 1rem;
+    color: #fff;
+    cursor: pointer;
+    margin-top: 2rem;
+}
+@media (pointer: coarse) {
+    body {
+        overflow: hidden; /* Needed to prevent the vertical scroll on touch devices */
+    }
+}

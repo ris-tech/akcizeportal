@@ -29,7 +29,7 @@ class KlijentiController extends Controller
     {
         $klijenti = Klijenti::select('klijenti.*','knjigovodja.naziv as knjigovodja')
                 ->join('knjigovodja', 'klijenti.knjigovodja_id', '=', 'knjigovodja.id')
-                ->paginate(5);
+                ->get();
     
         return view('klijenti.index',compact('klijenti'))
             ->with('i', ($request->input('page', 1) - 1) * 5);

@@ -32,11 +32,11 @@
         <td>{{ $banka->ime }}</td>
         <td>
             @can('role-edit')
-                <a class="btn btn-primary" href="{{ route('banke.edit',$banka->id) }}">Edit</a>
+                <a class="btn btn-primary" href="{{ route('banke.edit',$banka->id) }}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Promeni"><i class="fas fa-pencil-alt"></i></a>
             @endcan
             @can('role-delete')
                 {!! Form::open(['method' => 'DELETE','route' => ['banke.destroy', $banka->id],'style'=>'display:inline']) !!}
-                    {!! Form::submit('Izbriši', ['class' => 'btn btn-danger']) !!}
+                    <button class="btn btn-danger show-alert-delete-box" type="submit"><i class="fas fa-trash-alt"></i></button>
                 {!! Form::close() !!}
             @endcan
         </td>

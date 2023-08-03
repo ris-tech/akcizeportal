@@ -1,14 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="row">
-    <div class="col-lg-12 margin-tb">
-        <div class="pull-left">
-            <h2>Promeni Poresku Filijalu</h2>
-        </div>
-        <div class="pull-right">
-            <a class="btn btn-primary" href="{{ route('poreskafilijala.index') }}"> Nazad</a>
-        </div>
+<div class="row justify-content-between mb-5">
+    <div class="col-lg-3">
+        <h2>Promeni Poresku Filijalu</h2>
+    </div>
+    <div class="col-lg-2 text-end">
+        <a class="btn btn-outline-secondary" href="{{ route('poreskafilijala.index') }}"> Nazad</a>
     </div>
 </div>
 

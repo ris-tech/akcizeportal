@@ -1,34 +1,32 @@
 <section>
     <header>
         <h2 class="text-lg font-medium text-gray-900">
-            {{ __('Profile Information') }}
+            {{ __('Nalog') }}
         </h2>
 
         <p class="mt-1 text-sm text-gray-600">
-            {{ __("Update your account's profile information and email address.") }}
+            {{ __("Promeni podatke naloga.") }}
         </p>
     </header>
 
-    <form id="send-verification" method="post" action="{{ route('verification.send') }}">
-        @csrf
-    </form>
+
 
     <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
         @csrf
         @method('patch')
         <div class="row mb-2">
-                <label for="name" class="col-sm-2 col-form-label">{{ __('Name') }}</label>
+                <label for="name" class="col-sm-2 col-form-label">{{ __('Ime') }}</label>
                 <div class="col-sm-6">
                     <input type="text" name="name" id="name" class="form-control" value="{{ old('name', $user->name) }}" required autofocus autocomplete="name">
-                    <x-input-error class="mt-2" :messages="$errors->get('name')" />
+                    
                 </div>
         </div>
         <div class="row mb-2">
-            <label for="email" class="col-sm-2 col-form-label">{{ __('Email') }}</label>
+            <label for="email" class="col-sm-2 col-form-label">{{ __('E-Mail') }}</label>
             <div class="col-sm-6">
                 <input type="text" name="email" id="email" class="form-control" value="{{ old('email', $user->email) }}" required autocomplete="username">
             </div>
-            <x-input-error class="mt-2" :messages="$errors->get('email')" />
+            
             @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
                 <div>
                     <p class="text-sm mt-2 text-gray-800">
@@ -49,16 +47,21 @@
         </div>
 
         <div class="flex items-center gap-4">
-            <button type="submit" class="btn btn-outline-secondary">{{ __('Save') }}</button>
-
-            @if (session('status') === 'profile-updated')
-                <p
-                    x-data="{ show: true }"
-                    x-show="show"
-                    x-transition
-                    x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-gray-600"
-                >{{ __('Saved.') }}</p>
+            <button type="submit" class="btn btn-outline-secondary">{{ __('Sačuvaj') }}</button>
+            @if (count($errors) > 0)
+            <div class="alert alert-danger">
+                <strong>Whoops!</strong> There were some problems with your input.<br><br>
+                <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+                </ul>
+            </div>
+            @endif
+            @if ($message = Session::get('status'))
+                <div class="alert alert-success">
+                    <p>{{ $message }}</p>
+                </div>
             @endif
         </div>
     </form>
