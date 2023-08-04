@@ -42,8 +42,8 @@
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>SAŠA GLIŠIĆ PR USLUGE PODRŠKE POSLOVANJU</b>, Лозница ул. Драгојла Дудића бр.8,<br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ПИБ:111167318 кога заступа директор Саша Глишић  у даљем тексту <b>извршилац посла</b>,  и 
     <br><br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>BRANKO MATIĆ PR</b> ,15300 Лозница ул. Дринска бр. 21, ПИБ:108573222 кога заступа директор<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Бранко Матић  у даљем тексту <b>наручилац посла</b>.<br><br><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>{{$klijent->naziv}}</b> ,{{$klijent->postanski_broj}} {{$klijent->mesto}} {{$klijent->ulica}} бр. {{$klijent->broj_ulice}}, ПИБ:{{$klijent->pib}} кога заступа директор<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{$odgovorno_lice->ime}} {{$odgovorno_lice->prezime}}  у даљем тексту <b>наручилац посла</b>.<br><br><br>
     <div class="ugovor-center"><b>Члан 1.</b></div><br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Овим уговором стране слободно, у границама принудних прописа, јавног поретка и добрих обичаја уређују своје односе  по својој вољи.<br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Предмет овог уговора је пословна сарадња уговорених страна у остваривању права на рефакцију плаћене акцизе на деривате нафте, биогорива и биотечности из члана 9. став 1. тач. 3), 5) и 7) Закона о акцизама, које у  транспортне сврхе користи наручилац посла.  
@@ -61,7 +61,7 @@
     <br><br>
     <div class="ugovor-center"><b>Члан 5.</b></div><br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Уговорене стране су се споразумеле да након што се изврши рефакција акцизе према донетом решењу надлежне организационе јединице Пореске управе, односно _ филијала Лозница, а најкасније 3 (три) дана од враћања акцизе извршилац посла достави наручиоцу фактуру на   20  % за заступања у посутпку и предузимање процесних радњи за његово име и за његов рачун, од плаћене-враћене акцизе на деривате нафте коришћене у транспортне сврхе а по основу решења надлежне организационе јединице Пореске управе достављеног надлежној организационој јединици Управе за трезор.<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Наручилац посла се обавезује да ће по достављању фактуре извршиоца посла из става 1 овог члана уплатити износ од   20  % према донетом решењу надлежне организационе јединице Пореске управе на текући рачун извршиоца посла бр.160-527679-79 Banca Intesa најкасније у року од 3 (три) дана по достављању фактуре. <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Наручилац посла се обавезује да ће по достављању фактуре извршиоца посла из става 1 овог члана уплатити износ од <b>{{$klijent->cena}} %</b> према донетом решењу надлежне организационе јединице Пореске управе на текући рачун извршиоца посла бр.<b>{{$klijent->broj_bankovog_racuna}} {{$banka->ime}}</b> најкасније у року од 3 (три) дана по достављању фактуре. <br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Уколико наручилац посла задоцњи са испуњењем новчане обавезе из става 1 и 2 овог члана поред главнице, дугује и затезну камату на износ дуга до дана исплате, и то по стопи утврђеној Законом о затезној камати.
     <br><br>
     <div class="ugovor-center"><b>Члан 6.</b></div><br>
@@ -86,8 +86,8 @@
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Овај уговор састављен је у 4 (четири) истоветна примерка од којих свака страна задржава по два примерка.
     <br><br>
     <div class="ugovor-center"><b>Члан 11.</b></div><br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Овај уговор ступа на снагу 28.04.2023.године.<br><br><br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;У Лозници, 28.04.2023.године<br><br><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Овај уговор ступа на снагу {{date('d.m.Y')}}.године.<br><br><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;У Лозници, {{date('d.m.Y')}}.године<br><br><br>
     <table width="100%">
       <tr>
         <td width="50%" style="text-align: center;">
@@ -102,7 +102,7 @@
             <img style="width:60%;" src="{{ asset('storage/ksk74u4ijs9IJge8Jjeh-hdjsjese974hjskjr774hs.png') }}">
         </td>
         <td width="50%" style="text-align: center;" class="signature-container">
-            <img style="width:60%;" src="{{ asset('storage/{{ $clientsig }}') }}">
+            <img style="width:100%;" src="{{ asset('storage').'/'.$sigfile }}">
         </td>
       </tr>
       <tr>
@@ -110,7 +110,7 @@
           <b>директор Саша Глишић</b>
         </td>
         <td width="50%" style="text-align: center;">
-          <b>директор Бранко Матић</b>
+          <b>директор {{$odgovorno_lice->ime}} {{$odgovorno_lice->prezime}}</b>
         </td>
       </tr>
     </table>

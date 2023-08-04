@@ -148,6 +148,8 @@
             event.preventDefault();
             var url = $(this).attr("action");
             var formData = $('body').find('.open-signiture-pad').attr('src');
+            var clientId = $('input[name="clientId"]').val();
+            
             //console.log(url);
             //console.log(formData);
             $.ajaxSetup({
@@ -158,7 +160,7 @@
             var request = $.ajax({
                 url: url,
                 method: 'POST',
-                data: {clientsig: formData},
+                data: {clientsig: formData, clientId: clientId},
                 dataType: 'json',
                 success: function(result){
                     alert(result.success);
