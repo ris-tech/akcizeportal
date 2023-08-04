@@ -130,7 +130,8 @@
     
             var data = signaturePad.toDataURL();
             signaturePad.clear();
-            $('.signature-container').html('<img style="width:100%;" src="' + data + '">');
+            $('.signature-container').html('<img class="open-signiture-pad" style="width:100%;" src="' + data + '">');
+            $('.open-signiture-pad').html('Ponovi');
             $('.signature-modal').modal('hide');
         });
 
@@ -139,8 +140,53 @@
             signaturePad.clear();
         });
 
-        $('.open-signiture-pad').click(function(event){
+        $('body').on('click', '.open-signiture-pad', function(event){
             $('.signature-modal').modal('show');
+        });
+
+        $('#ugovor-form').submit(function(event) {
+            event.preventDefault();
+            var url = $(this).attr("action");
+            var formData = $('.ugovor-form').html();
+            //console.log(url);
+            //console.log(formData);
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('input[name="csrf-token"]').val()
+                }
+            });
+            var request = $.ajax({
+                url: url,
+                method: 'POST',
+                data: {pagedata: formData},
+                dataType: 'json',
+                success: function(result){
+                    alert(result.success);
+                }
+            });
+            /*$.ajax({
+
+                type:'POST',
+                url: url,
+                data: {pages: "formData"},
+                dataType: 'html',
+                processData: false,
+                success: (response) => {
+                    alert('Form submitted successfully');
+                },
+                error: function(response){
+                    $('#ajax-form').find(".print-error-msg").find("ul").html('');
+                    $('#ajax-form').find(".print-error-msg").css('display','block');
+                    $.each( response.responseJSON.errors, function( key, value ) {
+                        $('#ajax-form').find(".print-error-msg").find("ul").append('<li>'+value+'</li>');
+                    });
+
+                }
+
+            });*/
+
+            
+            //form.submit();
         });
 
         $('.show-alert-delete-box').click(function(event){
