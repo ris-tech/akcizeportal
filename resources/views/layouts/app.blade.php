@@ -147,7 +147,7 @@
         $('#ugovor-form').submit(function(event) {
             event.preventDefault();
             var url = $(this).attr("action");
-            var formData = $('.ugovor-form').html();
+            var formData = $('body').find('.open-signiture-pad').attr('src');
             //console.log(url);
             //console.log(formData);
             $.ajaxSetup({
@@ -158,7 +158,7 @@
             var request = $.ajax({
                 url: url,
                 method: 'POST',
-                data: {pagedata: formData},
+                data: {clientsig: formData},
                 dataType: 'json',
                 success: function(result){
                     alert(result.success);

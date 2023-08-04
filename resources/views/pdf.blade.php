@@ -99,10 +99,10 @@
       </tr>
       <tr>
         <td width="50%" style="text-align: center;">
-            <img src="{{ asset('assets/ksk74u4ijs9IJge8Jjeh-hdjsjese974hjskjr774hs.png') }}">
+            <img style="width:60%;" src="{{ asset('storage/ksk74u4ijs9IJge8Jjeh-hdjsjese974hjskjr774hs.png') }}">
         </td>
         <td width="50%" style="text-align: center;" class="signature-container">
-          <button type="button" class="btn btn-secondary open-signiture-pad">Uneski Potpis</button>
+            <img style="width:60%;" src="{{ asset('storage/{{ $clientsig }}') }}">
         </td>
       </tr>
       <tr>
