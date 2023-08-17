@@ -7,11 +7,7 @@
     </div>
 </div>
 @if($ugovor_file != '') 
-<<<<<<< HEAD
   <a href="{{ env('APP_URL') }}/{{ $ugovor_path }}{{ $ugovor_file }}" target="_blank">Ugovor</a>
-=======
-  <a href="http://localhost/{{ $ugovor_path }}{{ $ugovor_file }}">Ugovor</a>
->>>>>>> e1c776fd54614c040cc6bb5371cd819e7ec47859
   @else
   <div class="ugovor-form">
     <page size="A4">
@@ -102,11 +98,6 @@
       </table>
     </page>
   </div>
-<<<<<<< HEAD
-
-=======
-@endif
->>>>>>> e1c776fd54614c040cc6bb5371cd819e7ec47859
   {!! Form::open(array('route' => 'ugovor.store','id' => 'ugovor-form','method'=>'POST')) !!}
   <input type="hidden" name="csrf-token" value="{{ csrf_token() }}">
     <input type="hidden" name="clientId" value="{{$klijent->id}}">
@@ -115,10 +106,7 @@
   <div class="alert alert-danger print-error-msg" style="display:none">
     <ul></ul>
   </div>
-<<<<<<< HEAD
   @endif
-=======
->>>>>>> e1c776fd54614c040cc6bb5371cd819e7ec47859
 <div class="modal fade signature-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content">
