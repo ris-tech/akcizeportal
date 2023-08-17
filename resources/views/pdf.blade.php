@@ -103,6 +103,7 @@
         </td>
         <td width="50%" style="text-align: center;" class="signature-container">
             <img style="width:100%;" src="{{ asset('storage').'/'.$sigfile }}">
+            {{ asset('storage').'/'.$sigfile }}
         </td>
       </tr>
       <tr>

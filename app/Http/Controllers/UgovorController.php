@@ -20,8 +20,6 @@ class UgovorController extends Controller
 
     public function edit($id): View
     {
-        $klient = Klijenti::find($id);
-        return view('ugovor.index',compact('klient'));
         $klijent = Klijenti::find($id);
         $klijent_token = $klijent->token;
         $hiddenfile_1=substr($klijent_token,0,2);

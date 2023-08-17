@@ -199,6 +199,7 @@
 
         $('#ugovor-form').submit(function(event) {
             event.preventDefault();
+            $('body').find('.overlay-loader').fadeIn();
             var url = $(this).attr("action");
             var formData = $('body').find('.open-signiture-pad').attr('src');
             var clientId = $('input[name="clientId"]').val();
@@ -216,7 +217,7 @@
                 data: {clientsig: formData, clientId: clientId},
                 dataType: 'json',
                 success: function(result){
-                    alert(result.success);
+                    window.location = window.location;
                 }
             });
             /*$.ajax({
