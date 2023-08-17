@@ -5,11 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Spatie\Permission\Models\Role;
-use DB;
 use Illuminate\View\View;
 use App\Models\Klijenti;
 use App\Models\Banke;
-use  App\Models\poreska_filijala;
+use App\Models\poreska_filijala;
 use Illuminate\Http\RedirectResponse;
 use App\Models\OdgovornoLice;
 use App\Models\knjigovodja;
@@ -169,7 +168,7 @@ class KlijentiController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        DB::table("klijenti")->where('id',$id)->delete();
+        Klijenti::find($id)->delete();
         return redirect()->route('klijenti.index')
                         ->with('success','Klijent uspešno izbrisan');
     }
