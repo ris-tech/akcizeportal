@@ -22,6 +22,7 @@ class Klijenti extends Model
         'broj_ugovora',
         'datum_ugovora',
         'pocetak_obrade',
+        'knjigovodja_id',
         'poreska_filijala_id',
         'banka_id',
         'broj_bankovog_racuna',

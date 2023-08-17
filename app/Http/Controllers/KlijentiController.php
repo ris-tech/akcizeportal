@@ -29,6 +29,7 @@ class KlijentiController extends Controller
     {
         $klijenti = Klijenti::select('klijenti.*','knjigovodja.naziv as knjigovodja')
                 ->join('knjigovodja', 'klijenti.knjigovodja_id', '=', 'knjigovodja.id')
+				->orderBy('naziv', 'asc')
                 ->get();
     
         return view('klijenti.index',compact('klijenti'))
@@ -132,7 +133,7 @@ class KlijentiController extends Controller
     
         
         $klijent = Klijenti::find($id);
-
+		//dd($request);
         Klijenti::find($id)
             ->update(
                 ['naziv' => $request->naziv,
