@@ -100,7 +100,6 @@ class UgovorController extends Controller
         $img = str_replace('data:image/png;base64,', '', $clientsig);
         $img = str_replace(' ', '+', $img);
         $data = base64_decode($img);
-
         $random = Str::random(40);
 		$sigfile = $random.'.png';
 		$sigarr = [

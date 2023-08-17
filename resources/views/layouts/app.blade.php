@@ -173,29 +173,7 @@
     <script src=" https://cdn.jsdelivr.net/npm/jquery@3.7.0/dist/jquery.min.js "></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
     <script>
-        const canvas = document.querySelector("canvas");
-        const signaturePad = new SignaturePad(canvas, {
-            minWidth: 2,
-            maxWidth: 5,
-            penColor: "rgb(68, 45, 199)"
-        });
-
-        $('.save-signature').click(function(event) {
-    
-            var data = signaturePad.toDataURL();
-            signaturePad.clear();
-            $('.signature-container').html('<img style="width:100%;" src="' + data + '">');
-            $('.signature-modal').modal('hide');
-        });
-
-        $('.reset-pad').click(function(event) {
-    
-            signaturePad.clear();
-        });
-
-        $('.open-signiture-pad').click(function(event){
-            $('.signature-modal').modal('show');
-        });
+        
 
         $('#ugovor-form').submit(function(event) {
             event.preventDefault();
@@ -220,29 +198,7 @@
                     window.location = window.location;
                 }
             });
-            /*$.ajax({
-
-                type:'POST',
-                url: url,
-                data: {pages: "formData"},
-                dataType: 'html',
-                processData: false,
-                success: (response) => {
-                    alert('Form submitted successfully');
-                },
-                error: function(response){
-                    $('#ajax-form').find(".print-error-msg").find("ul").html('');
-                    $('#ajax-form').find(".print-error-msg").css('display','block');
-                    $.each( response.responseJSON.errors, function( key, value ) {
-                        $('#ajax-form').find(".print-error-msg").find("ul").append('<li>'+value+'</li>');
-                    });
-
-                }
-
-            });*/
-
-            
-            //form.submit();
+           
         });
 
         $('.show-alert-delete-box').click(function(event){
