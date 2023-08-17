@@ -7,6 +7,10 @@
     "require": {
         "php": "^8.1",
         "barryvdh/laravel-dompdf": "^2.0",
+<<<<<<< HEAD
+=======
+        "elibyy/tcpdf-laravel": "^10.0",
+>>>>>>> e1c776fd54614c040cc6bb5371cd819e7ec47859
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.2",
