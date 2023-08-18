@@ -173,32 +173,41 @@
     <script src=" https://cdn.jsdelivr.net/npm/jquery@3.7.0/dist/jquery.min.js "></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
     <script>
-        
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 
         $('#ugovor-form').submit(function(event) {
             event.preventDefault();
-            $('body').find('.overlay-loader').fadeIn();
+
+            
             var url = $(this).attr("action");
             var formData = $('body').find('.open-signiture-pad').attr('src');
             var clientId = $('input[name="clientId"]').val();
+            var datum_ugovora = $('input[name="datum_ugovora"]').val();
+            var broj_ugovora = $('input[name="broj_ugovora"]').val();
+
+            if(typeof formData != 'undefined') {
+                $('body').find('.overlay-loader').fadeIn();
+                //console.log(url);
+                //console.log(formData);
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('input[name="csrf-token"]').val()
+                    }
+                });
+                var request = $.ajax({
+                    url: url,
+                    method: 'POST',
+                    data: {clientsig: formData, clientId: clientId,datum_ugovora: datum_ugovora,broj_ugovora: broj_ugovora },
+                    dataType: 'json',
+                    success: function(result){
+                        window.location = window.location;
+                    }
+                });
+            } else {
+                swal("Greška!", "Nije potpisano!", "error");
+            }
             
-            //console.log(url);
-            //console.log(formData);
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('input[name="csrf-token"]').val()
-                }
-            });
-            var request = $.ajax({
-                url: url,
-                method: 'POST',
-                data: {clientsig: formData, clientId: clientId},
-                dataType: 'json',
-                success: function(result){
-                    window.location = window.location;
-                }
-            });
-           
         });
 
         $('.show-alert-delete-box').click(function(event){

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Banke;
+use App\Models\config;
 use App\Models\Klijenti;
 use App\Models\OdgovornoLice;
 use Illuminate\Http\JsonResponse;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\App;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Str;
 use Turanjanin\SerbianTransliterator\Transliterator;
+use App\Models\Dokumenta;
 
 class UgovorController extends Controller
 {
@@ -22,30 +24,36 @@ class UgovorController extends Controller
     {
         $klijent = Klijenti::find($id);
         $klijent_token = $klijent->token;
-        $hiddenfile_1=substr($klijent_token,0,2);
-        $hiddenfile_2=substr($klijent_token,2,2);
-        $hiddenfile_3=substr($klijent_token,4,2);
-        $ugovor_path = 'storage/ugovori'.'/'.$hiddenfile_1.'/'.$hiddenfile_2.'/'.$hiddenfile_3.'/';
-        $hiddenfolder = public_path($ugovor_path);
-        if (!is_dir($hiddenfolder)) {
-            mkdir($hiddenfolder, 0777, true );
-        }
-        $ugovor_src = array_diff(scandir($hiddenfolder), array('..', '.'));
-        //dd($ugovor_src);
-        if (empty($ugovor_src)) {
-            $ugovor_file = '';
-        } else {
-            $ugovor_file = $ugovor_src[2];
-            if (!is_file($hiddenfolder.$ugovor_file)) {
-                $ugovor_file = '';
-            }
-        }
+        $hiddenFolder=substr($klijent_token,0,8);
+        $ugovoriPath = 'storage/'.$hiddenFolder.'/ugovori/';
+        $hiddenFolderPath = public_path($ugovoriPath);
+
+        $dokumenta = Dokumenta::where('klijent_id', $id)->get();
+        
+        $config = config::where('confvar', 'zadnji_broj_ugovora')->get();
+        $br_ugovora = $config->pluck('confval')[0];
+        $br_ugovora++;
+        $novi_br_ugovora = 'AKZ'.sprintf("%04s", $br_ugovora);
 
         $ugovor = [
-                'ugovor_file' => $ugovor_file,
-                'ugovor_path' => $ugovor_path
+            'ugovor_file' => '',
+            'ugovor_path' => $ugovoriPath,
+            'br_ugovora' => $novi_br_ugovora
         ];
-        //dd($ugovor);
+        
+        if ($dokumenta->isNotEmpty()) {
+            
+            if($dokumenta->pluck('ugovor')[0] != NULL) {
+                $ugovor = [
+                    'ugovor_file' => $dokumenta->pluck('ugovor')[0],
+                    'ugovor_path' => $ugovoriPath
+                ];            
+            }
+        }
+        
+        //dd($br_ugovora);
+
+        
         $odgovorno_lice = OdgovornoLice::find($klijent->odgovorno_lice_id);
         $banka = Banke::find($klijent->banka_id);
         $klijent->naziv = Transliterator::toCyrillic($klijent->naziv);
@@ -56,7 +64,6 @@ class UgovorController extends Controller
         $klijent->opstina = Transliterator::toCyrillic($klijent->opstina);
         $odgovorno_lice->ime = Transliterator::toCyrillic($odgovorno_lice->ime);
         $odgovorno_lice->prezime = Transliterator::toCyrillic($odgovorno_lice->prezime);
-
 
         return view('ugovor.index',compact('klijent','odgovorno_lice','banka'), $ugovor);
     }
@@ -82,12 +89,10 @@ class UgovorController extends Controller
 
         $ugovor_file = bin2hex(date('Y-m-d').'_'.$klijent->id.'_'.uniqid()).'.pdf';
 
-        $hiddenfile_1 = substr($hiddenfolder_enc,0,2);
-        $hiddenfile_2 = substr($hiddenfolder_enc,2,2);
-        $hiddenfile_3 = substr($hiddenfolder_enc,4,2);
-        $hiddenfolder = public_path('storage/ugovori'.'/'.$hiddenfile_1.'/'.$hiddenfile_2.'/'.$hiddenfile_3.'/');
-        if (!is_dir($hiddenfolder)) {
-            mkdir($hiddenfolder, 0777, true );
+        $hiddenFolder=substr($hiddenfolder_enc,0,8);
+        $ugovoriPath = public_path('storage/'.$hiddenFolder.'/ugovori/');
+        if (!is_dir($ugovoriPath)) {
+            mkdir($ugovoriPath, 0777, true );
         }
         $klijent->ulica = Transliterator::toCyrillic($klijent->ulica);
         $klijent->broj_ulice = Transliterator::toCyrillic($klijent->broj_ulice);
@@ -105,15 +110,21 @@ class UgovorController extends Controller
 		$sigarr = [
 	            'sigfile' => $sigfile
 	    ];
-
+        //dd($request);
         Storage::disk('public')->put($sigfile, $data);
 
-        PDF::loadView('pdf',compact('klijent','odgovorno_lice','banka'), $sigarr)->save($hiddenfolder.$ugovor_file);
+        PDF::loadView('pdf',compact('klijent','odgovorno_lice','banka'), $sigarr)->save($ugovoriPath.$ugovor_file);
 
         Storage::disk('public')->delete($sigfile);
 
+        $dokumenta = new Dokumenta();
 
-
+        $dokumenta->klijent_id = $request->clientId;
+        $dokumenta->ugovor = $ugovor_file;
+        $dokumenta->datum_ugovora = $request->datum_ugovora;
+        $dokumenta->broj_ugovora = $request->broj_ugovora;
+        
+        $dokumenta->save();
 
         return response()->json(['success'=> $sigfile]);
     }

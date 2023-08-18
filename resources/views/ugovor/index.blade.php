@@ -17,7 +17,7 @@
       <br>
       <br>
       <div class="ugovor-title ugovor-center">У Г О В О Р</div>
-      <div class="ugovor-center">пословној сарадњи</div><br><br>
+      <div class="ugovor-center">бр. Уговора: {{ $br_ugovora }}<br>пословној сарадњи</div><br><br>
       између:<br><br>
       <span class="paragraph2">-</span><b>SAŠA GLIŠIĆ PR USLUGE PODRŠKE POSLOVANJU</b>, Лозница ул. Драгојла Дудића бр.8,<br>
       <span class="paragraph"></span>ПИБ:111167318 кога заступа директор Саша Глишић  у даљем тексту <b>извршилац посла</b>,  и 
@@ -101,6 +101,8 @@
   {!! Form::open(array('route' => 'ugovor.store','id' => 'ugovor-form','method'=>'POST')) !!}
   <input type="hidden" name="csrf-token" value="{{ csrf_token() }}">
     <input type="hidden" name="clientId" value="{{$klijent->id}}">
+    <input type="hidden" name="datum_ugovora" value="{{date('Y-m-d')}}">
+    <input type="hidden" name="broj_ugovora" value="{{$br_ugovora}}">
     <button class="btn btn-outline-success make-contract" type="submit">Kreiraj ugovor</button>
   {!! Form::close() !!}
   <div class="alert alert-danger print-error-msg" style="display:none">

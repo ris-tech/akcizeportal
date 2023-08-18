@@ -12,6 +12,7 @@ use App\Models\poreska_filijala;
 use Illuminate\Http\RedirectResponse;
 use App\Models\OdgovornoLice;
 use App\Models\knjigovodja;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class KlijentiController extends Controller
@@ -26,9 +27,13 @@ class KlijentiController extends Controller
 
     public function index(Request $request): View
     {
-        $klijenti = Klijenti::select('klijenti.*','knjigovodja.naziv as knjigovodja')
-                ->join('knjigovodja', 'klijenti.knjigovodja_id', '=', 'knjigovodja.id')
-				->orderBy('naziv', 'asc')
+        $klijenti = DB::table('klijenti')
+                ->select(array('klijenti.*', 'knjigovodja.naziv as knjigovodja', 'klijenti_dokumenta.ugovor', 'klijenti_dokumenta.pep', 'klijenti_dokumenta.datum_ugovora', 'klijenti_dokumenta.broj_ugovora', DB::raw('COUNT(vozila.id) as vozila')))
+                ->leftJoin('knjigovodja', 'klijenti.knjigovodja_id', '=', 'knjigovodja.id')
+                ->leftJoin('klijenti_dokumenta', 'klijenti.id', '=', 'klijenti_dokumenta.klijent_id')
+                ->leftJoin('vozila', 'klijenti.id', 'vozila.klijent_id')
+                ->groupBy('klijenti.id')
+				->orderBy('klijenti.naziv', 'asc')
                 ->get();
     
         return view('klijenti.index',compact('klijenti'))
