@@ -7,7 +7,7 @@
     </div>
 </div>
 @if($ugovor_file != '') 
-  <a href="http://localhost/{{ $ugovor_path }}{{ $ugovor_file }}">Ugovor</a>
+  <a href="{{ env('APP_URL') }}/{{ $ugovor_path }}{{ $ugovor_file }}" target="_blank">Ugovor</a>
   @else
   <div class="ugovor-form">
     <page size="A4">
@@ -17,7 +17,7 @@
       <br>
       <br>
       <div class="ugovor-title ugovor-center">У Г О В О Р</div>
-      <div class="ugovor-center">пословној сарадњи</div><br><br>
+      <div class="ugovor-center">бр. Уговора: {{ $br_ugovora }}<br>пословној сарадњи</div><br><br>
       између:<br><br>
       <span class="paragraph2">-</span><b>SAŠA GLIŠIĆ PR USLUGE PODRŠKE POSLOVANJU</b>, Лозница ул. Драгојла Дудића бр.8,<br>
       <span class="paragraph"></span>ПИБ:111167318 кога заступа директор Саша Глишић  у даљем тексту <b>извршилац посла</b>,  и 
@@ -98,15 +98,17 @@
       </table>
     </page>
   </div>
-@endif
   {!! Form::open(array('route' => 'ugovor.store','id' => 'ugovor-form','method'=>'POST')) !!}
   <input type="hidden" name="csrf-token" value="{{ csrf_token() }}">
     <input type="hidden" name="clientId" value="{{$klijent->id}}">
+    <input type="hidden" name="datum_ugovora" value="{{date('Y-m-d')}}">
+    <input type="hidden" name="broj_ugovora" value="{{$br_ugovora}}">
     <button class="btn btn-outline-success make-contract" type="submit">Kreiraj ugovor</button>
   {!! Form::close() !!}
   <div class="alert alert-danger print-error-msg" style="display:none">
     <ul></ul>
   </div>
+  @endif
 <div class="modal fade signature-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content">
@@ -138,7 +140,32 @@
     </ul>
   </div>
 @endif
-
-
-
 @endsection
+@section('pagescript')
+<script>
+const canvas = document.querySelector("canvas");
+        const signaturePad = new SignaturePad(canvas, {
+            minWidth: 2,
+            maxWidth: 5,
+            penColor: "rgb(68, 45, 199)"
+        });
+
+        $('.save-signature').click(function(event) {
+    
+            var data = signaturePad.toDataURL();
+            signaturePad.clear();
+            $('.signature-container').html('<img class="open-signiture-pad" style="width:100%;" src="' + data + '">');
+            $('.open-signiture-pad').html('Ponovi');
+            $('.signature-modal').modal('hide');
+        });
+
+        $('.reset-pad').click(function(event) {
+    
+            signaturePad.clear();
+        });
+
+        $('body').on('click', '.open-signiture-pad', function(event){
+            $('.signature-modal').modal('show');
+        });
+</script>
+@stop
