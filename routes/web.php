@@ -9,6 +9,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\KlijentiController;
 use App\Http\Controllers\KnjigovodjaController;
 use App\Http\Controllers\BankeController;
+use App\Http\Controllers\DokumentaController;
+use App\Http\Controllers\PEPController;
 use App\Http\Controllers\PoreskaFilijalaController;
 use App\Http\Controllers\UgovorController;
 
@@ -48,4 +50,6 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('banke', BankeController::class);
     Route::resource('poreskafilijala', PoreskaFilijalaController::class);
     Route::resource('ugovor', UgovorController::class);
+    Route::resource('dokumenta', DokumentaController::class);
+    Route::resource('pep', PEPController::class);
 });
