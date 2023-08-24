@@ -9,7 +9,7 @@
             <h2>Dokumenti Klijenta: <b>{{ $klijent->naziv }}</b></h2>
         </div>
         <div class="col-md-2 text-end">
-            <a class="btn btn-outline-secondary" href="{{ route('klijenti.index') }}"> Nazad</a>
+            <a class="btn btn-outline-secondary" href="{{ route('klijenti.index') }}">Nazad</a>
         </div>
     </div>
     <div class="row border-bottom">
