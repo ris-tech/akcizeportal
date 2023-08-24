@@ -14,7 +14,7 @@
     </div>
     <div class="row border-bottom">
         <div class="col-md-2">
-            <b>Ugovor</b><br>
+            <b>Ugovor </b><br>
             @if($ugovor != '-') <i class="fa-regular fa-circle-check text-success"></i> @else <i class="fa-regular fa-circle-xmark text-danger"></i> @endif
         </div>
         <div class="col-md-2">
@@ -66,7 +66,7 @@
 @endsection
 @section('pagescript')
 <script>
-     $('body').on('click', '.open-pdf-viewer', function(){  
+     $('body').on('click', '.open-pdf-viewer', function(){
         var pdf = $(this).attr('data-src');
         $('.pdf-frame').attr('src', pdf);
         $('#pdf-modal').modal('show');
@@ -76,3 +76,4 @@
     });
 </script>
 @stop
+
