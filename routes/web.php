@@ -13,6 +13,7 @@ use App\Http\Controllers\DokumentaController;
 use App\Http\Controllers\PEPController;
 use App\Http\Controllers\PoreskaFilijalaController;
 use App\Http\Controllers\UgovorController;
+use App\Models\Dokumenta;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,7 +42,7 @@ Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-
+Route::post('/dokumenta/sendMail', [DokumentaController::class, 'sendMail'])->name('dokumenta.sendMail');
 Route::group(['middleware' => ['auth']], function() {
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
