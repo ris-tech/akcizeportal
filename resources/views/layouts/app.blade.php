@@ -73,7 +73,11 @@
 			transform: rotate(360deg);
 		  }
 		}
+        iframe {
+            min-height: 700px !important;
+}
     </style>
+    @yield('pagestyle')
 </head>
 <body class="">
 <div class="overlay-loader">

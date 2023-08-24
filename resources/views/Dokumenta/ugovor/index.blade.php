@@ -46,7 +46,7 @@
       <span class="paragraph"></span>Извршилац посла се обавезује да ће надлежној организационом јединицом Пореске управе   накасније до истека  текућег квартала поднети писмени Захтев за рефакцију плаћене акцизе на деривате нафте, односно биогорива из члана 9. став 1. тач. 3), 5) и 7) Закона о акцизама за претходни квартал на  обрасцу РЕФ-Т са прилогом доказа из члана 3 овог уговора које му је доставио наручилац посла. 
       <br><br>
       <div class="ugovor-center"><b>Члан 5.</b></div><br>
-      <span class="paragraph"></span>Уговорене стране су се споразумеле да након што се изврши рефакција акцизе према донетом решењу надлежне организационе јединице Пореске управе, односно _ филијала Лозница, а најкасније 3 (три) дана од враћања акцизе извршилац посла достави наручиоцу фактуру на   20  % за заступања у посутпку и предузимање процесних радњи за његово име и за његов рачун, од плаћене-враћене акцизе на деривате нафте коришћене у транспортне сврхе а по основу решења надлежне организационе јединице Пореске управе достављеног надлежној организационој јединици Управе за трезор.<br>
+      <span class="paragraph"></span>Уговорене стране су се споразумеле да након што се изврши рефакција акцизе према донетом решењу надлежне организационе јединице Пореске управе, односно _ филијала Лозница, а најкасније 3 (три) дана од враћања акцизе извршилац посла достави наручиоцу фактуру на   {{$klijent->cena}}  % за заступања у посутпку и предузимање процесних радњи за његово име и за његов рачун, од плаћене-враћене акцизе на деривате нафте коришћене у транспортне сврхе а по основу решења надлежне организационе јединице Пореске управе достављеног надлежној организационој јединици Управе за трезор.<br>
       <span class="paragraph"></span>Наручилац посла се обавезује да ће по достављању фактуре извршиоца посла из става 1 овог члана уплатити износ од <b>{{$klijent->cena}} %</b> према донетом решењу надлежне организационе јединице Пореске управе на текући рачун извршиоца посла бр.<b>{{$klijent->broj_bankovog_racuna}} {{$banka->ime}}</b> најкасније у року од 3 (три) дана по достављању фактуре. <br>
       <span class="paragraph"></span>Уколико наручилац посла задоцњи са испуњењем новчане обавезе из става 1 и 2 овог члана поред главнице, дугује и затезну камату на износ дуга до дана исплате, и то по стопи утврђеној Законом о затезној камати.
       <br><br>
@@ -108,6 +108,7 @@
     <input type="hidden" name="clientId" value="{{$klijent->id}}">
     <input type="hidden" name="datum_ugovora" value="{{date('Y-m-d')}}">
     <input type="hidden" name="broj_ugovora" value="{{$br_ugovora}}">
+    <input type="hidden" name="broj_ugovora_raw" value="{{$br_ugovora_raw}}">
     <button class="btn btn-outline-success make-contract" type="submit">Kreiraj ugovor</button>
   {!! Form::close() !!}
   <div class="alert alert-danger print-error-msg" style="display:none">
@@ -182,6 +183,7 @@ const canvas = document.querySelector("canvas");
             var clientId = $('input[name="clientId"]').val();
             var datum_ugovora = $('input[name="datum_ugovora"]').val();
             var broj_ugovora = $('input[name="broj_ugovora"]').val();
+            var broj_ugovora_raw = $('input[name="broj_ugovora_raw"]').val();
 
             if(typeof formData != 'undefined') {
                 $('body').find('.overlay-loader').fadeIn();
@@ -195,7 +197,7 @@ const canvas = document.querySelector("canvas");
                 var request = $.ajax({
                     url: url,
                     method: 'POST',
-                    data: {clientsig: formData, clientId: clientId,datum_ugovora: datum_ugovora,broj_ugovora: broj_ugovora },
+                    data: {clientsig: formData, clientId: clientId,datum_ugovora: datum_ugovora,broj_ugovora: broj_ugovora,broj_ugovora_raw: broj_ugovora_raw },
                     dataType: 'json',
                     success: function(result){
                         window.location = "{{ env('APP_URL') }}/dokumenta/{{ $klijent->id }}";
