@@ -14,6 +14,7 @@ use App\Models\OdgovornoLice;
 use App\Models\knjigovodja;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Dokumenta;
 
 class KlijentiController extends Controller
 {
@@ -35,7 +36,7 @@ class KlijentiController extends Controller
                 ->groupBy('klijenti.id')
 				->orderBy('klijenti.naziv', 'asc')
                 ->get();
-    
+
         return view('klijenti.index',compact('klijenti'))
             ->with('i', ($request->input('page', 1) - 1) * 5);
     }
@@ -93,7 +94,7 @@ class KlijentiController extends Controller
         $odgovorno_lice->telefon = $request->telefon;
         $odgovorno_lice->email = $request->email;
         $odgovorno_lice->jmbg = $request->jmbg;
-        
+
         $odgovorno_lice->save();
 
         $odgovorno_lice_id = $odgovorno_lice->id;
@@ -118,7 +119,7 @@ class KlijentiController extends Controller
         $klijenti->prioritet = $request->prioritet;
 
         $klijenti->save();
-    
+
         return redirect()->route('klijenti.index')
                         ->with('success','Klijent uspešno unešen');
     }
@@ -134,8 +135,8 @@ class KlijentiController extends Controller
         $rules['pib'] = $rules['pib'].',id,'.$id;
 
         $validator = Validator::make($request->all(), $rules);
-    
-        
+
+
         $klijent = Klijenti::find($id);
 		//dd($request);
         Klijenti::find($id)
@@ -166,13 +167,15 @@ class KlijentiController extends Controller
                 'email' => $request->email,
                 'jmbg' => $request->jmbg]
             );
-    
+
         return redirect()->route('klijenti.index')
                         ->with('success','Klijent uspešno promenjen');
     }
 
     public function destroy($id): RedirectResponse
     {
+
+        Dokumenta::where('klijent_id', $id)->delete();
         Klijenti::find($id)->delete();
         return redirect()->route('klijenti.index')
                         ->with('success','Klijent uspešno izbrisan');
