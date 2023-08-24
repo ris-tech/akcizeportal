@@ -16,6 +16,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Str;
 use Turanjanin\SerbianTransliterator\Transliterator;
 use App\Models\Dokumenta;
+use App\Models\poreska_filijala;
 
 class UgovorController extends Controller
 {
@@ -29,7 +30,7 @@ class UgovorController extends Controller
         $hiddenFolderPath = public_path($ugovoriPath);
 
         $dokumenta = Dokumenta::where('klijent_id', $id)->get();
-        
+
         $config = config::where('confvar', 'zadnji_broj_ugovora')->get();
         $br_ugovora = $config->pluck('confval')[0];
         $br_ugovora++;
@@ -41,22 +42,24 @@ class UgovorController extends Controller
             'br_ugovora_raw' => $br_ugovora,
             'br_ugovora' => $novi_br_ugovora
         ];
-        
+
         if ($dokumenta->isNotEmpty()) {
-            
+
             if($dokumenta->pluck('ugovor')[0] != NULL) {
                 $ugovor = [
                     'ugovor_file' => $dokumenta->pluck('ugovor')[0],
                     'ugovor_path' => $ugovoriPath
-                ];            
+                ];
             }
         }
-        
+
         //dd($br_ugovora);
 
-        
+
         $odgovorno_lice = OdgovornoLice::find($klijent->odgovorno_lice_id);
         $banka = Banke::find($klijent->banka_id);
+        $poreska = poreska_filijala::find($klijent->poreska_filijala_id);
+        $poreska->ime = Transliterator::toCyrillic($poreska->ime);
         $klijent->naziv_lat = $klijent->naziv;
         $klijent->naziv = Transliterator::toCyrillic($klijent->naziv);
         $klijent->ulica = Transliterator::toCyrillic($klijent->ulica);
@@ -67,7 +70,7 @@ class UgovorController extends Controller
         $odgovorno_lice->ime = Transliterator::toCyrillic($odgovorno_lice->ime);
         $odgovorno_lice->prezime = Transliterator::toCyrillic($odgovorno_lice->prezime);
 
-        return view('Dokumenta.ugovor.index',compact('klijent','odgovorno_lice','banka'), $ugovor);
+        return view('Dokumenta.ugovor.index',compact('klijent','odgovorno_lice','banka','poreska'), $ugovor);
     }
 
     public function store(Request $request)
@@ -77,9 +80,9 @@ class UgovorController extends Controller
         $klijent = Klijenti::find($request->clientId);
         $odgovorno_lice = OdgovornoLice::find($klijent->odgovorno_lice_id);
         $banka = Banke::find($klijent->banka_id);
-        $klijent->naziv = Transliterator::toCyrillic($klijent->naziv);        
+        $klijent->naziv = Transliterator::toCyrillic($klijent->naziv);
         $hiddenfolder_enc = md5($klijent->naziv);
-        Klijenti::find($request->clientId)  
+        Klijenti::find($request->clientId)
         ->update(
             ['token' => $hiddenfolder_enc]
         );
@@ -100,6 +103,8 @@ class UgovorController extends Controller
         $klijent->postanski_broj = Transliterator::toCyrillic($klijent->postanski_broj);
         $klijent->mesto = Transliterator::toCyrillic($klijent->mesto);
         $klijent->opstina = Transliterator::toCyrillic($klijent->opstina);
+        $poreska = poreska_filijala::find($klijent->poreska_filijala_id);
+        $poreska->ime = Transliterator::toCyrillic($poreska->ime);
         $odgovorno_lice->ime = Transliterator::toCyrillic($odgovorno_lice->ime);
         $odgovorno_lice->prezime = Transliterator::toCyrillic($odgovorno_lice->prezime);
         $clientsig = $request->clientsig;
@@ -114,7 +119,7 @@ class UgovorController extends Controller
         //dd($request);
         Storage::disk('public')->put($sigfile, $data);
 
-        PDF::loadView('pdf.ugovor',compact('klijent','odgovorno_lice','banka'), $sigarr)->save($ugovoriPath.$ugovor_file);
+        PDF::loadView('pdf.ugovor',compact('klijent','odgovorno_lice','banka','poreska'), $sigarr)->save($ugovoriPath.$ugovor_file);
 
         Storage::disk('public')->delete($sigfile);
 
@@ -124,18 +129,18 @@ class UgovorController extends Controller
 
             Dokumenta::where('klijent_id', $request->clientId)
             ->update(['ugovor' => $ugovor_file, 'datum_ugovora' => $request->datum_ugovora, 'broj_ugovora' => $request->broj_ugovora]);
-            
+
         } else {
             $new_dokumenta = new Dokumenta();
             $new_dokumenta->klijent_id = $request->clientId;
             $new_dokumenta->ugovor = $ugovor_file;
             $new_dokumenta->broj_ugovora = $request->broj_ugovora;
             $new_dokumenta->datum_ugovora = $request->datum_ugovora;
-            
+
             $new_dokumenta->save();
         }
 
-        
+
         config::where('confvar', 'zadnji_broj_ugovora')
         ->update(['confval' => intval($request->broj_ugovora_raw)]);
 
