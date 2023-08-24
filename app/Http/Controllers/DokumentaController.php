@@ -102,7 +102,8 @@ class DokumentaController extends Controller
         $docType = $request->docType;
         $docTypeName = $request->docTypeName;
         $data = [
-            'docType' => $docType
+            'docType' => $docType,
+            'docTypeName' => $docTypeName
         ];
         $id = $request->query('id');
         $klijent = Klijenti::find($id);

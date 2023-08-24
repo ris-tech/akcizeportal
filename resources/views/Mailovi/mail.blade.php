@@ -95,7 +95,7 @@
 									<td style="padding: 50px; border-bottom: 2px solid #f4f4f4;" class="p30-20">
 										<table width="100%" border="0" cellspacing="0" cellpadding="0">
 											<tr>
-												<td class="h3" style="padding-bottom: 30px; color:#555555; font-family:\'Montserrat\', Arial, sans-serif; font-size:20px; line-height:25px; text-align:left;"><multiline>{{ $formalno }} {{ $ime }} {{ $prezime }} </multiline></td>
+												<td class="h3" style="padding-bottom: 30px; color:#555555; font-family:\'Montserrat\', Arial, sans-serif; font-size:20px; line-height:25px; text-align:left;"><multiline>@if ($docType == 'ugovor') {{ $formalno }} {{ $ime }} {{ $prezime }} @else Poštovane dame i gospodo @endif</multiline></td>
 											</tr>
 											<tr>
 												<td>
@@ -107,7 +107,7 @@
 																		<tbody>
 																			<tr>
 																				<td style="font-family:\'Montserrat\', Arial, sans-serif;font-size:10pt; line-height:15pt; text-align:left;padding: 0px 0px 20px 0px;">
-																					U dodatku vam šaljemo {{ $docType }}.
+																					U dodatku vam šaljemo {{ $docTypeName }}.
 																				</td>
 																			</tr>
 																		</tbody>
