@@ -15,6 +15,7 @@
                     @endif
 
                     {{ __('You are logged in!') }}
+                    {{ Auth::user()->roles->pluck('name') }}
                 </div>
             </div>
         </div>

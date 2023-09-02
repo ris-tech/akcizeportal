@@ -9,11 +9,17 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\KlijentiController;
 use App\Http\Controllers\KnjigovodjaController;
 use App\Http\Controllers\BankeController;
+use App\Http\Controllers\DobavljaciController;
 use App\Http\Controllers\DokumentaController;
+use App\Http\Controllers\GorivoController;
+use App\Http\Controllers\KvartaliController;
+use App\Http\Controllers\NaloziController;
 use App\Http\Controllers\PEPController;
 use App\Http\Controllers\PoreskaFilijalaController;
+use App\Http\Controllers\RadnaListaController;
 use App\Http\Controllers\UgovorController;
 use App\Models\Dokumenta;
+use App\Models\Gorivo;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,4 +59,17 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('ugovor', UgovorController::class);
     Route::resource('dokumenta', DokumentaController::class);
     Route::resource('pep', PEPController::class);
+    Route::resource('gorivo', GorivoController::class);
+    Route::resource('dobavljaci', DobavljaciController::class);
+    Route::resource('kvartali', KvartaliController::class);
+    Route::resource('nalozi', NaloziController::class);
+    Route::get('/radnalista/scan/{id}', [RadnaListaController::class, 'scan'])->name('radnalista.scan');
+    Route::get('/radnalista/extImg/{id}', [RadnaListaController::class, 'extImg'])->name('radnalista.extImg');
+    Route::get('/radnalista/tabela/{id}', [RadnaListaController::class, 'tabela'])->name('radnalista.tabela');
+    Route::post('/radnalista/deleteFile', [RadnaListaController::class, 'deleteFile'])->name('radnalista.deleteFile');
+    Route::post('/radnalista/retrieveFile', [RadnaListaController::class, 'retrieveFile'])->name('radnalista.retrieveFile');
+    Route::post('/radnalista/finishScan', [RadnaListaController::class, 'finishScan'])->name('radnalista.finishScan');    
+    Route::post('/radnalista/storeFiles', [RadnaListaController::class, 'storeFiles'])->name('radnalista.storeFiles');
+    Route::resource('radnalista', RadnaListaController::class);
+
 });

@@ -54,6 +54,9 @@
             @can('role-edit')
                 <a href="{{ route('dokumenta.show',$klijent->id) }}" class="btn btn-secondary" type="submit" data-bs-toggle="tooltip" data-bs-title="Dokumenti"><i class="fa-solid fa-folder-open"></i></button>
             @endcan
+            @if ($klijent->ugovor != NULL)
+                <a href="{{ route('nalozi.show',$klijent->id) }}" class="btn btn-info ms-1" type="submit" data-bs-toggle="tooltip" data-bs-title="Nalozi"><i class="fa-solid fa-briefcase"></i></button>
+            @endif
         </td>
     </tr>
     @endforeach

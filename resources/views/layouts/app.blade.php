@@ -26,6 +26,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/5.0.7/sweetalert2.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 
+
+
     <style>
         .navbar > .container-fluid {
             display:unset !important;
@@ -118,6 +120,7 @@
                         @else
 
                             <li><a class="nav-link" href="{{ route('klijenti.index') }}"><i class="fas fa-user-tie me-2"></i> Klijenti</a></li>
+                            <li><a class="nav-link" href="{{ route('radnalista.index') }}"><i class="fas fa-user-tie me-2"></i> Lista Naloga</a></li>
                             <li class="nav-item dropdown">
                                 <a id="podesavanja" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     <i class="fas fa-tools me-2"></i> Podešavanja
@@ -126,6 +129,9 @@
                                     <a class="dropdown-item" href="{{ route('knjigovodja.index') }}">Knjigovodja</a>
                                     <a class="dropdown-item" href="{{ route('banke.index') }}">Banke</a>
                                     <a class="dropdown-item" href="{{ route('poreskafilijala.index') }}">Poreske Filijale</a>
+                                    <a class="dropdown-item" href="{{ route('gorivo.index') }}">Gorivo</a>
+                                    <a class="dropdown-item" href="{{ route('dobavljaci.index') }}">Dobavljači</a>
+                                    <a class="dropdown-item" href="{{ route('kvartali.index') }}">Kvartali</a>
                                 </div>
                             </li>
                             <li class="nav-item dropdown">
@@ -203,6 +209,47 @@
                 }
             });
         });
+
+        $('.finish-scan').click(function(event){
+            var form =  $(this).closest("form");
+            var name = $(this).data("name");
+            event.preventDefault();
+            swal({
+                title: "Siguran?",
+                text: "Jel si siguran da si završio skeniranje?",
+                icon: "warning",
+                type: "warning",
+                buttons: ["Odustani","Da!"],
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Da, završi!'
+            }).then((willDelete) => {
+                if (willDelete) {
+                    form.submit();
+                }
+            });
+        });
+
+        $('.finish-unos').click(function(event){
+            var form =  $(this).closest("form");
+            var name = $(this).data("name");
+            event.preventDefault();
+            swal({
+                title: "Siguran?",
+                text: "Jel si siguran da si završio unos?",
+                icon: "warning",
+                type: "warning",
+                buttons: ["Odustani","Da!"],
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Da, završi!'
+            }).then((willDelete) => {
+                if (willDelete) {
+                    form.submit();
+                }
+            });
+        });
+        
         $('.show-mail-box').click(function(event){
             var docType = $(this).attr("docType");
             event.preventDefault();
