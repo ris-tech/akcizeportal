@@ -47,7 +47,7 @@ class NaloziController extends Controller
         $users = User::get();
         
 
-        return view('nalozi.index',compact('nalozi', 'goriva', 'kvartali', 'users'))
+        return view('Nalozi.index',compact('nalozi', 'goriva', 'kvartali', 'users'))
         ->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -60,7 +60,7 @@ class NaloziController extends Controller
         $kvartali = Kvartali::where('godina', date('Y'))->get();
         $users = User::get();
 
-        return view('nalozi.create',compact('kvartali','goriva','users'), $data);
+        return view('Nalozi.create',compact('kvartali','goriva','users'), $data);
     }
 
     public function edit($id): View
