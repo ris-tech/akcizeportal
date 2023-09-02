@@ -110,7 +110,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                             <th width="15%">VRSTA GORIVA</th>
                             <th width="15%">DOBAVLJAČ</th>
                             <th width="12%">IZNOS</th>
-                            <th width="10%">Kolicina</th>
+                            <th width="10%">KOLIČINA</th>
                             <th width="18%">REG. VOZILA</th>
                         </tr>
                         @foreach($pozicije as $pozicija)
@@ -239,15 +239,15 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                                 <tr>
                                     <th>BR.</th>
                                     <th>REG. VOZILA</th>
-                                    <th>UKUPNO LITARA</th>
-                                    <th>UKUPNI IZNOS</th>
+									<th>UKUPNI IZNOS</th>
+                                    <th>UKUPNA KOLIČINA</th>
                                 </tr>
                                 @foreach($suma as $pos)
                                 <tr>
                                     <th>{{$sumpos++}}</th>
                                     <th>{{$pos->vozila}}</th>
-                                    <th>{{number_format($pos->kol_goriva, 2, ',', '.')}} L</th>
                                     <th>{{number_format($pos->iznos_goriva, 2, ',', '.')}} RSD</th>
+                                    <th>{{number_format($pos->kol_goriva, 2, ',', '.')}} L</th>
                                 </tr>
                                 @endforeach
                         </div>
@@ -329,7 +329,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                     var reg_vozila = $(crr_row).find('[name="reg_vozila[]"]').val();
                 
                     if(datum != '' && br_fakture != '' && gorivo != '' && dobavljac != '' && iznos != '' && kolicina != '' && kolicina != '' && reg_vozila != '' && !hC) {
-                        var coneldTr = $(crr_row).clone().appendTo($('.table'));
+                        var coneldTr = $(crr_row).clone();
                         $(crr_row).addClass('cloned');
                         $(coneldTr).removeClass('cloned');
                         $(coneldTr).find('[name="iznos[]"]').val('');
