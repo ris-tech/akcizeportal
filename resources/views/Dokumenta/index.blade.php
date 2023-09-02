@@ -43,10 +43,13 @@
                     <input type="hidden" name="email" class="emailVal" value="@if ($odgovorno_lice->email != NULL) {{ $odgovorno_lice->email }} @endif">
                     <button docType="ugovor" class="btn btn-outline-primary @if ($odgovorno_lice->email == NULL) show-mail-box @else ask-send @endif" type="submit" data-bs-toggle="tooltip" data-bs-title="Pošalji Mail"><i class="fa-solid fa-envelope"></i></button>
                 {!! Form::close() !!}
-
-
             @else
                 <a data-bs-toggle="tooltip" data-bs-title="Kreiraj ugovor" class="btn btn-outline-warning mt-1" href="{{ route('ugovor.edit',$klijent->id) }}" target="_self"><i class="fa-solid fa-file-signature"></i></a>
+                {!! Form::open(['method' => 'POST','route' => ['dokumenta.upload', $klijent->id],'style'=>'display:inline','files'=>'true']) !!}
+                    <input type="hidden" name="docType" value="ugovor">
+                    <input type="file" name="upload" class="upload_postojeci" id="upload_postojeci_ugovor" hidden/>
+                    <label for="upload_postojeci_ugovor" class="btn btn-outline-info mt-1" data-bs-toggle="tooltip" data-bs-title="Uploaduj Ugovor"><i class="fa-solid fa-upload"></i></label>
+                {!! Form::close() !!}
             @endif
         </div>
     </div>
@@ -74,6 +77,11 @@
                 {!! Form::close() !!}
             @else
                 <a data-bs-toggle="tooltip" data-bs-title="Kreiraj PEP-Obrazac" href="{{ route('pep.edit',$klijent->id) }}" class="btn btn-outline-warning mt-1" target="_self"><i class="fa-solid fa-file-signature"></i></a>
+                {!! Form::open(['method' => 'POST','route' => ['dokumenta.upload', $klijent->id],'style'=>'display:inline','files'=>'true']) !!}
+                    <input type="hidden" name="docType" value="pep">
+                    <input type="file" name="upload" class="upload_postojeci" id="upload_postojeci_pep" hidden/>
+                    <label for="upload_postojeci_pep" class="btn btn-outline-info mt-1 " data-bs-toggle="tooltip" data-bs-title="Uploaduj PEP-Obrazac"><i class="fa-solid fa-upload"></i></label>
+                {!! Form::close() !!}
             @endif
         </div>
     </div>
@@ -115,6 +123,10 @@
      });
      $("#pdf-modal").on("hidden.bs.modal", function () {
         $('.pdf-frame').attr('src', '');
+    });
+    $('.upload_postojeci').change(function() {
+        $('.overlay-loader').fadeIn();
+        $(this).closest('form').submit();
     });
 </script>
 @stop

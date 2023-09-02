@@ -76,7 +76,6 @@ class UgovorController extends Controller
     public function store(Request $request)
     {
 
-        $password="password";
         $klijent = Klijenti::find($request->clientId);
         $odgovorno_lice = OdgovornoLice::find($klijent->odgovorno_lice_id);
         $banka = Banke::find($klijent->banka_id);

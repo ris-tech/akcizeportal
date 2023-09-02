@@ -8,7 +8,9 @@ use App\Models\Klijenti;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use App\Models\OdgovornoLice;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Redirect;
 
 class DokumentaController extends Controller
 {
@@ -16,6 +18,71 @@ class DokumentaController extends Controller
     {
         //
     }
+
+    public function upload(Request $request): RedirectResponse
+    {
+        
+        $klijent = Klijenti::find($request->id);
+        if($klijent->token != NULL) {
+            $hiddenfolder_enc = $klijent->token;
+        } else {
+            $hiddenfolder_enc = md5($klijent->naziv);
+            Klijenti::find($request->id)  
+            ->update(
+                ['token' => $hiddenfolder_enc]
+            );
+
+            $setToken = Klijenti::find($request->id);
+            $setToken->token = $hiddenfolder_enc;
+            $setToken->save();
+        }
+
+        $hiddenFolder=substr($hiddenfolder_enc,0,8);
+        $docPath = public_path('storage/'.$hiddenFolder.'/');
+        if (!is_dir($docPath)) {
+            mkdir($docPath, 0777, true );
+        }
+
+        $uploaded_file = $request->file('upload');
+        $new_file = bin2hex(date('Y-m-d').'_'.$klijent->id.'_'.uniqid()).'.'.$uploaded_file->extension();
+        $uploaded_file->move($docPath,$new_file);
+
+        $dokumenta = Dokumenta::where('klijent_id', $request->id);
+        //dd($dokumenta->get());
+        if ($dokumenta->get()->isNotEmpty()) {
+            if($request->docType == 'ugovor') {
+                Dokumenta::where('klijent_id', $request->id)
+                ->update(['ugovor' => $new_file, 'datum_ugovora' => date('Y-m-d'), 'broj_ugovora' => 'upload']);
+            }
+            if($request->docType == 'pep') {
+                Dokumenta::where('klijent_id', $request->id)
+                ->update(['pep' => $new_file, 'datum_pep' => date('Y-m-d')]);
+            }
+        } else {
+            if($request->docType == 'ugovor') {
+                $new_dokumenta = new Dokumenta();
+                $datum_ugovora = date('Y-m-d');
+                $new_dokumenta->klijent_id = $request->id;
+                $new_dokumenta->ugovor = $new_file;
+                $new_dokumenta->datum_ugovora = $datum_ugovora;
+                $new_dokumenta->broj_ugovora = 'upload';
+                
+                $new_dokumenta->save();
+            }
+            if($request->docType == 'pep') {
+                $new_dokumenta = new Dokumenta();
+                $datum_pep = date('Y-m-d');
+                $new_dokumenta->klijent_id = $request->id;
+                $new_dokumenta->pep = $new_file;
+                $new_dokumenta->datum_pep = $datum_pep;
+                
+                $new_dokumenta->save();
+            }
+        }
+        return redirect()->route('dokumenta.show',$request->id)
+        ->with('success',$request->docType.' uspešno uploadovano');
+    }
+
     public function show($id): View
     {
         $pass_doc = [];

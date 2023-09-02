@@ -57,6 +57,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('banke', BankeController::class);
     Route::resource('poreskafilijala', PoreskaFilijalaController::class);
     Route::resource('ugovor', UgovorController::class);
+    Route::post('/dokumenta/upload/{id}', [DokumentaController::class, 'upload'])->name('dokumenta.upload');
     Route::resource('dokumenta', DokumentaController::class);
     Route::resource('pep', PEPController::class);
     Route::resource('gorivo', GorivoController::class);
