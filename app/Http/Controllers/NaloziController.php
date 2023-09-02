@@ -8,6 +8,7 @@ use App\Models\Nalozi;
 use App\Models\User;
 use Illuminate\Http\Request;
 use DB;
+use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
@@ -62,6 +63,15 @@ class NaloziController extends Controller
 
         return view('Nalozi.create',compact('kvartali','goriva','users'), $data);
     }
+
+    public function getKvartali(Request $request): JsonResponse
+    {
+        $godina = $request->godina;
+        $kvartali = Kvartali::where('godina', $godina)->get();
+
+        return response()->json($kvartali);
+    }
+    
 
     public function edit($id): View
     {

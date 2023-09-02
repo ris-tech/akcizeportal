@@ -138,6 +138,20 @@ class RadnaListaController extends Controller
         $nalozi->load('kvartal');
         return redirect()->route('radnalista.index');
     }
+	
+	public function finishUnos(Request $request): RedirectResponse
+    {
+        $upd = Nalozi::where('id', $request->nalog_id)
+                ->update(['unos_gotov' => 1]);
+
+        $nalozi = Nalozi::where('skener_id', '=', Auth::user()->id)
+        ->orWhere('unosilac_id', '=', Auth::user()->id)->get();
+
+        $nalozi->load('skener');
+        $nalozi->load('unosilac');
+        $nalozi->load('kvartal');
+        return redirect()->route('radnalista.index');
+    }
 
     public function tabela($id): View
     {

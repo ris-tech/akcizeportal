@@ -21,6 +21,7 @@
     </div>
 @endif
 {!! Form::open(array('route' => 'nalozi.store','method'=>'POST')) !!}
+<input type="hidden" name="csrf-token" value="{{ csrf_token() }}">
 <input type="hidden" name="klijent_id" value="{{$id}}">
 <div class="row mb-3 p-3 shadow">
     <h2>Osnovni podaci</h2>
@@ -34,7 +35,7 @@
                 <option value="2020" @selected(old('godina') == '2020')>2020</option>
                 <option value="2021" @selected(old('godina') == '2021')>2021</option>
                 <option value="2022" @selected(old('godina') == '2022')>2022</option>
-                <option value="2023" @selected(old('godina') == '2023')>2023</option>
+                <option value="2023" selected @selected(old('godina') == '2023')>2023</option>
                 <option value="2024" @selected(old('godina') == '2024')>2024</option>
                 <option value="2025" @selected(old('godina') == '2025')>2025</option>
                 <option value="2026" @selected(old('godina') == '2026')>2026</option>
@@ -100,3 +101,38 @@
 {!! Form::close() !!}
 
 @endsection
+@section('pagescript')
+<script>
+     $('[name="godina"]').change(function() {
+        var godina = $(this).val();
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('input[name="csrf-token"]').val()
+            }
+        });
+        var request = $.ajax({
+            url: '{{route("nalozi.getKvartali")}}',
+            method: 'POST',
+            data: {godina: godina},
+            dataType: 'json',
+            success: function(result){
+                var res_len = result.length;
+                var output = '';
+                if (res_len > 0) {
+                    for (let i = 0; i < res_len; i++) {
+                        var crrod = new Date(result[i].od);
+                        var crrdo = new Date(result[i].do);
+                        var newod = String(crrod.getDate()).padStart(2, '0')+'.'+String(crrod.getMonth() + 1).padStart(2, '0');
+                        var newdo = String(crrdo.getDate()).padStart(2, '0')+'.'+String(crrdo.getMonth() + 1).padStart(2, '0');
+                        output += '<option value="'+result[i].id+'">'+result[i].kvartal+' ('+newod+' - '+newdo+')</option>';
+                    }
+                } else {
+                    output = '<option value="" selected disabled>! Nema Kvartala !</option>';
+                }
+                $('[name="kvartal_id"]').html(output);
+                
+            }
+        });
+     });
+</script>
+@stop

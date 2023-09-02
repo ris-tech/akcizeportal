@@ -77,7 +77,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
             </div>
         @else
             <div class="position-fixed bottom-0 end-0">
-                {!! Form::open(array('route' => 'radnalista.finishScan','id' => 'finish-unos-form','method'=>'POST')) !!}
+                {!! Form::open(array('route' => 'radnalista.finishUnos','id' => 'finish-unos-form','method'=>'POST')) !!}
                     <input type="hidden" name="csrf-token" value="{{ csrf_token() }}">
                     <input type="hidden" name="nalog_id" value="{{$nalozi->id}}">
                     <button class="btn btn-outline-success finish-unos" type="submit">Završi unos</button>
@@ -85,7 +85,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                 </div>
             <div class="row">
                 <div class="col-md-8">
-                    <h1>Unošenje</h1>
+                    <h1>Izveštaj o nabavci i utrošku derivata</h1>
                 </div>
                 <div class="col-md-2">
                     <a href="{{route('radnalista.extImg', $nalozi->id)}}" class="btn btn-outline-success open-ext-img mb-2" type="button" target="_blank">Otvori externo</a>

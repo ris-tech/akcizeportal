@@ -63,6 +63,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('gorivo', GorivoController::class);
     Route::resource('dobavljaci', DobavljaciController::class);
     Route::resource('kvartali', KvartaliController::class);
+    Route::post('/nalozi/getKvartali', [NaloziController::class, 'getKvartali'])->name('nalozi.getKvartali');
     Route::resource('nalozi', NaloziController::class);
     Route::get('/radnalista/scan/{id}', [RadnaListaController::class, 'scan'])->name('radnalista.scan');
     Route::get('/radnalista/extImg/{id}', [RadnaListaController::class, 'extImg'])->name('radnalista.extImg');
@@ -70,6 +71,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('/radnalista/deleteFile', [RadnaListaController::class, 'deleteFile'])->name('radnalista.deleteFile');
     Route::post('/radnalista/retrieveFile', [RadnaListaController::class, 'retrieveFile'])->name('radnalista.retrieveFile');
     Route::post('/radnalista/finishScan', [RadnaListaController::class, 'finishScan'])->name('radnalista.finishScan');    
+    Route::post('/radnalista/finishUnos', [RadnaListaController::class, 'finishUnos'])->name('radnalista.finishUnos');    
     Route::post('/radnalista/storeFiles', [RadnaListaController::class, 'storeFiles'])->name('radnalista.storeFiles');
     Route::resource('radnalista', RadnaListaController::class);
 
