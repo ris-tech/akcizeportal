@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Fajlovi;
 use App\Models\Gorivo;
 use App\Models\Kvartali;
 use App\Models\Nalozi;
+use App\Models\Pozicije;
 use App\Models\User;
 use Illuminate\Http\Request;
 use DB;
@@ -165,7 +167,8 @@ class NaloziController extends Controller
 
     public function destroy(Request $request, $id): RedirectResponse
     {
-        
+        Fajlovi::where('nalog_id', $id)->delete();
+        Pozicije::where('nalog_id',$id)->delete();
         $Nalozi = Nalozi::find($id);
         $Nalozi->delete();
         return redirect()->route('nalozi.show', ['nalozi' => $request->klijent_id])

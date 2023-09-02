@@ -116,7 +116,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                         @foreach($pozicije as $pozicija)
                         <tr class="line-row cloned">
                             <td><input type="text" readonly="readonly" value="{{$pos++}}" class="form-control" name="br_pos[]"></td>
-                            <td><input class="form-control" type="date" name="datum[]" value="{{$pozicija->datum_fakture}}"></td>
+                            <td><input class="form-control" type="date" name="datum[]" value="{{$pozicija->datum_fakture}}" min="{{$nalozi->kvartal['od']}}" max="{{$nalozi->kvartal['do']}}"></td>
                             <td><input class="form-control" type="text" name="br_fakture[]" placeholder="BR. FAKTURE" value="{{$pozicija->broj_fakture}}"></td>
                             <td>@if($nalozi->eurodizel == 1 && $nalozi->tng == 1)
                                 <select class="form-select" name="gorivo[]">
@@ -271,41 +271,77 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
             
             @section('pagescript')
             <script type="text/javascript">
+			$('[name="datum[]"]').focusout(function() {
+				var inpDate = new Date($(this).val());
+				var odDate = new Date("{{$nalozi->kvartal['od']}}");
+				var doDate = new Date("{{$nalozi->kvartal['do']}}");
+				console.log(inpDate);
+				console.log(odDate);
+				console.log(doDate);
+				if (inpDate < odDate){
+					$(this).addClass('is-invalid');
+				}
+				if (inpDate > doDate){
+					$(this).addClass('is-invalid');
+				}
+				
+				if (inpDate <= doDate && inpDate >= odDate){
+					$(this).removeClass('is-invalid');
+				}
+				
+			});
                 $('.save-table').click(function() {
                     var cnt_tr = $('body').find('.line-row');
-                    
-                    var last_tr = $('.unos-tabela').find('tr').last();
-                    console.log($(last_tr));
-                    var datum = $(last_tr).find('[name="datum[]"]').val();
-                    var br_fakture = $(last_tr).find('[name="br_fakture[]"]').val();
-                    var iznos = $(last_tr).find('[name="iznos[]"]').val();
-                    var kolicina = $(last_tr).find('[name="kolicina[]"]').val();
-                    var reg_vozila = $(last_tr).find('[name="reg_vozila[]"]').val();
-                    console.log(cnt_tr.length);
-                    if (cnt_tr.length > 1) {
-                        if(datum == '' && br_fakture == '' && iznos == '' && kolicina == '' && reg_vozila == '') {
-                            console.log('zadnji red prazan');
-                            $(last_tr).remove();
-                            $('.unos-tabela').find('tr').last().removeClass('cloned');
-                            $('.overlay-loader').fadeIn();
-                            $('#save-unos-form').submit();
-                        } else if(datum == '' || br_fakture == '' || iznos == '' || kolicina == '' || reg_vozila == '') {
-                            console.log('zadnji red nije popunjen');
-                            swal({
-                                title: "Pažnja!",
-                                text: "U zadnjem redu nisu ispunjena potrebna polja!",
-                                icon: "warning",
-                                type: "warning",
-                                showConfirmButton:false,
-                                confirmButtonColor: '#3085d6',
-                                confirmButtonText: 'Ok!'
-                            });
-                        } else {
-                            console.log('pucaj');
-                            $('.overlay-loader').fadeIn();
-                            $('#save-unos-form').submit();
-                        }       
-                    }              
+                    var errDate = 0;
+					$('body').find('[name="datum[]"]').each(function() {
+						if($(this).hasClass('is-invalid')) {
+							errDate = 1;
+						}
+					});
+					if (errDate == 1) {
+						swal({
+							title: "Pažnja!",
+							text: "U najmanje jednom polju je pogrešan datum unešen!",
+							icon: "warning",
+							type: "warning",
+							showConfirmButton:false,
+							confirmButtonColor: '#3085d6',
+							confirmButtonText: 'Ok!'
+						});
+					} else {
+						var last_tr = $('.unos-tabela').find('tr').last();
+						console.log($(last_tr));
+						var datum = $(last_tr).find('[name="datum[]"]').val();
+						var br_fakture = $(last_tr).find('[name="br_fakture[]"]').val();
+						var iznos = $(last_tr).find('[name="iznos[]"]').val();
+						var kolicina = $(last_tr).find('[name="kolicina[]"]').val();
+						var reg_vozila = $(last_tr).find('[name="reg_vozila[]"]').val();
+						console.log(cnt_tr.length);
+						if (cnt_tr.length > 1) {
+							if(datum == '' && br_fakture == '' && iznos == '' && kolicina == '' && reg_vozila == '') {
+								console.log('zadnji red prazan');
+								$(last_tr).remove();
+								$('.unos-tabela').find('tr').last().removeClass('cloned');
+								$('.overlay-loader').fadeIn();
+								$('#save-unos-form').submit();
+							} else if(datum == '' || br_fakture == '' || iznos == '' || kolicina == '' || reg_vozila == '') {
+								console.log('zadnji red nije popunjen');
+								swal({
+									title: "Pažnja!",
+									text: "U zadnjem redu nisu ispunjena potrebna polja!",
+									icon: "warning",
+									type: "warning",
+									showConfirmButton:false,
+									confirmButtonColor: '#3085d6',
+									confirmButtonText: 'Ok!'
+								});
+							} else {
+								console.log('pucaj');
+								$('.overlay-loader').fadeIn();
+								$('#save-unos-form').submit();
+							}       
+						}       
+					}					
 
                 });
                 $('.zoom-img').click(function() {

@@ -6,7 +6,7 @@
         <h2>Kreiraj novi nalog</h2>
     </div>
     <div class="col-md-2 text-end">
-        <a class="btn btn-outline-secondary" href="{{ route('nalozi.index') }}"> Nazad</a>
+        <a class="btn btn-outline-secondary" href="{{ route('nalozi.show',$nalozi->klijent->id) }}"> Nazad</a>
     </div>
 </div>
 
@@ -22,6 +22,7 @@
 @endif
 
 {!! Form::model($nalozi, ['method' => 'PATCH','route' => ['nalozi.update', $nalozi->id]]) !!}
+<input type="hidden" name="csrf-token" value="{{ csrf_token() }}">
 <input type="hidden" name="klijent_id" value="{{$nalozi->klijent_id}}">
 <div class="row mb-3 p-3 shadow">
     <div class="col-xs-2 col-sm-2 col-md-2">
@@ -100,3 +101,38 @@
 {!! Form::close() !!}
 
 @endsection
+@section('pagescript')
+<script>
+     $('[name="godina"]').change(function() {
+        var godina = $(this).val();
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('input[name="csrf-token"]').val()
+            }
+        });
+        var request = $.ajax({
+            url: '{{route("nalozi.getKvartali")}}',
+            method: 'POST',
+            data: {godina: godina},
+            dataType: 'json',
+            success: function(result){
+                var res_len = result.length;
+                var output = '';
+                if (res_len > 0) {
+                    for (let i = 0; i < res_len; i++) {
+                        var crrod = new Date(result[i].od);
+                        var crrdo = new Date(result[i].do);
+                        var newod = String(crrod.getDate()).padStart(2, '0')+'.'+String(crrod.getMonth() + 1).padStart(2, '0');
+                        var newdo = String(crrdo.getDate()).padStart(2, '0')+'.'+String(crrdo.getMonth() + 1).padStart(2, '0');
+                        output += '<option value="'+result[i].id+'">'+result[i].kvartal+' ('+newod+' - '+newdo+')</option>';
+                    }
+                } else {
+                    output = '<option value="" selected disabled>! Nema Kvartala !</option>';
+                }
+                $('[name="kvartal_id"]').html(output);
+                
+            }
+        });
+     });
+</script>
+@stop
