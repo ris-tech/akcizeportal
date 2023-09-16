@@ -65,7 +65,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('kvartali', KvartaliController::class);
     Route::post('/nalozi/getKvartali', [NaloziController::class, 'getKvartali'])->name('nalozi.getKvartali');
     Route::resource('nalozi', NaloziController::class);
-    Route::get('/radnalista/scan/{id}', [RadnaListaController::class, 'scan'])->name('radnalista.scan');
+    Route::get('/radnalista/scan/{id}/{tip}/{tip_ime}', [RadnaListaController::class, 'scan'])->name('radnalista.scan');
+    Route::get('/radnalista/selectScan/{id}', [RadnaListaController::class, 'selectScan'])->name('radnalista.selectScan');
     Route::get('/radnalista/extImg/{id}', [RadnaListaController::class, 'extImg'])->name('radnalista.extImg');
     Route::get('/radnalista/tabela/{id}', [RadnaListaController::class, 'tabela'])->name('radnalista.tabela');
     Route::post('/radnalista/deleteFile', [RadnaListaController::class, 'deleteFile'])->name('radnalista.deleteFile');

@@ -11,6 +11,7 @@ class Fajlovi extends Model
     protected $table = "fajlovi";
     protected $fillable = [
         'nalog_id',
+        'tip',
         'fajl'
     ];
 }

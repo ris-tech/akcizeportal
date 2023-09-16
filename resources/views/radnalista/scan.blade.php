@@ -46,24 +46,30 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
 @stop
 
 @section('content')
+<div class="row">
+    <div class="col-md-10">
+        <h1>Skeniranje - {{$tip_ime}}</h1>
+    </div>
+    <div class="col-md-2 text-end">
+        <a class="btn btn-outline-secondary" href="{{ route('radnalista.selectScan',['id'=>$nalozi->id]) }}"> Nazad</a>
+    </div>
+</div>
+
 @if(!$resp)
-    <h1>Skeniranje</h1>
     <div class="row">
         <div class="col-md-12 alert alert-warning text-center fw-bold">
             Nalog nepostojeći!
         </div>
     </div>  
 @else
-    @if($nalozi->skener_id != Auth::user()->id)
-        <h1>Skeniranje</h1>
+    @if($nalozi->{$v_tip} != Auth::user()->id)
         <div class="row">
-            <div class="col-md-12 alert alert-warning text-center fw-bold">
+            <div class="colmd-12 alert alert-warning text-center fw-bold">
                 Niste zadeljeni tom nalogu za skeniranje!
             </div>
         </div>
     @else
-        @if($nalozi->sken_gotov == 1)
-            <h1>Skeniranje</h1>
+        @if($nalozi->{$tip} == 1)
             <div class="row">
                 <div class="col-md-12 alert alert-warning text-center fw-bold">
                     Skeniranje za taj nalog je završen!
@@ -74,10 +80,10 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                 {!! Form::open(array('route' => 'radnalista.finishScan','id' => 'finish-scan-form','method'=>'POST')) !!}
                     <input type="hidden" name="csrf-token" value="{{ csrf_token() }}">
                     <input type="hidden" name="nalog_id" value="{{$nalozi->id}}">
+                    <input type="hidden" name="tip" value="{{$tip}}">
                     <button class="btn btn-outline-success finish-scan" type="submit">Završi skeniranje</button>
                 {!! Form::close() !!}
                 </div>
-            <h1>Skeniranje</h1>
             @include('radnalista.rlhead')
             <div class="row mt-3">
                 <div class="col-md-12">
@@ -85,6 +91,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                         @csrf
                         <input type="hidden" name="klijent_id" value="{{ $nalozi->klijent['id'] }}">
                         <input type="hidden" name="nalog_id" value="{{ $nalozi->id }}">
+                        <input type="hidden" name="tip" value="{{ $tip }}">
                         @foreach($fajlovi as $fajl)
                             <div class="dz-preview dz-processing dz-image-preview dz-success dz-complete"> 
                                 <div class="dz-image">

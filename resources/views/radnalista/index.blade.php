@@ -15,12 +15,17 @@
         <td>{{ $nalog->klijent['naziv'] }}</td>
         <td>{{ $nalog->kvartal['godina'] }}</td>
         <td>{{ $nalog->kvartal['kvartal'] }}</td>
-        <td>@if(Auth::User()->name == $nalog->skener['name'] && $nalog->sken_gotov == 0) Skeniranje @endif @if(Auth::User()->name == $nalog->unosilac['name']  && $nalog->unos_gotov == 0) Unošenje u tabelu @endif</td>
+        <td>
+            @if(Auth::User()->id == $nalog->skener_ulazne_fakture_id
+        && ($nalog->sken_ulazne_fakture == 0 || $nalog->sken_izlazne_fakture == 0 || $nalog->sken_izvodi == 0 || $nalog->sken_analiticke_kartice == 0 || $nalog->sken_licenca == 0 || $nalog->sken_saobracajna == 0 || $nalog->sken_depo_karton == 0 || $nalog->sken_kompenzacije == 0 || $nalog->sken_knjizna_odobrenja == 0)) Skeniranje, 
+        @endif 
+        @if(Auth::User()->id == $nalog->unosilac_id  && $nalog->unos_gotov == 0) Unošenje u tabelu @endif</td>
         <td>   
-            @if(Auth::User()->name == $nalog->skener['name'] && $nalog->sken_gotov == 0)
-                <a class="btn btn-primary" href="{{ route('radnalista.scan',['id'=>$nalog->id]) }}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Skeniranje"><i class="fa-solid fa-print"></i></a>
+            @if(Auth::User()->id == $nalog->skener_ulazne_fakture_id
+        && ($nalog->sken_ulazne_fakture == 0 || $nalog->sken_izlazne_fakture == 0 || $nalog->sken_izvodi == 0 || $nalog->sken_analiticke_kartice == 0 || $nalog->sken_licenca == 0 || $nalog->sken_saobracajna == 0 || $nalog->sken_depo_karton == 0 || $nalog->sken_kompenzacije == 0 || $nalog->sken_knjizna_odobrenja == 0))
+                <a class="btn btn-primary" href="{{ route('radnalista.selectScan',['id'=>$nalog->id]) }}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Skeniranje"><i class="fa-solid fa-print"></i></a>
             @endif
-            @if(Auth::User()->name == $nalog->unosilac['name'] && $nalog->unos_gotov == 0)
+            @if(Auth::User()->id == $nalog->unosilac_id && $nalog->unos_gotov == 0)
                 <a class="btn btn-primary" href="{{ route('radnalista.tabela',$nalog->id) }}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Unošenje"><i class="fa-solid fa-table-list"></i></a>
             @endif
         </td>

@@ -33,26 +33,77 @@ class RadnaListaController extends Controller
     public function index(Request $request): View
     {
         $nalozi = Nalozi::where([
-                ['skener_id', '=', Auth::user()->id],
-                ['sken_gotov', '=', 0]
-            ])
+                    ['skener_ulazne_fakture_id', '=', Auth::user()->id],
+                    ['sken_ulazne_fakture', '=', 0]
+                ])
+                ->orWhere([
+                    ['skener_izlazne_fakture_id', '=', Auth::user()->id],
+                    ['sken_izlazne_fakture', '=', 0],
+                ])
+                ->orWhere([
+                    ['skener_izvodi_id', '=', Auth::user()->id],
+                    ['sken_izvodi', '=', 0],
+                ])
+                ->orWhere([
+                    ['skener_analiticke_kartice_id', '=', Auth::user()->id],
+                    ['sken_analiticke_kartice', '=', 0],
+                ])
+                ->orWhere([
+                    ['skener_licenca_id', '=', Auth::user()->id],
+                    ['sken_licenca', '=', 0],
+                ])
+                ->orWhere([
+                    ['skener_saobracajna_id', '=', Auth::user()->id],
+                    ['sken_saobracajna', '=', 0],
+                ])
+                ->orWhere([
+                    ['skener_depo_karton_id', '=', Auth::user()->id],
+                    ['sken_depo_karton', '=', 0],
+                ])
+                ->orWhere([
+                    ['skener_kompenzacije_id', '=', Auth::user()->id],
+                    ['sken_kompenzacije', '=', 0],
+                ])
+                ->orWhere([
+                    ['skener_knjizna_odobrenja_id', '=', Auth::user()->id],
+                    ['sken_knjizna_odobrenja', '=', 0],
+                ])
                 ->orWhere([
                     ['unosilac_id', '=', Auth::user()->id],
                     ['unos_gotov', '=', 0],
                 ])
+                ->with('skener_ulazne_fakture')
+                ->with('skener_izlazne_fakture')
+                ->with('skener_izvodi')
+                ->with('skener_analiticke_kartice')
+                ->with('skener_licenca')
+                ->with('skener_saobracajna')
+                ->with('skener_depo_karton')
+                ->with('skener_kompenzacije')
+                ->with('skener_knjizna_odobrenja')
+                ->with('unosilac')
+                ->with('kvartal')
+                ->with('klijent')
                 ->get();
-
-                $nalozi->load('skener');
-                $nalozi->load('unosilac');
-                $nalozi->load('kvartal');
 
         return view('radnalista.index',compact('nalozi'));
     }
 
-    public function scan($id): View
+    public function selectScan($id): View
     {
-        
         $nalozi = Nalozi::where('id',$id)->first();
+
+        return view('radnalista.selectscan', compact('nalozi'));
+    }
+
+    public function scan($id, $tip, $tip_ime): View
+    {
+        $v_tip = str_replace('sken','skener',$tip).'_id';
+        $nalozi = Nalozi::where('id',$id)
+                ->with('unosilac')
+                ->with('kvartal')
+                ->with('klijent')
+                ->first();
         //dd($nalozi);
         if($nalozi) {
             $klijent_pod = Klijenti::find($nalozi->klijent_id);
@@ -62,15 +113,14 @@ class RadnaListaController extends Controller
 
             $data = [
                 'resp' => true,
-                'dokumenta_path' => $dokumenta_path
+                'dokumenta_path' => $dokumenta_path,
+                'tip' => $tip,
+                'v_tip' => $v_tip,
+                'tip_ime' => $tip_ime
             ];
 
-            $fajlovi = Fajlovi::where('nalog_id',$id)->get();
+            $fajlovi = Fajlovi::where('nalog_id',$id)->where('tip',$tip)->get();
             $poreska_filijala = poreska_filijala::find($klijent_pod->poreska_filijala_id)->first();
-                    $nalozi->load('klijent');
-                    $nalozi->load('skener');
-                    $nalozi->load('unosilac');
-                    $nalozi->load('kvartal');
 
             return view('radnalista.scan', compact('nalozi','poreska_filijala','fajlovi'), $data);
         } else {
@@ -100,6 +150,7 @@ class RadnaListaController extends Controller
         $fajlovi = new Fajlovi;
 
         $fajlovi->nalog_id = $request->nalog_id;
+        $fajlovi->tip = $request->tip;
         $fajlovi->fajl = $imageName;
 
         $fajlovi->save();
@@ -128,14 +179,8 @@ class RadnaListaController extends Controller
     public function finishScan(Request $request): RedirectResponse
     {
         $upd = Nalozi::where('id', $request->nalog_id)
-                ->update(['sken_gotov' => 1]);
+                ->update([$request->tip => 1]);
 
-        $nalozi = Nalozi::where('skener_id', '=', Auth::user()->id)
-        ->orWhere('unosilac_id', '=', Auth::user()->id)->get();
-
-        $nalozi->load('skener');
-        $nalozi->load('unosilac');
-        $nalozi->load('kvartal');
         return redirect()->route('radnalista.index');
     }
 	
@@ -156,7 +201,11 @@ class RadnaListaController extends Controller
     public function tabela($id): View
     {
         
-        $nalozi = Nalozi::where('id',$id)->first();
+        $nalozi = Nalozi::where('id',$id)
+                ->with('klijent')
+                ->with('unosilac')
+                ->with('kvartal')
+                ->first();
         $pozicije = Pozicije::where('nalog_id', $id)->get();
         $suma = DB::table('pozicije')
                 ->where('nalog_id', $id)
@@ -178,12 +227,10 @@ class RadnaListaController extends Controller
                 'sumpos' => 1
             ];
             $dobavljaci = Dobavljaci::get();
-            $fajlovi = Fajlovi::where('nalog_id',$id)->get();
+            $fajlovi = Fajlovi::where('nalog_id',$id)
+                        ->where('tip', 'sken_izlazne_fakture ')
+                        ->get();
             $poreska_filijala = poreska_filijala::find($klijent_pod->poreska_filijala_id)->first();
-                    $nalozi->load('klijent');
-                    $nalozi->load('skener');
-                    $nalozi->load('unosilac');
-                    $nalozi->load('kvartal');
 
             return view('radnalista.tabela', compact('nalozi','pozicije','suma', 'poreska_filijala','fajlovi','dobavljaci'), $data);
         } else {
@@ -210,7 +257,9 @@ class RadnaListaController extends Controller
                 'dokumenta_path' => $dokumenta_path,
                 'i' => 0
             ];
-            $fajlovi = Fajlovi::where('nalog_id',$id)->get();
+            $fajlovi = Fajlovi::where('nalog_id',$id)
+                        ->where('tip', 'sken_izlazne_fakture ')
+                        ->get();
 
             return view('radnalista.extImg', compact('nalozi','fajlovi'), $data);
         } else {
