@@ -85,6 +85,70 @@
             @endif
         </div>
     </div>
+    <div class="row border-bottom">
+        <div class="col-md-2">
+            <b>Analitičke kartice</b><br>
+            @if($analiticka_kartica != '0') <i class="fa-regular fa-circle-check text-success"></i> @else <i class="fa-regular fa-circle-xmark text-danger"></i> @endif
+        </div>
+        <div class="col-md-8">
+            <b>Broj Dokumenata</b><br>
+            {{ $analiticka_kartica }}
+        </div>
+        <div class="col-md-2 text-end">
+           <a href="{{route('dokumenta.showDokumenta', ['id' => $klijent->id, 'docType' => 'analiticka_kartica', 'docTypeName' => 'Analitičke kartice'])}}" class="btn btn-outline-success" data-bs-toggle="tooltip" data-bs-title="Analitičke kartice"><i class="fa-solid fa-credit-card"></i></a>
+        </div>
+    </div>
+    <div class="row border-bottom">
+        <div class="col-md-2">
+            <b>Licence</b><br>
+            @if($vozila != '0') 
+                @if($vozila == $licenca)
+                    <i class="fa-regular fa-circle-check text-success"></i> 
+                @else
+                    <i class="fa-solid fa-triangle-exclamation text-warning"></i>
+                @endif
+            @else 
+                <i class="fa-regular fa-circle-xmark text-danger"></i> 
+            @endif
+        </div>
+        <div class="col-md-4">
+            <b>Broj Registarsih brojeva</b><br>
+            {{ $vozila }}
+        </div>
+        <div class="col-md-4">
+            <b>Broj Licenci</b><br>
+            {{ $licenca }}
+        </div>
+        <div class="col-md-2 text-end">
+           <a href="{{route('vozila.show', ['vozila' => $klijent->id])}}" class="btn btn-outline-success" data-bs-toggle="tooltip" data-bs-title="Analitičke kartice"><i class="fa-solid fa-credit-card"></i></a>
+        </div>
+    </div>
+    <div class="row border-bottom">
+        <div class="col-md-2">
+            <b>Saobraćajne</b><br>
+            @if($saobracajna != '0') <i class="fa-regular fa-circle-check text-success"></i> @else <i class="fa-regular fa-circle-xmark text-danger"></i> @endif
+        </div>
+        <div class="col-md-8">
+            <b>Broj Dokumenata</b><br>
+            {{ $saobracajna }}
+        </div>
+        <div class="col-md-2 text-end">
+           <a href="{{route('dokumenta.showDokumenta', ['id' => $klijent->id, 'docType' => 'saobracajna', 'docTypeName' => 'Saobraćajne'])}}" class="btn btn-outline-success" data-bs-toggle="tooltip" data-bs-title="Analitičke kartice"><i class="fa-solid fa-credit-card"></i></a>
+        </div>
+    </div>
+    <div class="row border-bottom">
+        <div class="col-md-2">
+            <b>Depo kartoni</b><br>
+            @if($depo_karton != '0') <i class="fa-regular fa-circle-check text-success"></i> @else <i class="fa-regular fa-circle-xmark text-danger"></i> @endif
+        </div>
+        <div class="col-md-8">
+            <b>Broj Dokumenata</b><br>
+            {{ $depo_karton }}
+        </div>
+        <div class="col-md-2 text-end">
+           <a href="{{route('dokumenta.showDokumenta', ['id' => $klijent->id, 'docType' => 'depo_karton', 'docTypeName' => 'Depo kartoni'])}}" class="btn btn-outline-success" data-bs-toggle="tooltip" data-bs-title="Analitičke kartice"><i class="fa-solid fa-credit-card"></i></a>
+        </div>
+    </div>
 </div>
 <div class="modal fade pdf-modal" id="pdf-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl" style="max-height:100%;">

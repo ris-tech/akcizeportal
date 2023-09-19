@@ -118,12 +118,14 @@
                                 </li>
                             @endif
                         @else
-
-                            <li><a class="nav-link" href="{{ route('klijenti.index') }}"><i class="fas fa-user-tie me-2"></i> Klijenti</a></li>
-                            <li><a class="nav-link" href="{{ route('radnalista.index') }}"><i class="fas fa-user-tie me-2"></i> Lista Naloga</a></li>
+                            @hasrole('Admin')
+                            <li><a class="nav-link" href="{{ route('klijenti.index') }}"><i class="fas fa-user-tie me-2" style="width:20px;"></i> Klijenti</a></li>
+                            @endhasrole
+                            <li><a class="nav-link" href="{{ route('radnalista.index') }}"><i class="fas fa-user-tie me-2" style="width:20px;"></i> Lista Naloga</a></li>
+                            @hasrole('Admin')
                             <li class="nav-item dropdown">
                                 <a id="podesavanja" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    <i class="fas fa-tools me-2"></i> Podešavanja
+                                    <i class="fas fa-tools me-2" style="width:20px;"></i> Podešavanja
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-dark" aria-labelledby="podesavanja">
                                     <a class="dropdown-item" href="{{ route('knjigovodja.index') }}">Knjigovodja</a>
@@ -133,19 +135,20 @@
                                     <a class="dropdown-item" href="{{ route('dobavljaci.index') }}">Dobavljači</a>
                                     <a class="dropdown-item" href="{{ route('kvartali.index') }}">Kvartali</a>
                                 </div>
-                            </li>
+                            </li>                            
                             <li class="nav-item dropdown">
                                 <a id="administracija" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    <i class="fas fa-user-cog me-2"></i> Administracija
+                                    <i class="fas fa-user-cog me-2" style="width:20px;"></i> Administracija
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-dark" aria-labelledby="administracija">
                                     <a class="dropdown-item" href="{{ route('users.index') }}">Korisnici</a>
                                     <a class="dropdown-item" href="{{ route('roles.index') }}">Dozvole</a>
                                 </div>
                             </li>
+                            @endhasrole
                             <li class="nav-item dropdown">
                                 <a id="profil" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    <i class="fas fa-user me-2"></i> {{ Auth::user()->name }}
+                                    <i class="fas fa-user me-2" style="width:20px;"></i> {{ Auth::user()->name }}
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdown">
@@ -163,10 +166,6 @@
                             </li>
                         @endguest
                   </ul>
-                  <form class="d-flex mt-3" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-success" type="submit">Search</button>
-                  </form>
                 </div>
               </div>
             </div>

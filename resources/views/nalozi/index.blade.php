@@ -30,17 +30,40 @@
      <th>Godina</th>
      <th>Kvartal</th>
      <th>Gorivo</th>
-     <th>Skener</th>
+     <th>Skeneri</th>
      <th>Unosilac</th>
      <th width="280px">Opcije</th>
   </tr>
     @foreach ($nalozi as $nalog)
     <tr>
-        <td>{{ $nalog->kvartal['godina'] }}</td>
-        <td>{{ $nalog->kvartal['kvartal'] }}</td>
+        <td>{{ $nalog->kvartal->godina }}</td>
+        <td>{{ $nalog->kvartal->kvartal }}</td>
         <td>@if($nalog->eurodizel)<span class="badge bg-secondary">EURO DIZEL</span>@endif @if($nalog->tng)<span class="badge bg-secondary">TNG</span>@endif</td>
-        <td>{{ $nalog->skener['name'] }}</td>
-        <td>{{ $nalog->unosilac['name'] }}</td>
+        <td>
+            <table class="table table-striped">
+                <tr>
+                    <td><strong>Ulazne fakture:</strong></td>
+                    <td>{{ $nalog->skener_ulazne_fakture->name }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Izlazne fakture:</strong></td>
+                    <td>{{ $nalog->skener_izlazne_fakture->name }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Izvodi:</strong></td>
+                    <td>{{ $nalog->skener_izvodi->name }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Kompenzacije:</strong></td>
+                    <td>{{ $nalog->skener_kompenzacije->name }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Knjižna odobrenja:</strong></td>
+                    <td>{{ $nalog->skener_knjizna_odobrenja->name }}</td>
+                </tr>
+            </table>
+        </td>
+        <td>{{ $nalog->unosilac->name }}</td>
         <td>
             @can('role-edit')
                 <a class="btn btn-primary" href="{{ route('nalozi.edit',$nalog->id) }}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Promeni"><i class="fas fa-pencil-alt"></i></a>

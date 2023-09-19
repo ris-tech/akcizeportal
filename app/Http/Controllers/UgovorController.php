@@ -122,19 +122,20 @@ class UgovorController extends Controller
 
         Storage::disk('public')->delete($sigfile);
 
-        $dokumenta = Dokumenta::where('klijent_id', $request->clientId);
+        $dokumenta = Dokumenta::where('klijent_id', $request->clientId)->where('tip', 'ugovor');
         //dd($dokumenta->get());
         if ($dokumenta->get()->isNotEmpty()) {
 
-            Dokumenta::where('klijent_id', $request->clientId)
-            ->update(['ugovor' => $ugovor_file, 'datum_ugovora' => $request->datum_ugovora, 'broj_ugovora' => $request->broj_ugovora]);
+            Dokumenta::where('klijent_id', $request->clientId)->where('tip', 'ugovor')
+            ->update(['fajl' => $ugovor_file, 'datum_fajla' => $request->datum_ugovora, 'broj_fajla' => $request->broj_ugovora]);
 
         } else {
             $new_dokumenta = new Dokumenta();
             $new_dokumenta->klijent_id = $request->clientId;
-            $new_dokumenta->ugovor = $ugovor_file;
-            $new_dokumenta->broj_ugovora = $request->broj_ugovora;
-            $new_dokumenta->datum_ugovora = $request->datum_ugovora;
+            $new_dokumenta->tip = 'ugovor';
+            $new_dokumenta->fajl = $ugovor_file;
+            $new_dokumenta->broj_fajla = $request->broj_ugovora;
+            $new_dokumenta->datum_fajla = $request->datum_ugovora;
 
             $new_dokumenta->save();
         }

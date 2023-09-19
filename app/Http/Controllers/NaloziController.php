@@ -26,31 +26,40 @@ class NaloziController extends Controller
         $data = [
             'id' => $id
         ];
-        $nalozi = Nalozi::where('klijent_id', $id)->get();
-       
-        $nalozi->load('skener');
-        $nalozi->load('unosilac');
-        //
-        $nalozi->load('kvartal');
-        //dd($nalozi);
+        $nalozi = Nalozi::where('klijent_id', $id)
+                    ->with('skener_ulazne_fakture')
+                    ->with('skener_izlazne_fakture')
+                    ->with('skener_izvodi')
+                    ->with('skener_kompenzacije')
+                    ->with('skener_knjizna_odobrenja')
+                    ->with('unosilac')
+                    ->with('kvartal')
+                    ->get();
 
         return view('Nalozi.index',compact('nalozi'), $data);
     }
     public function index(Request $request): View
     {
-        $nalozi = Nalozi::paginate(99);
-        
-        $nalozi->load('skener');
-        $nalozi->load('unosilac');
-        $nalozi->load('gorivo');
-        $nalozi->load('kvartal');
+        $data = [
+            'id' => $request->id
+        ];
+        $nalozi = Nalozi::
+                  with('skener_ulazne_fakture')
+                ->with('skener_izlazne_fakture')
+                ->with('skener_izvodi')
+                ->with('skener_kompenzacije')
+                ->with('skener_knjizna_odobrenja')
+                ->with('unosilac')
+                ->with('gorivo')
+                ->with('kvartal')
+                ->get();
 
         $goriva = Gorivo::get();
         $kvartali = Kvartali::where('godina', date('Y'))->get();
         $users = User::get();
         
 
-        return view('Nalozi.index',compact('nalozi', 'goriva', 'kvartali', 'users'))
+        return view('Nalozi.index',compact('nalozi', 'goriva', 'kvartali', 'users'), $data)
         ->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -79,11 +88,16 @@ class NaloziController extends Controller
     {
         
         
-        $nalozi = Nalozi::find($id)->first();
-
-        $nalozi->load('skener');
-        $nalozi->load('unosilac');
-        $nalozi->load('kvartal');
+        $nalozi = Nalozi::find($id)
+                ->with('skener_ulazne_fakture')
+                ->with('skener_izlazne_fakture')
+                ->with('skener_izvodi')
+                ->with('skener_kompenzacije')
+                ->with('skener_knjizna_odobrenja')
+                ->with('unosilac')
+                ->with('kvartal')
+                ->first();
+        
         $kvartali = Kvartali::where('godina', $nalozi->kvartal['godina'])->get();
         $users = User::get();
 
@@ -121,7 +135,11 @@ class NaloziController extends Controller
             }
             
             $crt_nalog->tng = $request->tng;
-            $crt_nalog->skener_id = $request->skener_id;
+            $crt_nalog->skener_ulazne_fakture_id = $request->skener_ulazne_fakture_id;
+            $crt_nalog->skener_izlazne_fakture_id = $request->skener_izlazne_fakture_id;
+            $crt_nalog->skener_izvodi_id = $request->skener_izvodi_id;
+            $crt_nalog->skener_kompenzacije_id = $request->skener_kompenzacije_id;
+            $crt_nalog->skener_knjizna_odobrenja_id = $request->skener_knjizna_odobrenja_id;
             $crt_nalog->unosilac_id = $request->unosilac_id;
 
             $crt_nalog->save();

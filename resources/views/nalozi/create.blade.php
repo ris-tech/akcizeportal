@@ -6,7 +6,7 @@
             <h2>Novi nalog</h2>
     </div>
     <div class="col-lg-2 text-end">
-        <a class="btn btn-outline-secondary" href="{{ route('nalozi.index') }}"> Nazad</a>
+        <a class="btn btn-outline-secondary" href="{{ route('nalozi.show',$id) }}"> Nazad</a>
     </div>
 </div>
 <hr>
@@ -71,18 +71,56 @@
     </div>
     <div class="col-xs-3 col-sm-3 col-md-3">
         <div class="form-group">
-            <label for="skener"><strong>Skener:</strong></label>
-            <select name="skener_id" class="form-select" id="skener">
+            <label for="skener_ulazne_fakture_id"><strong>Ulazne fakture:</strong></label>
+            <select name="skener_ulazne_fakture_id" class="form-select" id="skener_ulazne_fakture_id" required>
+                <option value="" disabled selected>Izaberi</option>
                 @foreach($users as $user)
-                    <option value="{{$user->id}}" @selected(old('skener_id') == $user->id)>{{$user->name}}</option>
+                    <option value="{{$user->id}}"  @selected(old('skener_ulazne_fakture_id') == $user->id)>{{$user->name}}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="skener_izlazne_fakture_id"><strong>Izlazne fakture:</strong></label>
+            <select name="skener_izlazne_fakture_id" class="form-select" id="skener_izlazne_fakture_id" required>
+                <option value="" disabled selected>Izaberi</option>
+                @foreach($users as $user)
+                    <option value="{{$user->id}}"  @selected(old('skener_izlazne_fakture_id') == $user->id)>{{$user->name}}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="skener_izvodi_id"><strong>Izvodi:</strong></label>
+            <select name="skener_izvodi_id" class="form-select" id="skener_izvodi_id" required>
+                <option value="" disabled selected>Izaberi</option>
+                @foreach($users as $user)
+                    <option value="{{$user->id}}"  @selected(old('skener_izvodi_id') == $user->id)>{{$user->name}}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="skener_kompenzacije_id"><strong>Kompenzacije:</strong></label>
+            <select name="skener_kompenzacije_id" class="form-select" id="skener_kompenzacije_id" required>
+                <option value="" disabled selected>Izaberi</option>
+                @foreach($users as $user)
+                    <option value="{{$user->id}}"  @selected(old('skener_kompenzacije_id') == $user->id)>{{$user->name}}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="skener_knjizna_odobrenja_id"><strong>Knjizna odobrenja:</strong></label>
+            <select name="skener_knjizna_odobrenja_id" class="form-select" id="skener_knjizna_odobrenja_id" required>
+                <option value="" disabled selected>Izaberi</option>
+                @foreach($users as $user)
+                    <option value="{{$user->id}}"  @selected(old('skener_knjizna_odobrenja_id') == $user->id)>{{$user->name}}</option>
                 @endforeach
             </select>
         </div>
     </div>
     <div class="col-xs-3 col-sm-3 col-md-3">
         <div class="form-group">
-            <label for="unosilac"><strong>Unosilac:</strong></label>
-            <select name="unosilac_id" class="form-select" id="unosilac">
+            <label for="unosilac_id"><strong>Unosilac:</strong></label>
+            <select name="unosilac_id" class="form-select" id="unosilac_id" required>
+                <option value="" disabled selected>Izaberi</option>
                 @foreach($users as $user)
                     <option value="{{$user->id}}" @selected(old('unosilac_id') == $user->id)>{{$user->name}}</option>
                 @endforeach

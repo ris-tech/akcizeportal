@@ -12,7 +12,7 @@
         </div>
         <div class="offcanvas-body">
           <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-            @guest
+                @guest
                     @if (Route::has('login'))
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
@@ -25,8 +25,10 @@
                         </li>
                     @endif
                 @else
-
-                    <li><a class="nav-link" href="{{ route('klijenti.index') }}"><i class="fas fa-user-tie me-2"></i> Klijenti</a></li>
+                    {{dd(Auth::user())}}
+                    @if(auth()->user()->can('role-list'))
+                        <li><a class="nav-link" href="{{ route('klijenti.index') }}"><i class="fas fa-user-tie me-2"></i> Klijenti1</a></li>
+                    @endif
                     <li><a class="nav-link" href="{{ route('radnalista.index') }}"><i class="fas fa-user-tie me-2"></i> Lista Naloga</a></li>
                     <li class="nav-item dropdown">
                         <a id="podesavanja" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>

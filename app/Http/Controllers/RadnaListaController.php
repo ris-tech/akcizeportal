@@ -19,6 +19,7 @@ use App\Models\Dokumenta;
 use App\Models\Fajlovi;
 use App\Models\Nalozi;
 use App\Models\Pozicije;
+use App\Models\Vozila;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Ramsey\Uuid\Uuid;
@@ -45,22 +46,6 @@ class RadnaListaController extends Controller
                     ['sken_izvodi', '=', 0],
                 ])
                 ->orWhere([
-                    ['skener_analiticke_kartice_id', '=', Auth::user()->id],
-                    ['sken_analiticke_kartice', '=', 0],
-                ])
-                ->orWhere([
-                    ['skener_licenca_id', '=', Auth::user()->id],
-                    ['sken_licenca', '=', 0],
-                ])
-                ->orWhere([
-                    ['skener_saobracajna_id', '=', Auth::user()->id],
-                    ['sken_saobracajna', '=', 0],
-                ])
-                ->orWhere([
-                    ['skener_depo_karton_id', '=', Auth::user()->id],
-                    ['sken_depo_karton', '=', 0],
-                ])
-                ->orWhere([
                     ['skener_kompenzacije_id', '=', Auth::user()->id],
                     ['sken_kompenzacije', '=', 0],
                 ])
@@ -75,10 +60,6 @@ class RadnaListaController extends Controller
                 ->with('skener_ulazne_fakture')
                 ->with('skener_izlazne_fakture')
                 ->with('skener_izvodi')
-                ->with('skener_analiticke_kartice')
-                ->with('skener_licenca')
-                ->with('skener_saobracajna')
-                ->with('skener_depo_karton')
                 ->with('skener_kompenzacije')
                 ->with('skener_knjizna_odobrenja')
                 ->with('unosilac')
@@ -273,6 +254,8 @@ class RadnaListaController extends Controller
     public function store(Request $request): RedirectResponse
     {
         Pozicije::where('nalog_id', $request->nalog_id)->delete();
+        $nalog = Nalozi::where('id', $request->nalog_id)->first();
+        $klijent_id = $nalog->klijent_id;
         $nalog_id = $request->nalog_id;
         $datum = $request->datum;
         $br_fakture = $request->br_fakture;
@@ -298,6 +281,10 @@ class RadnaListaController extends Controller
     
             ];
             Pozicije::insert($datasave);
+            $vozila = Vozila::where('reg_broj', $reg_vozila[$i])->count();
+            Vozila::updateOrCreate(
+                ['klijent_id' => $klijent_id, 'reg_broj' =>  $reg_vozila[$i]]
+            );
         }
         return redirect()->route('radnalista.tabela', ['id' => $nalog_id])
                         ->with('success','Sačuvano');

@@ -21,7 +21,7 @@ class Nalozi extends Model
         'skener_saobracajna_id',
         'skener_depo_karton_id',
         'skener_kompenzacije_id',
-        'skener_knjizna_odobrenja',
+        'skener_knjizna_odobrenja_id',
         'unosilac_id'
     ];
     

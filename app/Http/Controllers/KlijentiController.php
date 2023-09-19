@@ -15,6 +15,7 @@ use App\Models\knjigovodja;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Dokumenta;
+use stdClass;
 
 class KlijentiController extends Controller
 {
@@ -29,15 +30,52 @@ class KlijentiController extends Controller
     public function index(Request $request): View
     {
         $klijenti = DB::table('klijenti')
-                ->select(array('klijenti.*', 'knjigovodja.naziv as knjigovodja', 'klijenti_dokumenta.ugovor', 'klijenti_dokumenta.pep', 'klijenti_dokumenta.datum_ugovora', 'klijenti_dokumenta.broj_ugovora', DB::raw('COUNT(vozila.id) as vozila')))
+                ->select(array('klijenti.*', 'knjigovodja.naziv as knjigovodja', DB::raw('COUNT(vozila.id) as vozila')))
                 ->leftJoin('knjigovodja', 'klijenti.knjigovodja_id', '=', 'knjigovodja.id')
                 ->leftJoin('klijenti_dokumenta', 'klijenti.id', '=', 'klijenti_dokumenta.klijent_id')
                 ->leftJoin('vozila', 'klijenti.id', 'vozila.klijent_id')
                 ->groupBy('klijenti.id')
 				->orderBy('klijenti.naziv', 'asc')
                 ->get();
+        $dokumenta = [];
 
-        return view('klijenti.index',compact('klijenti'))
+        foreach($klijenti as $klijent) {
+            $ugovor = Dokumenta::where('klijent_id', $klijent->id)->where('tip', 'ugovor')->get();
+            if($ugovor->isNotEmpty()) {
+                $datum_fajla = '-';
+                $broj_fajla = '-';
+                if ($ugovor[0]->datum_fajla != NULL) {
+                    $datum_fajla = $ugovor[0]->datum_fajla;
+                }
+                if ($ugovor[0]->broj_fajla != NULL) {
+                    $broj_fajla = $ugovor[0]->broj_fajla;
+                }
+                $dokumenta['dokumenti'][$klijent->id]['ugovor']['datum_fajla'] = $datum_fajla;
+                $dokumenta['dokumenti'][$klijent->id]['ugovor']['broj_fajla'] = $broj_fajla;
+            } else {
+                $dokumenta['dokumenti'][$klijent->id]['ugovor']['datum_fajla'] = '-';
+                $dokumenta['dokumenti'][$klijent->id]['ugovor']['broj_fajla'] = '-';
+            }
+
+            $pep = Dokumenta::where('klijent_id', $klijent->id)->where('tip', 'pep')->get();
+            if($pep->isNotEmpty()) {
+                $datum_fajla = '-';
+                $broj_fajla = '-';
+                if ($pep[0]->datum_fajla != NULL) {
+                    $datum_fajla = $pep[0]->datum_fajla;
+                }
+                if ($pep[0]->broj_fajla != NULL) {
+                    $broj_fajla = $pep[0]->broj_fajla;
+                }
+                $dokumenta['dokumenti'][$klijent->id]['pep']['datum_fajla'] = $datum_fajla;
+                $dokumenta['dokumenti'][$klijent->id]['pep']['broj_fajla'] = '-';
+
+            } else {
+                $dokumenta['dokumenti'][$klijent->id]['pep']['datum_fajla'] = '';
+                $dokumenta['dokumenti'][$klijent->id]['pep']['broj_fajla'] = '-';
+            }
+        }
+        return view('klijenti.index',compact('klijenti'), $dokumenta)
             ->with('i', ($request->input('page', 1) - 1) * 5);
     }
 

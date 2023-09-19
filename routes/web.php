@@ -18,8 +18,10 @@ use App\Http\Controllers\PEPController;
 use App\Http\Controllers\PoreskaFilijalaController;
 use App\Http\Controllers\RadnaListaController;
 use App\Http\Controllers\UgovorController;
+use App\Http\Controllers\VozilaController;
 use App\Models\Dokumenta;
 use App\Models\Gorivo;
+use App\Models\Vozila;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,9 +34,8 @@ use App\Models\Gorivo;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -46,8 +47,6 @@ require __DIR__.'/auth.php';
 
 Auth::routes();
 
-Route::get('/home', [HomeController::class, 'index'])->name('home');
-
 Route::post('/dokumenta/sendMail', [DokumentaController::class, 'sendMail'])->name('dokumenta.sendMail');
 Route::group(['middleware' => ['auth']], function() {
     Route::resource('roles', RoleController::class);
@@ -58,6 +57,9 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('poreskafilijala', PoreskaFilijalaController::class);
     Route::resource('ugovor', UgovorController::class);
     Route::post('/dokumenta/upload/{id}', [DokumentaController::class, 'upload'])->name('dokumenta.upload');
+    Route::get('/dokumenta/showDokumenta/{id}/{docType}/{docTypeName}', [DokumentaController::class, 'showDokumenta'])->name('dokumenta.showDokumenta');
+    Route::post('/dokumenta/storeFiles', [DokumentaController::class, 'storeFiles'])->name('dokumenta.storeFiles');
+    Route::post('/dokumenta/deleteFile', [DokumentaController::class, 'deleteFile'])->name('dokumenta.deleteFile');
     Route::resource('dokumenta', DokumentaController::class);
     Route::resource('pep', PEPController::class);
     Route::resource('gorivo', GorivoController::class);
@@ -75,5 +77,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('/radnalista/finishUnos', [RadnaListaController::class, 'finishUnos'])->name('radnalista.finishUnos');    
     Route::post('/radnalista/storeFiles', [RadnaListaController::class, 'storeFiles'])->name('radnalista.storeFiles');
     Route::resource('radnalista', RadnaListaController::class);
+    Route::post('/vozila/upload/{id}', [VozilaController::class, 'upload'])->name('vozila.upload');
+    Route::resource('vozila', VozilaController::class);
 
 });

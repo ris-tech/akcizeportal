@@ -131,7 +131,9 @@
 
     {!! Form::open(array('route' => 'pep.store','id' => 'pep-form','method'=>'POST')) !!}
     <input type="hidden" name="csrf-token" value="{{ csrf_token() }}">
+        <input type="hidden" name="docType" value="pep">
         <input type="hidden" name="clientId" value="{{$klijent->id}}">
+        <input type="hidden" name="broj_ugovora" value="upload">
         <button class="btn btn-outline-success make-pep" type="submit">Kreiraj PEP-Obrazac</button>
     {!! Form::close() !!}
     <div class="alert alert-danger print-error-msg" style="display:none">

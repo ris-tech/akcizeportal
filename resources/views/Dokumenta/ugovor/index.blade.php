@@ -107,6 +107,7 @@
   <input type="hidden" name="csrf-token" value="{{ csrf_token() }}">
     <input type="hidden" name="clientId" value="{{$klijent->id}}">
     <input type="hidden" name="datum_ugovora" value="{{date('Y-m-d')}}">
+    <input type="hidden" name="docType" value="ugovor">
     <input type="hidden" name="broj_ugovora" value="{{$br_ugovora}}">
     <input type="hidden" name="broj_ugovora_raw" value="{{$br_ugovora_raw}}">
     <button class="btn btn-outline-success make-contract" type="submit">Kreiraj ugovor</button>

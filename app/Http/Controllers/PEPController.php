@@ -47,7 +47,6 @@ class PEPController extends Controller
     public function store(Request $request)
     {
 
-        $password="password";
         $klijent = Klijenti::find($request->clientId);
         $odgovorno_lice = OdgovornoLice::find($klijent->odgovorno_lice_id);
         if($klijent->token != NULL) {
@@ -89,19 +88,21 @@ class PEPController extends Controller
 
         Storage::disk('public')->delete($sigfile);
 
-        $dokumenta = Dokumenta::where('klijent_id', $request->clientId);
+        $dokumenta = Dokumenta::where('klijent_id', $request->clientId)->where('tip', 'pep');
         //dd($dokumenta->get());
         if ($dokumenta->get()->isNotEmpty()) {
 
             Dokumenta::where('klijent_id', $request->clientId)
-            ->update(['pep' => $pep_file, 'datum_pep' => date('Y-m-d')]);
+            ->where('tip', 'pep')
+            ->update(['fajl' => $pep_file, 'datum_fajla' => date('Y-m-d')]);
             
         } else {
             $new_dokumenta = new Dokumenta();
             $datum_pep = date('Y-m-d');
             $new_dokumenta->klijent_id = $request->clientId;
-            $new_dokumenta->pep = $pep_file;
-            $new_dokumenta->datum_pep = $datum_pep;
+            $new_dokumenta->tip = 'pep';
+            $new_dokumenta->fajl = $pep_file;
+            $new_dokumenta->datum_fajla = $datum_pep;
             
             $new_dokumenta->save();
         }

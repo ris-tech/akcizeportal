@@ -11,9 +11,8 @@ class Dokumenta extends Model
     protected $table = "klijenti_dokumenta";
     protected $fillable = [
         'klijent_id',
-        'ugovor',
-        'broj_ugovora',
-        'datum_ugovora',
-        'pep'
+        'tip',
+        'fajl',
+        'datum_fajla'
     ];
 }

@@ -39,8 +39,8 @@
         <td>{{ $klijent->pib }}</td>
         <td>{{ $klijent->knjigovodja }}</td>
         <td>{{ $klijent->cena }} %</td>
-        <td>@if ($klijent->ugovor != NULL) <i class="fa-regular fa-circle-check text-success"> @else <i class="fa-regular fa-circle-xmark text-danger"></i> @endif</td>
-        <td>@if ($klijent->pep != NULL) <i class="fa-regular fa-circle-check text-success"> @else <i class="fa-regular fa-circle-xmark text-danger"></i> @endif</td>
+        <td>@if ($dokumenti[$klijent->id]['ugovor']['datum_fajla'] != '-') <i class="fa-regular fa-circle-check text-success"> @else <i class="fa-regular fa-circle-xmark text-danger"></i> @endif</td>
+        <td>@if ($dokumenti[$klijent->id]['pep']['datum_fajla'] != '-') <i class="fa-regular fa-circle-check text-success"> @else <i class="fa-regular fa-circle-xmark text-danger"></i> @endif</td>
         <td>{{ $klijent->vozila }}</td>
         <td>
             @can('role-edit')
@@ -54,7 +54,7 @@
             @can('role-edit')
                 <a href="{{ route('dokumenta.show',$klijent->id) }}" class="btn btn-secondary" type="submit" data-bs-toggle="tooltip" data-bs-title="Dokumenti"><i class="fa-solid fa-folder-open"></i></button>
             @endcan
-            @if ($klijent->ugovor != NULL)
+            @if ($dokumenti[$klijent->id]['ugovor']['datum_fajla'] != '-')
                 <a href="{{ route('nalozi.show',$klijent->id) }}" class="btn btn-info ms-1" type="submit" data-bs-toggle="tooltip" data-bs-title="Nalozi"><i class="fa-solid fa-briefcase"></i></button>
             @endif
         </td>
