@@ -55,11 +55,11 @@
                 </tr>
                 <tr>
                     <td><strong>Kompenzacije:</strong></td>
-                    <td>{{ $nalog->skener_kompenzacije->name }}</td>
+                    <td>@if($nalog->skener_kompenzacije != NULL) {{ $nalog->skener_kompenzacije->name }} @else Nema @endif</td>
                 </tr>
                 <tr>
                     <td><strong>Knjižna odobrenja:</strong></td>
-                    <td>{{ $nalog->skener_knjizna_odobrenja->name }}</td>
+                    <td>@if($nalog->skener_knjizna_odobrenja != NULL) {{ $nalog->skener_knjizna_odobrenja->name }} @else Nema @endif</td>
                 </tr>
             </table>
         </td>

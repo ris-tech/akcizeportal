@@ -28,7 +28,7 @@
     <div class="col-xs-2 col-sm-2 col-md-2">
         <div class="form-group">
             <label for="godina"><strong>Godina:</strong></label>
-            <select name="godina" class="form-select" id="godina">
+            <select name="godina" class="form-select" id="godina" required>
                 @for($i=2016;$i < 2027;$i++)
                 <option value="{{$i}}" @if($nalozi->kvartal->godina == '{{$i}}') selected @endif>{{$i}}</option>
                 @endfor
@@ -38,7 +38,7 @@
     <div class="col-xs-2 col-sm-2 col-md-2">
         <div class="form-group">
             <label for="kvartal"><strong>Kvartal:</strong></label>
-            <select name="kvartal_id" class="form-select" id="kvartal">
+            <select name="kvartal_id" class="form-select" id="kvartal" required>
                 @foreach($kvartali as $kvartal)
                     <option value="{{$kvartal->id}}" @if($nalozi->kvartal['id'] == $kvartal->id) selected @endif>{{$kvartal->kvartal}} ({{date('d.m', strtotime($kvartal->od))}} - {{date('d.m', strtotime($kvartal->do))}})</option>
                 @endforeach
@@ -65,7 +65,7 @@
     <div class="col-xs-3 col-sm-3 col-md-3">
         <div class="form-group">
             <label for="skener_ulazne_fakture_id"><strong>Ulazne fakture:</strong></label>
-            <select name="skener_ulazne_fakture_id" class="form-select" id="skener_ulazne_fakture_id">
+            <select name="skener_ulazne_fakture_id" class="form-select" id="skener_ulazne_fakture_id" required>
                 @foreach($users as $user)
                     <option value="{{$user->id}}"  @if($nalozi->skener_ulazne_fakture_id == $user->id) selected @endif>{{$user->name}}</option>
                 @endforeach
@@ -73,7 +73,7 @@
         </div>
         <div class="form-group">
             <label for="skener_izlazne_fakture_id"><strong>Izlazne fakture:</strong></label>
-            <select name="skener_izlazne_fakture_id" class="form-select" id="skener_izlazne_fakture_id">
+            <select name="skener_izlazne_fakture_id" class="form-select" id="skener_izlazne_fakture_id" required>
                 @foreach($users as $user)
                     <option value="{{$user->id}}"  @if($nalozi->skener_izlazne_fakture_id == $user->id) selected @endif>{{$user->name}}</option>
                 @endforeach
@@ -81,7 +81,7 @@
         </div>
         <div class="form-group">
             <label for="skener_izvodi_id"><strong>Izvodi:</strong></label>
-            <select name="skener_izvodi_id" class="form-select" id="skener_izvodi_id">
+            <select name="skener_izvodi_id" class="form-select" id="skener_izvodi_id" required>
                 @foreach($users as $user)
                     <option value="{{$user->id}}"  @if($nalozi->skener_izvodi_id == $user->id) selected @endif>{{$user->name}}</option>
                 @endforeach
@@ -90,6 +90,7 @@
         <div class="form-group">
             <label for="skener_kompenzacije_id"><strong>Kompenzacije:</strong></label>
             <select name="skener_kompenzacije_id" class="form-select" id="skener_kompenzacije_id">
+                <option value="">Nema</option>
                 @foreach($users as $user)
                     <option value="{{$user->id}}"  @if($nalozi->skener_kompenzacije_id == $user->id) selected @endif>{{$user->name}}</option>
                 @endforeach
@@ -98,6 +99,7 @@
         <div class="form-group">
             <label for="skener_knjizna_odobrenja_id"><strong>Knjizna odobrenja:</strong></label>
             <select name="skener_knjizna_odobrenja_id" class="form-select" id="skener_knjizna_odobrenja_id">
+                <option value="">Nema</option>
                 @foreach($users as $user)
                     <option value="{{$user->id}}"  @if($nalozi->skener_knjizna_odobrenja_id == $user->id) selected @endif>{{$user->name}}</option>
                 @endforeach
@@ -107,7 +109,7 @@
     <div class="col-xs-3 col-sm-3 col-md-3">
         <div class="form-group">
             <label for="unosilac_id"><strong>Unosilac:</strong></label>
-            <select name="unosilac_id" class="form-select" id="unosilac_id">
+            <select name="unosilac_id" class="form-select" id="unosilac_id" required>
                 @foreach($users as $user)
                     <option value="{{$user->id}}" @if($nalozi->unosilac->id == $user->id) selected @endif>{{$user->name}}</option>
                 @endforeach

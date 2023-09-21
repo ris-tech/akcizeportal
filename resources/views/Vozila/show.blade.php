@@ -53,7 +53,21 @@
             <tbody>
                 @foreach($vozila as $vozilo)
                 <tr>
-                    <td>@if($vozilo->do >= date('Y-m-d')) <i class="fa-regular fa-circle-check text-success"></i> @else @if($vozilo->od != NULL) <i class="fa-solid fa-triangle-exclamation text-warning"></i> @else <i class="fa-regular fa-circle-xmark text-danger"></i>  @endif @endif {{$vozilo->reg_broj}}</td>
+                    <td>
+                        @if($vozilo->od > date('Y-m-d'))
+                            <i class="fa-solid fa-hand-point-right text-info"></i>
+                        @else
+                            @if($vozilo->do >= date('Y-m-d')) 
+                                <i class="fa-regular fa-circle-check text-success"></i> 
+                            @else 
+                                @if($vozilo->od != NULL) 
+                                    <i class="fa-solid fa-triangle-exclamation text-warning"></i> 
+                                @else 
+                                    <i class="fa-regular fa-circle-xmark text-danger"></i>  
+                                @endif 
+                            @endif 
+                        @endif
+                        {{$vozilo->reg_broj}}</td>
                     <td>@if($vozilo->od != NULL) {{Str::cleanDate($vozilo->od)}} @else - @endif</td>
                     <td>@if($vozilo->do != NULL) {{Str::cleanDate($vozilo->do)}} @else - @endif</td>
                     <td class="text-end">

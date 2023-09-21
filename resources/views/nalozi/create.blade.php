@@ -99,7 +99,7 @@
         </div>
         <div class="form-group">
             <label for="skener_kompenzacije_id"><strong>Kompenzacije:</strong></label>
-            <select name="skener_kompenzacije_id" class="form-select" id="skener_kompenzacije_id" required>
+            <select name="skener_kompenzacije_id" class="form-select" id="skener_kompenzacije_id">
                 <option value="" disabled selected>Izaberi</option>
                 @foreach($users as $user)
                     <option value="{{$user->id}}"  @selected(old('skener_kompenzacije_id') == $user->id)>{{$user->name}}</option>
@@ -108,7 +108,7 @@
         </div>
         <div class="form-group">
             <label for="skener_knjizna_odobrenja_id"><strong>Knjizna odobrenja:</strong></label>
-            <select name="skener_knjizna_odobrenja_id" class="form-select" id="skener_knjizna_odobrenja_id" required>
+            <select name="skener_knjizna_odobrenja_id" class="form-select" id="skener_knjizna_odobrenja_id">
                 <option value="" disabled selected>Izaberi</option>
                 @foreach($users as $user)
                     <option value="{{$user->id}}"  @selected(old('skener_knjizna_odobrenja_id') == $user->id)>{{$user->name}}</option>

@@ -13,6 +13,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
 use Ramsey\Uuid\Uuid;
+use Spatie\PdfToImage\Pdf;
 
 class VozilaController extends Controller
 {
@@ -66,8 +67,16 @@ class VozilaController extends Controller
             mkdir($docPath, 0777, true );
         }
         $uploaded_file = $request->file('upload');
-        $new_file = bin2hex(date('Y-m-d').'_'.$klijent->id.'_'.uniqid()).'.'.$uploaded_file->extension();
-        $uploaded_file->move($docPath,$new_file);
+        if($uploaded_file->extension() == 'pdf') {
+            $pdf = new Pdf($uploaded_file);
+            $new_file = bin2hex(date('Y-m-d').'_'.$klijent->id.'_'.uniqid()).'.jpg';
+            $pdf->saveImage($docPath,$new_file);
+        } else {
+            $new_file = bin2hex(date('Y-m-d').'_'.$klijent->id.'_'.uniqid()).'.'.$uploaded_file->extension();
+            $uploaded_file->move($docPath,$new_file);
+        }
+
+        
 
         Vozila::where('reg_broj', $request->reg_broj)->update([
             'od' => $request->od,
