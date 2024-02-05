@@ -55,6 +55,7 @@
 			left: 50%;
 			position: absolute;
 			top: 50%;
+			width:600px;			
 			transform: translate(-50%, -50%);
 		}
 
@@ -78,15 +79,41 @@
         iframe {
             min-height: 700px !important;
 }
+.progress, .process-details-global, .process-details-single {
+	display:none;
+}
+.offcanvas.offcanvas-bottom {
+    height: 50vh !important;
+}
+
+/* Context menu */
+.context-menu, .context-menu-dobavljac{
+     display: none;
+     position: absolute;
+     border-radius: 3px;
+     width: 200px;
+     background: white;
+     box-shadow: 5px 5px 5px #888888;
+}
+
+
+
     </style>
     @yield('pagestyle')
 </head>
 <body class="">
 <div class="overlay-loader">
     <div class="overlay__inner">
-        <div class="overlay__content"><span class="spinner"></span><br>
+        <div class="overlay__content"><div class="text-center"><span class="spinner"></span><br>
 			<span class="fs-3 text-light">Učitavanje...</span><br>
-			<span class="text-light">Molim te sačekaj</span>
+			<span class="text-light">Molim te sačekaj</span></div><br>
+			<span class="process-details-global text-light">...</span>
+			<div class="progress">
+				<div class="progress-bar progress-upload progress-bar-primary" role="progressbar" data-dz-uploadprogress>
+					<span class="progress-text"></span>
+				</div>
+			</div>
+			
 		</div>
 	</div>
 </div>
@@ -122,6 +149,8 @@
                             <li><a class="nav-link" href="{{ route('klijenti.index') }}"><i class="fas fa-user-tie me-2" style="width:20px;"></i> Klijenti</a></li>
                             @endhasrole
                             <li><a class="nav-link" href="{{ route('radnalista.index') }}"><i class="fas fa-user-tie me-2" style="width:20px;"></i> Lista Naloga</a></li>
+                            <li><a class="nav-link" href="{{ route('izvestaji.index') }}"><i class="fas fa-user-tie me-2" style="width:20px;"></i> Izveštaj po Vozilu</a></li>
+                            <li><a class="nav-link" href="{{ route('izvestajOPlacanju.index') }}"><i class="fas fa-user-tie me-2" style="width:20px;"></i> Izveštaj o plaćanju</a></li>
                             @hasrole('Admin')
                             <li class="nav-item dropdown">
                                 <a id="podesavanja" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
@@ -181,6 +210,7 @@
     </div>
     <script src=" https://cdn.jsdelivr.net/npm/jquery@3.7.0/dist/jquery.min.js "></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+    <script src="{{asset('assets/js/jquery.number.min.js')}}"></script>
     <script>
         const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
         const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))

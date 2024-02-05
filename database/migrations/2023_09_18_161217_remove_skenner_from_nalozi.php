@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('nalozi', function (Blueprint $table) {
-            $table->dropForeign('nalozi_skener_analiticke_kartice_foreign');
-            $table->dropForeign('nalozi_skener_licenca_foreign');
-            $table->dropForeign('nalozi_skener_saobracajna_foreign');
-            $table->dropForeign('nalozi_skener_depo_karton_foreign');
+            $table->dropForeign('nalozi_skener_analiticke_kartice_id_foreign');
+            $table->dropForeign('nalozi_skener_licenca_id_foreign');
+            $table->dropForeign('nalozi_skener_saobracajna_id_foreign');
+            $table->dropForeign('nalozi_skener_depo_karton_id_foreign');
             $table->dropColumn('skener_analiticke_kartice_id');
             $table->dropColumn('skener_licenca_id');
             $table->dropColumn('skener_saobracajna_id');

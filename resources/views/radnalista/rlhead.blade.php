@@ -1,49 +1,41 @@
 <div class="row">
-    <div class="col-md-2">
-        <div class="card">
+    <div class="col">
+        <div class="card" style="height:90px;">
             <div class="card-body bg-secondary text-light">
-                <strong>Klijent</strong>
+                <strong>Naziv firme</strong>
                 <h5>{{$nalozi->klijent['naziv']}}</h5>
             </div>
         </div>
     </div>
-    <div class="col-md-2">
-        <div class="card">
-            <div class="card-body bg-secondary text-light">
-                <strong>Godina</strong>
-                <h5>{{$nalozi->kvartal['godina']}}</h5>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-2">
-        <div class="card">
+    <div class="col">
+        <div class="card" style="height:90px;">
             <div class="card-body bg-secondary text-light">
                 <strong>Kvartal</strong>
                 <h5>{{$nalozi->kvartal['kvartal']}}</h5>
             </div>
         </div>
     </div>
-    <div class="col-md-2">
-        <div class="card">
+    <div class="col">
+        <div class="card" style="height:90px;">
             <div class="card-body bg-secondary text-light">
                 <strong>Od</strong>
-                <h5>{{date('d.m', strtotime($nalozi->kvartal['od']))}}</h5>
+                <h5>{{date('d.m.Y', strtotime($nalozi->kvartal['od']))}}</h5>
             </div>
         </div>
     </div>
-    <div class="col-md-2">
-        <div class="card">
+    <div class="col">
+        <div class="card" style="height:90px;">
             <div class="card-body bg-secondary text-light">
                 <strong>Do</strong>
-                <h5>{{date('d.m', strtotime($nalozi->kvartal['do']))}}</h5>
+                <h5>{{date('d.m.Y', strtotime($nalozi->kvartal['do']))}}</h5>
             </div>
         </div>
     </div>
-    <div class="col-md-2">
-        <div class="card">
+    <div class="col">
+        <div class="card" style="height:90px;">
             <div class="card-body bg-secondary text-light">
-                FILIJALA {{ $poreska_filijala->ime }}
-                PIB: {{ $nalozi->klijent['pib'] }}
+                <b>FILIJALA:</b> {{ $poreska_filijala->ime }}<br>
+                <b>PIB:</b> {{ $nalozi->klijent['pib'] }}
             </div>
         </div>
     </div>

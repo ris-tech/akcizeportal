@@ -19,4 +19,14 @@ class Pozicije extends Model
         'kolicina',
         'vozila'
     ];
+
+    public function vozilo()
+    {
+      return $this->belongsTo(Vozila::Class,'vozila');
+    }
+
+    public function dobavljac()
+    {
+      return $this->belongsTo(Dobavljaci::Class,'dobavljac_id');
+    }
 }

@@ -12,6 +12,20 @@ class Fajlovi extends Model
     protected $fillable = [
         'nalog_id',
         'tip',
-        'fajl'
+        'banka_id',
+        'folder',        
+        'fajl',
+        'aktivan'
     ];
+
+    public function nalog()
+    {
+      return $this->belongsTo(Nalozi::Class,'nalog_id');
+    }
+    
+    public function banka()
+    {
+      return $this->belongsTo(Banke::Class,'banka_id');
+    }
+
 }

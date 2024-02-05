@@ -34,14 +34,14 @@
   </tr>
     @foreach ($klijenti as $klijent)
     <tr>
-        <td>{{ ++$i }}</td>
+        <td>{{ $loop->iteration }}</td>
         <td>{{ $klijent->naziv }}</td>
         <td>{{ $klijent->pib }}</td>
         <td>{{ $klijent->knjigovodja }}</td>
         <td>{{ $klijent->cena }} %</td>
         <td>@if ($dokumenti[$klijent->id]['ugovor']['datum_fajla'] != '-') <i class="fa-regular fa-circle-check text-success"> @else <i class="fa-regular fa-circle-xmark text-danger"></i> @endif</td>
         <td>@if ($dokumenti[$klijent->id]['pep']['datum_fajla'] != '-') <i class="fa-regular fa-circle-check text-success"> @else <i class="fa-regular fa-circle-xmark text-danger"></i> @endif</td>
-        <td>{{ $klijent->vozila }}</td>
+        <td>{{ $vozila[$klijent->id] }}</td>
         <td>
             @can('role-edit')
                 <a class="btn btn-primary" href="{{ route('klijenti.edit',$klijent->id) }}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Promeni"><i class="fas fa-pencil-alt"></i></a>

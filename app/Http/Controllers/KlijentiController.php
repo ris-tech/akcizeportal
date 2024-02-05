@@ -8,6 +8,7 @@ use Spatie\Permission\Models\Role;
 use Illuminate\View\View;
 use App\Models\Klijenti;
 use App\Models\Banke;
+use App\Models\Vozila;
 use App\Models\poreska_filijala;
 use Illuminate\Http\RedirectResponse;
 use App\Models\OdgovornoLice;
@@ -30,16 +31,21 @@ class KlijentiController extends Controller
     public function index(Request $request): View
     {
         $klijenti = DB::table('klijenti')
-                ->select(array('klijenti.*', 'knjigovodja.naziv as knjigovodja', DB::raw('COUNT(vozila.id) as vozila')))
+                ->select(array('klijenti.*', 'knjigovodja.naziv as knjigovodja'))
                 ->leftJoin('knjigovodja', 'klijenti.knjigovodja_id', '=', 'knjigovodja.id')
                 ->leftJoin('klijenti_dokumenta', 'klijenti.id', '=', 'klijenti_dokumenta.klijent_id')
                 ->leftJoin('vozila', 'klijenti.id', 'vozila.klijent_id')
                 ->groupBy('klijenti.id')
 				->orderBy('klijenti.naziv', 'asc')
                 ->get();
+        $klijentiResult = $klijenti;
         $dokumenta = [];
+        $vozila[] = '';
+        
+        foreach($klijentiResult as $klijent) {
+            $vozilaCnt = Vozila::where('klijent_id', $klijent->id)->count();
+            $vozila[$klijent->id] = $vozilaCnt;
 
-        foreach($klijenti as $klijent) {
             $ugovor = Dokumenta::where('klijent_id', $klijent->id)->where('tip', 'ugovor')->get();
             if($ugovor->isNotEmpty()) {
                 $datum_fajla = '-';
@@ -75,8 +81,7 @@ class KlijentiController extends Controller
                 $dokumenta['dokumenti'][$klijent->id]['pep']['broj_fajla'] = '-';
             }
         }
-        return view('klijenti.index',compact('klijenti'), $dokumenta)
-            ->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('klijenti.index',compact('klijenti', 'vozila'), $dokumenta);
     }
 
     public function create(): View

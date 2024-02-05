@@ -10,6 +10,7 @@ use App\Models\Pozicije;
 use App\Models\User;
 use Illuminate\Http\Request;
 use DB;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -88,7 +89,7 @@ class NaloziController extends Controller
     {
         
         
-        $nalozi = Nalozi::find($id)
+        $nalozi = Nalozi::where('id', $id)
                 ->with('skener_ulazne_fakture')
                 ->with('skener_izlazne_fakture')
                 ->with('skener_izvodi')
@@ -118,10 +119,10 @@ class NaloziController extends Controller
             $crt_nalog->klijent_id = $request->klijent_id;
             $crt_nalog->kvartal_id = $request->kvartal_id;
             if (isset($request->gorivo)) {
-                if (in_array('eurodizel',$request->gorivo)) {
-                    $crt_nalog->eurodizel = 1;
+                if (in_array('evrodizel',$request->gorivo)) {
+                    $crt_nalog->evrodizel = 1;
                 } else {
-                    $crt_nalog->eurodizel = NULL;
+                    $crt_nalog->evrodizel = NULL;
                 }
                 if (in_array('tng',$request->gorivo)) {
                     $crt_nalog->tng = 1;
@@ -132,6 +133,10 @@ class NaloziController extends Controller
                 return back()
                 ->withInput()
                 ->withErrors(['Gorivo nije izabrano']);
+            }
+
+            if(isset($request->taxi)) {
+                $crt_nalog->taxi = true;
             }
             
             $crt_nalog->tng = $request->tng;
@@ -156,28 +161,45 @@ class NaloziController extends Controller
 
     public function update(Request $request, $id): RedirectResponse
     {
-        
-        $input = $request->all();
-    
-        $nalog = Nalozi::find($id);
+        //dd($request);
+        $nalog = Nalozi::where('id', $id);
         if (isset($request->gorivo)) {
             //dd($request->gorivo);
-            if (in_array('eurodizel',$request->gorivo)) {
-                $nalog->eurodizel = 1;
+            if (in_array('evrodizel',$request->gorivo)) {
+                $evrodizel = 1;
             } else {
-                $nalog->eurodizel = NULL;
+                $evrodizel = NULL;
             }
             if (in_array('tng',$request->gorivo)) {
-                $nalog->tng = 1;
+                $tng = 1;
             } else {
-                $nalog->tng = NULL;
+                $tng = NULL;
             }           
         } else {
             return back()
             ->withInput()
             ->withErrors(['Gorivo nije izabrano']);
         }
-        $nalog->update($input);
+        $taxi = false;
+        if(isset($request->taxi)) {
+            $taxi = true;
+        }
+        
+        Nalozi::where('id', $id)->update(
+            [
+                "kvartal_id" => $request->kvartal_id,
+                "evrodizel" => $evrodizel,
+                "tng" => $tng,
+                "taxi" => $taxi,
+                "skener_ulazne_fakture_id" => $request->skener_ulazne_fakture_id,
+                "skener_izlazne_fakture_id" => $request->skener_izlazne_fakture_id,
+                "skener_izvodi_id" => $request->skener_izvodi_id,
+                "skener_kompenzacije_id" => $request->skener_kompenzacije_id,
+                "skener_knjizna_odobrenja_id" => $request->skener_knjizna_odobrenja_id,
+                "unosilac_id" => $request->unosilac_id,
+                "kvartal_id" => $request->kvartal_id,
+            ]
+        ); 
     
         return redirect()->route('nalozi.show', ['nalozi' => $request->klijent_id])
                         ->with('success','Dobavljač uspešno promenjen');

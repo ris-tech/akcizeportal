@@ -29,6 +29,9 @@
 
 
     <style>
+        .nv-icons{
+            display:none;
+        }
         .full-height {
             height:calc(100vh - 100px);
         }
@@ -124,6 +127,9 @@
 
                             <li><a class="nav-link" href="{{ route('klijenti.index') }}"><i class="fas fa-user-tie me-2"></i> Klijenti</a></li>
                             <li><a class="nav-link" href="{{ route('radnalista.index') }}"><i class="fas fa-user-tie me-2"></i> Lista Naloga</a></li>
+                            <li><a class="nav-link" href="{{ route('izvestaji.index') }}"><i class="fas fa-user-tie me-2"></i> Izveštaj po Vozilu</a></li>
+                            <li><a class="nav-link" href="{{ route('izvestajOPlacanju.index') }}"><i class="fas fa-user-tie me-2" style="width:20px;"></i> Izveštaj o plaćanju</a></li>
+
                             <li class="nav-item dropdown">
                                 <a id="podesavanja" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     <i class="fas fa-tools me-2"></i> Podešavanja
@@ -185,6 +191,7 @@
     </div>
     <script src=" https://cdn.jsdelivr.net/npm/jquery@3.7.0/dist/jquery.min.js "></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+    <script src="{{asset('assets/js/jquery.number.min.js')}}"></script>
     <script>
         const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
         const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))

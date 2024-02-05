@@ -12,7 +12,7 @@ class KvartaliController extends Controller
 {
     public function index(Request $request): View
     {
-        $kvartali = Kvartali::orderBy('godina','DESC')->orderBy('kvartal','DESC')->paginate(99);
+        $kvartali = Kvartali::orderBy('od','desc')->paginate(99);
         
         
         return view('kvartali.index',compact('kvartali'))

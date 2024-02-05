@@ -33,7 +33,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
     width:100%;
     height:100%;
     background-repeat: no-repeat;
-    background-size: cover;
+    background-size: contain;
 }
 .dz-options {
     margin-top: 1em;
@@ -49,7 +49,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
 <div class="container">
     <div class="row justify-content-between mb-5">
         <div class="col-md-10">
-            <h2>{{$docTypeName}} od Klijenta: <b>{{ $klijent->naziv }}</b></h2>
+            <h2>{{$tipName}} od Klijenta: <b>{{ $klijent->naziv }}</b></h2>
         </div>
         <div class="col-md-2 text-end">
             <a class="btn btn-outline-secondary" href="{{ route('dokumenta.show', $klijent->id) }}">Nazad</a>
@@ -65,20 +65,21 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
             <form action="{{ route('dokumenta.storeFiles') }}" method="post" enctype="multipart/form-data" id="image-upload" class="dropzone">
                 @csrf
                 <input type="hidden" name="klijent_id" value="{{ $klijent->id }}">
-                <input type="hidden" name="docType" value="{{ $docType }}">
+                <input type="hidden" name="tip" value="{{ $tip }}">
                 @foreach($dokumenta as $dokument)
-                    <div class="dz-preview dz-processing dz-image-preview dz-success dz-complete"> 
+                    <div class="dz-preview dz-processing dz-image-preview dz-success dz-complete">
                         <div class="dz-image">
-                            <img class="prw_img" data-dz-thumbnail="" alt="" src="{{ $dokumenta_path.$dokument->fajl}}">
+                            <img class="prw_img" data-dz-thumbnail="" alt="" src="@if($dokument->folder == NULL){{ $dokumenta_path.$tip.'/tmb/'.$dokument->tmb }}@else{{ $dokumenta_path.$tip.'/'.$dokument->folder.'/tmb/'.$dokument->tmb }}@endif" original="@if($dokument->folder == NULL){{ $dokumenta_path.$tip.'/'.$dokument->fajl}}@else{{ $dokumenta_path.$tip.'/'.$dokument->folder.'/'.$dokument->fajl}}@endif">
                         </div>
                         <div class="dz-details">
-                            <div class="dz-filename">
-                                <span data-dz-name="{{$dokument->id}}">{{$dokument->id}}</span>
+                            <div class="dz-filename" original="@if($dokument->folder == NULL){{ $dokumenta_path.$tip.'/'.$dokument->fajl}}@else{{ $dokumenta_path.$tip.'/'.$dokument->folder.'/'.$dokument->fajl}}@endif">
+                                <span data-dz-name="{{$dokument->id}}">{{$dokument->fajl}}</span>
                             </div>
                             <div class="dz-options">
-                                <button type="button" class="btn btn-danger delete-img" file-id="{{$dokument->fajl}}"><i class="fa-solid fa-trash"></i></button>
+                                <button type="button" class="btn btn-danger delete-img" file-id="{{$dokument->fajl}}" tmb="{{$dokument->tmb}}"><i class="fa-solid fa-trash"></i></button>
                             </div>
                         </div>
+                        <div class="text-bg-secondary dz-filename" original="@if($dokument->folder == NULL){{ $dokumenta_path.$tip.'/'.$dokument->fajl}}@else{{ $dokumenta_path.$tip.'/'.$dokument->folder.'/'.$dokument->fajl}}@endif" style="position: absolute;bottom:0;z-index:100;word-break: break-word;width: 200px;cursor:pointer;font-size:10pt;">{{$dokument->fajl}}</div>
                     </div>
                 @endforeach
             </form>
@@ -99,8 +100,20 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
     </div>
     </div>
 </div>
+<div class="modal fade pdf-modal" id="pdf-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" style="max-height:100%;max-width:90%;width:90%;">
+        <div class="modal-content" style="min-height:calc(100vh - 100px)">
+        <div class="modal-body text-center">
+            <iframe src="" class="pdf-frame" style="width:100%;height:100%;"></iframe>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
+        </div>
+        </div>
+    </div>
+</div>
 <div id="tpl" style="display:none;">
-    <div class="dz-preview dz-processing dz-image-preview dz-success dz-complete"> 
+    <div class="dz-preview dz-processing dz-image-preview dz-success dz-complete">
         <div class="dz-image">
             <img class="prw_img" data-dz-thumbnail="" alt="" src="">
         </div>
@@ -124,40 +137,174 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
 @endsection
 @section('pagescript')
 <script type="text/javascript">
+    $('body').find('.progress').each(function() {
+        $(this).show();
+    });
+    $('.process-details-global').show();
+
+
+    function numProc(hidden_folder, zip_uid, klijent_id, tip, uuid, cntFiles) {
+        $('body').find('.progress').each(function() {
+            $(this).show();
+        });
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('input[name="_token"]').val()
+            }
+        });
+        var request_num = $.ajax({ 
+            url: '{{route("dokumenta.getProc")}}',
+            method: 'POST',
+            data: {klijent: hidden_folder, uid: zip_uid, tip: tip},
+            dataType: 'json',
+            success: function(result_num){
+
+                let resp = $.parseJSON(result_num.files);
+                let cntProcFiles = resp.files;
+
+                if($.isNumeric(cntProcFiles)) {
+                    var calcProz = (cntProcFiles / cntFiles) * 100;
+                    var filesProz = Math.round(calcProz);
+                    var prozBar = $('.progress-bar-file-process-'+uuid); 
+                    $(prozBar).css("width", filesProz + "%");
+                    $(prozBar).html(cntProcFiles + "/" + cntFiles);
+                    if(cntProcFiles != cntFiles) {
+                        $('.progress-bar-file-process-'+uuid).removeClass('bg-success');
+                        $('.progress-bar-file-process-'+uuid).addClass('progress-bar-primary');
+                        setTimeout(numProc(hidden_folder, zip_uid, klijent_id, tip, uuid, cntFiles), 1000);
+                    } else {
+                        
+                        $('.progress-bar-file-process-'+uuid).removeClass('progress-bar-primary');
+                        $('.progress-bar-file-process-'+uuid).addClass('bg-success');
+                        if (procFile == pdfFiles) {
+                            console.log('Total Finish');
+                        }
+                        procFileProgress++;
+                    }
+                } else {
+                    setTimeout(numProc(hidden_folder, zip_uid, klijent_id, tip, uuid, cntFiles), 1000);
+                }
+            }
+        });
+    }
+    let completeFileArr = {};
+    let cntFiles = [];
+    let pdfFiles = 0;
+    let crrFiles = 1;
+    let procFile = 0;
+    let finFiles = 0;
+    let procFileProgress = 0;
+    
+    let processDetailsGlobal = '';
+    let processDetailsSingle = '';
     Dropzone.autoDiscover = false;
     var dropzone = new Dropzone('#image-upload', {
         init: function () {
-            this.on("addedfile",function(file) {
+            this.on("sending", function(file, xhr, formData) {
+                formData.append('uuid', file.upload.uuid);
+                formData.append('filename', file.name);
+            });
+            this.on("uploadprogress", function (file, progress) {
+                var progressBar = $(".progress-upload");
+                $(progressBar).css("width", Math.round(progress) + "%");
+                $(progressBar).html(Math.round(progress) + "%");
                 
             });
-            this.on("complete", function (file) {
-                console.log(file);
-                var lastCont = file.previewElement;
-                
-                var resp = file.xhr.response;
-                var resp_json = $.parseJSON(resp);
-                $(lastCont).find('.delete-img').attr('file-id',resp_json.file);
-                console.log(resp_json);
+            this.on("addedfile",function(files) {
+                pdfFiles++;            
+                $('.process-details-global').html('Upload Fajl 1/'+pdfFiles);
+                $('.overlay-loader').fadeIn();
+            });
+            this.on("complete", function (response) {
+                var xhrResp = $.parseJSON(response.xhr.response);
+                console.log(xhrResp);
+                /*if(xhrResp.resp.ext == 'pdf') {
+                    var hidden_folder = xhrResp.resp.hiddenFolder;
+                    var new_file = xhrResp.resp.new_file;
+                    var zip_uid = xhrResp.resp.zip_uid;
+                    var klijent_id = xhrResp.resp.klijent_id;
+                    var tip = xhrResp.resp.tip;
+                    var uuid = xhrResp.resp.uuid;
+                    var cntFiles = xhrResp.resp.cntFiles;
+                    var filename = xhrResp.resp.filename;
+                    
+
+                    $tmpl = '<span class="process-details-single-'+uuid+' text-light">Preradjivanje Fajla: '+filename+'</span>' +
+                        '<div class="progress">' +
+                            '<div class="progress-bar progress-bar-file-process-'+uuid+' progress-bar-primary" role="progressbar">' +
+                                '<span class="progress-text"></span>' +
+                            '</div>' +
+                        '</div>';
+                    $('.overlay__content').append($tmpl);
+                    
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('input[name="_token"]').val()
+                        }
+                    });
+                    var request = $.ajax({ 
+                        url: '{{route("dokumenta.processPDFs")}}',
+                        method: 'POST',
+                        data: {hiddenfolder: hidden_folder, new_file: new_file, zip_uid: zip_uid, klijent_id: klijent_id, tip: tip},
+                        dataType: 'json',
+                        success: function(result){
+                            finFiles++;
+                            
+                            let files = result.resp;
+                            if($.isNumeric(files)) {
+                                if (finFiles == pdfFiles) {
+                                    window.location = window.location;
+                                }
+                            }
+                        }
+                    });
+                    
+                    
+                    
+                    numProc(hidden_folder, zip_uid, klijent_id, tip, uuid, cntFiles);
+                    
+                    
+                    if (crrFiles != pdfFiles) {
+                        crrFiles++;
+                        $('.process-details-global').html('Upload Fajl '+crrFiles+' / '+pdfFiles);
+                    } else {
+                        $('.process-details-global').html('Upload Fajlova završen! ('+pdfFiles+')');
+                        $('.progress-upload').removeClass('progress-bar-primary');
+                        $('.progress-upload').addClass('bg-success');
+                    }
+                    
+                    procFile++;
+                } else {
+                    
+                }*/
+                if (crrFiles != pdfFiles) {
+                    crrFiles++;
+                    $('.process-details-global').html('Upload Fajl '+crrFiles+' / '+pdfFiles);
+                } else {
+                    window.location = window.location;
+                }
             });
         },
         thumbnailWidth: null,
         thumbnailHeight: null,
-        acceptedFiles: ".jpeg,.jpg,.png,.gif",
+        parallelUploads: 1,
+        autoProcessQueue: true,
+        acceptedFiles: ".jpeg,.jpg,.png,.gif,.pdf",
         previewTemplate: document.querySelector('#tpl').innerHTML,
 
-    
+
     });
 
     $('body').on('click', '.dz-filename', function() {
-        var img = $(this).parent().parent().find('img').attr('src');
-        $('.prv-img').css('background-image', 'url('+img+')');
-        
-        $('.imgLightBox').modal('show');
+        var pdf = $(this).attr('original');
+        $('.pdf-frame').attr('src', pdf);
+        $('#pdf-modal').modal('show');
     });
 
     $('body').on('click', '.delete-img', function() {
         var thisBtn = $(this);
         var fileid = $(this).attr('file-id');
+        var tmb = $(this).attr('tmb');
         var nalogid = $('body').find('input[name="nalog_id"]').val();
         var klijentid = $('body').find('input[name="klijent_id"]').val();
         swal({
@@ -179,7 +326,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                     var request = $.ajax({
                         url: '{{route("dokumenta.deleteFile")}}',
                         method: 'POST',
-                        data: {nalog_id: nalogid,klijent_id: klijentid, fajl: fileid},
+                        data: {nalog_id: nalogid,klijent_id: klijentid, fajl: fileid, tip: '{{ $tip }}', tmb: tmb},
                         dataType: 'json',
                         success: function(result){
                             $(thisBtn).parent().parent().parent().remove();
@@ -191,7 +338,6 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
     $('body').on('click', '.retrieve-img', function() {
         var thisBtn = $(this);
         var fileid = $(this).attr('file-id');
-        var nalogid = $('body').find('input[name="nalog_id"]').val();
         var klijentid = $('body').find('input[name="klijent_id"]').val();
         $.ajaxSetup({
             headers: {
@@ -199,9 +345,9 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
             }
         });
         var request = $.ajax({
-            url: '{{route("radnalista.retrieveFile")}}',
+            url: '{{route("dokumenta.retrieveFile")}}',
             method: 'POST',
-            data: {nalog_id: nalogid,klijent_id: klijentid, fajl: fileid},
+            data: {klijent_id: klijentid, fajl: fileid},
             dataType: 'json',
             success: function(result){
                 $(thisBtn).html('<i class="fa-solid fa-trash"></i>');

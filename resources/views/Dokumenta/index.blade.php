@@ -100,40 +100,40 @@
     </div>
     <div class="row border-bottom">
         <div class="col-md-2">
-            <b>Licence</b><br>
+            <b>Vozni park</b><br>
             @if($vozila != '0') 
                 @if($vozila == $licenca)
-                    <i class="fa-regular fa-circle-check text-success"></i> 
+                    Lic <i class="fa-regular fa-circle-check text-success"></i> 
                 @else
-                    <i class="fa-solid fa-triangle-exclamation text-warning"></i>
+                    Lic <i class="fa-solid fa-triangle-exclamation text-warning"></i>
                 @endif
             @else 
-                <i class="fa-regular fa-circle-xmark text-danger"></i> 
+                Lic <i class="fa-regular fa-circle-xmark text-danger"></i> 
+            @endif
+            @if($vozila != '0') 
+                @if($vozila == $saobracajna)
+                    Sao <i class="fa-regular fa-circle-check text-success"></i> 
+                @else
+                    Sao <i class="fa-solid fa-triangle-exclamation text-warning"></i>
+                @endif
+            @else 
+                Sao <i class="fa-regular fa-circle-xmark text-danger"></i> 
             @endif
         </div>
-        <div class="col-md-4">
-            <b>Broj Registarsih brojeva</b><br>
+        <div class="col-md-3">
+            <b>Broj Vozila</b><br>
             {{ $vozila }}
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <b>Broj Licenci</b><br>
             {{ $licenca }}
         </div>
-        <div class="col-md-2 text-end">
-           <a href="{{route('vozila.show', ['vozila' => $klijent->id])}}" class="btn btn-outline-success" data-bs-toggle="tooltip" data-bs-title="Analitičke kartice"><i class="fa-solid fa-credit-card"></i></a>
-        </div>
-    </div>
-    <div class="row border-bottom">
         <div class="col-md-2">
-            <b>Saobraćajne</b><br>
-            @if($saobracajna != '0') <i class="fa-regular fa-circle-check text-success"></i> @else <i class="fa-regular fa-circle-xmark text-danger"></i> @endif
-        </div>
-        <div class="col-md-8">
-            <b>Broj Dokumenata</b><br>
+            <b>Broj Saobraćajne</b><br>
             {{ $saobracajna }}
         </div>
         <div class="col-md-2 text-end">
-           <a href="{{route('dokumenta.showDokumenta', ['id' => $klijent->id, 'docType' => 'saobracajna', 'docTypeName' => 'Saobraćajne'])}}" class="btn btn-outline-success" data-bs-toggle="tooltip" data-bs-title="Analitičke kartice"><i class="fa-solid fa-credit-card"></i></a>
+           <a href="{{route('vozila.show', ['vozila' => $klijent->id])}}" class="btn btn-outline-success" data-bs-toggle="tooltip" data-bs-title="Licence"><i class="fa-solid fa-credit-card"></i></a>
         </div>
     </div>
     <div class="row border-bottom">
@@ -146,7 +146,7 @@
             {{ $depo_karton }}
         </div>
         <div class="col-md-2 text-end">
-           <a href="{{route('dokumenta.showDokumenta', ['id' => $klijent->id, 'docType' => 'depo_karton', 'docTypeName' => 'Depo kartoni'])}}" class="btn btn-outline-success" data-bs-toggle="tooltip" data-bs-title="Analitičke kartice"><i class="fa-solid fa-credit-card"></i></a>
+           <a href="{{route('dokumenta.showDokumenta', ['id' => $klijent->id, 'docType' => 'depo_karton', 'docTypeName' => 'Depo kartoni'])}}" class="btn btn-outline-success" data-bs-toggle="tooltip" data-bs-title="Depo kartoni"><i class="fa-solid fa-credit-card"></i></a>
         </div>
     </div>
 </div>

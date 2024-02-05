@@ -14,6 +14,10 @@ class Vozila extends Model
         'reg_broj',
         'licenca',
         'od',
-        'do'
+        'do',
+        'saobracajna',
+        'saobracajna_od',
+        'saobracajna_do',
+        'broj_sasije'
     ];
 }

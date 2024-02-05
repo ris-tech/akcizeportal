@@ -26,7 +26,7 @@ class PoreskaFilijalaController extends Controller
 
     public function edit($id): View
     {
-        $poreska_filijala = poreska_filijala::find($id);
+        $poreska_filijala = poreska_filijala::where('id', $id);
         $poreski_inspektori = poreska_inspektor::where('poreska_filijala_id', $id)->paginate(99);
     
         return view('poreske_filijale.edit',compact('poreska_filijala','poreski_inspektori'));
