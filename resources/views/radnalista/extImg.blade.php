@@ -97,7 +97,7 @@
                                             <button class="btn btn-info btn-sm retrieve-img delete-retrive-btn" id="{{$fajl->id}}">Povrati</button> 
                                         </div>
                                         <div class="col-md-6 pt-1" style="font-size:10pt;">
-                                            {{$i}} / {{$cntFiles}}
+                                            {{$i}} / {{$cntFiles}} 
                                         </div>
                                     </div>
                                 </div>
