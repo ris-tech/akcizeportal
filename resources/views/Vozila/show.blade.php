@@ -119,9 +119,27 @@
             <tbody>
                 @foreach($vozila as $vozilo)
                 <tr>
+<<<<<<< HEAD
                     <td>@if($vozilo->do >= date('Y-m-d')) <i class="fa-regular fa-circle-check text-success"></i> @else @if($vozilo->od != NULL) <i class="fa-solid fa-triangle-exclamation text-warning"></i> @else <i class="fa-regular fa-circle-xmark text-danger"></i>  @endif @endif </td>
                     <td>@if($vozilo->saobracajna_do >= date('Y-m-d')) <i class="fa-regular fa-circle-check text-success"></i> @else @if($vozilo->saobracajna_od != NULL) <i class="fa-solid fa-triangle-exclamation text-warning"></i> @else <i class="fa-regular fa-circle-xmark text-danger"></i>  @endif @endif </td>
                     <td>{{$vozilo->reg_broj}}</td>
+=======
+                    <td>
+                        @if($vozilo->od > date('Y-m-d'))
+                            <i class="fa-solid fa-hand-point-right text-info"></i>
+                        @else
+                            @if($vozilo->do >= date('Y-m-d')) 
+                                <i class="fa-regular fa-circle-check text-success"></i> 
+                            @else 
+                                @if($vozilo->od != NULL) 
+                                    <i class="fa-solid fa-triangle-exclamation text-warning"></i> 
+                                @else 
+                                    <i class="fa-regular fa-circle-xmark text-danger"></i>  
+                                @endif 
+                            @endif 
+                        @endif
+                        {{$vozilo->reg_broj}}</td>
+>>>>>>> 74dbb94bebb7de8f7cf36aabd037bf6e5f87eec9
                     <td>@if($vozilo->od != NULL) {{Str::cleanDate($vozilo->od)}} @else - @endif</td>
                     <td>@if($vozilo->do != NULL) {{Str::cleanDate($vozilo->do)}} @else - @endif</td>
                     <td class="text-end">

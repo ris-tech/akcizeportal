@@ -15,8 +15,12 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
 use Ramsey\Uuid\Uuid;
+<<<<<<< HEAD
 use Illuminate\Database\Query\Builder;
 use DB;
+=======
+use Spatie\PdfToImage\Pdf;
+>>>>>>> 74dbb94bebb7de8f7cf36aabd037bf6e5f87eec9
 
 class VozilaController extends Controller
 {
@@ -130,11 +134,23 @@ class VozilaController extends Controller
         }
         $uploaded_file = $request->file('upload');
         if($uploaded_file->extension() == 'pdf') {
+<<<<<<< HEAD
             
         }
 
         $new_file = bin2hex(date('Y-m-d').'_'.$klijent->id.'_'.uniqid()).'.'.$uploaded_file->extension();
         $uploaded_file->move($docPath,$new_file);
+=======
+            $pdf = new Pdf($uploaded_file);
+            $new_file = bin2hex(date('Y-m-d').'_'.$klijent->id.'_'.uniqid()).'.jpg';
+            $pdf->saveImage($docPath,$new_file);
+        } else {
+            $new_file = bin2hex(date('Y-m-d').'_'.$klijent->id.'_'.uniqid()).'.'.$uploaded_file->extension();
+            $uploaded_file->move($docPath,$new_file);
+        }
+
+        
+>>>>>>> 74dbb94bebb7de8f7cf36aabd037bf6e5f87eec9
 
 
         Vozila::where('reg_broj', $request->reg_broj)->update([
