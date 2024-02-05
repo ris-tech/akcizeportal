@@ -146,6 +146,10 @@ class NaloziController extends Controller
             $crt_nalog->skener_kompenzacije_id = $request->skener_kompenzacije_id;
             $crt_nalog->skener_knjizna_odobrenja_id = $request->skener_knjizna_odobrenja_id;
             $crt_nalog->unosilac_id = $request->unosilac_id;
+            $crt_nalog->dokumentacija_in = $request->dokumentacija_in;
+            $crt_nalog->dokumentacija_in_komentar = $request->dokumentacija_in_komentar;
+            $crt_nalog->dokumentacija_out = $request->dokumentacija_out;
+            $crt_nalog->dokumentacija_out_komentar = $request->dokumentacija_out_komentar;
 
             $crt_nalog->save();
 
@@ -198,6 +202,10 @@ class NaloziController extends Controller
                 "skener_knjizna_odobrenja_id" => $request->skener_knjizna_odobrenja_id,
                 "unosilac_id" => $request->unosilac_id,
                 "kvartal_id" => $request->kvartal_id,
+                "dokumentacija_in" => $request->dokumentacija_in,
+                "dokumentacija_in_komentar" => $request->dokumentacija_in_komentar,
+                "dokumentacija_out" => $request->dokumentacija_out,
+                "dokumentacija_out_komentar" => $request->dokumentacija_out_komentar,
             ]
         ); 
     

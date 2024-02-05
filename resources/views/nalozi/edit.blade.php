@@ -127,13 +127,13 @@
     </div>
 	<div class="col-xs-3 col-sm-3 col-md-3">
 		<label for="preuzeto">Preuzeta dokumentacija</label>
-		<input type="date" class="form-control" name="dokumentacija_in" id="preuzeto">
+		<input type="date" class="form-control" name="dokumentacija_in" id="preuzeto" value="{{$nalozi->dokumentacija_in}}">
         <label for="vracenja">Komentar za preuzetu dokumentacijau</label>
-		<textarea class="form-control" name="dokumentacija_in_komentar"></textarea>
+		<textarea class="form-control" name="dokumentacija_in_komentar">{{$nalozi->dokumentacija_in_komentar}}</textarea>
 		<label for="vracenja">Vraćenja dokumentacija</label>
-		<input type="date" class="form-control" id="vracenja" name="dokumentacija_out">
+		<input type="date" class="form-control" id="vracenja" name="dokumentacija_out" value="{{$nalozi->dokumentacija_out}}">
         <label for="vracenja">Komentar za vraćenu dokumentacijau</label>
-		<textarea class="form-control" name="dokumentacija_out_komentar"></textarea>
+		<textarea class="form-control" name="dokumentacija_out_komentar">{{$nalozi->dokumentacija_out_komentar}}</textarea>
 	</div>
 </div>
 

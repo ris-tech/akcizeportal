@@ -78,6 +78,8 @@
             </div>
         </div>
     </div>
+</div>
+<div class="row">
     <div class="col-xs-3 col-sm-3 col-md-3">
         <div class="form-group">
             <label for="skener_ulazne_fakture_id"><strong>Ulazne fakture:</strong></label>
@@ -138,6 +140,16 @@
             </select>
         </div>
     </div>
+    <div class="col-xs-3 col-sm-3 col-md-3">
+		<label for="preuzeto">Preuzeta dokumentacija</label>
+		<input type="date" class="form-control" name="dokumentacija_in" id="preuzeto" value="{{old('dokumentacija_in')}}">
+        <label for="vracenja">Komentar za preuzetu dokumentacijau</label>
+		<textarea class="form-control" name="dokumentacija_in_komentar">{{old('dokumentacija_in_komentar')}}</textarea>
+		<label for="vracenja">Vraćenja dokumentacija</label>
+		<input type="date" class="form-control" id="vracenja" name="dokumentacija_out" value="{{old('dokumentacija_out')}}">
+        <label for="vracenja">Komentar za vraćenu dokumentacijau</label>
+		<textarea class="form-control" name="dokumentacija_out_komentar">{{old('dokumentacija_out_komentar')}}</textarea>
+	</div>
 </div>
 
 <div class="row mb-3 p-3">
