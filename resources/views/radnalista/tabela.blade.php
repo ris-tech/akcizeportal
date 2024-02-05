@@ -295,7 +295,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                                     <div style="width:100%;" class="text-bg-secondary">
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <button class="btn btn-danger btn-sm delete-img" id="{{$fajl->fajl}}">Izbriši</button> 
+                                                <button class="btn btn-danger btn-sm delete-img delete-retrive-btn" id="{{$fajl->id}}">Izbriši</button> 
                                             </div>
                                             <div class="col-md-6 pt-1" style="font-size:10pt;">
                                                 {{$filepos}} / {{$cntFiles}}
@@ -307,7 +307,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                                     <div style="width:100%;" class="text-bg-secondary">
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <button class="btn btn-info btn-sm retrieve-img" id="{{$fajl->fajl}}">Povrati fajl</button>
+                                                <button class="btn btn-info btn-sm retrieve-img delete-retrive-btn" id="{{$fajl->id}}">Povrati</button>
                                             </div>
                                             <div class="col-md-6 pt-1" style="font-size:10pt;">
                                                 {{$filepos}} / {{$cntFiles}}
@@ -406,6 +406,46 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                     }
                     $(sField).html(output);
                 }
+                function getFajlStatus() {
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': '{{csrf_token() }}'
+                        }
+                    });
+                    var request = $.ajax({
+                        url: '{{route("radnalista.getFileStatus")}}',
+                        method: 'POST',
+                        data: {nalog_id: {{$nalozi->id}}},
+                        dataType: 'json',
+                        success: function(result){
+                            $(result).each(function() {
+                                let thisBtn = $('body').find('button#'+$(this)[0].fajl);
+                                if($(this)[0].aktivan == '0') {
+                                    $(thisBtn).removeClass('delete-img');
+                                    $(thisBtn).removeClass('btn-danger');
+                                    $(thisBtn).addClass('btn-info');
+                                    $(thisBtn).addClass('retrieve-img');
+                                    $(thisBtn).html('Povrati');
+                                    $(thisBtn).parent().parent().find('img').addClass(['border','border-2','border-danger','opacity-25']);
+                                    
+                                } else {
+                                    $(thisBtn).removeClass('retrieve-img');
+                                    $(thisBtn).removeClass('btn-info');
+                                    $(thisBtn).addClass('btn-danger');
+                                    $(thisBtn).addClass('delete-img');
+                                    $(thisBtn).html('Izbriši');
+                                    $(thisBtn).parent().parent().find('img').removeClass(['border','border-2','border-danger','opacity-25']);
+                                }
+                            });
+                            
+                        }
+                    });
+                    setTimeout(() => {
+                        getFajlStatus();                  
+                    }, 1000);
+                }
+
+                getFajlStatus();         
 
                 function calc_total_sum() {
                     let lastIznos = 0;
@@ -915,7 +955,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                     var request = $.ajax({
                         url: '{{route("radnalista.deleteFile")}}',
                         method: 'POST',
-                        data: {fajl: fileid},
+                        data: {fajl: fileid, nalog_id: {{$nalozi->id}}},
                         dataType: 'json',
                         success: function(result){
                             $(thisBtn).removeClass('delete-img');
@@ -939,7 +979,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                     var request = $.ajax({
                         url: '{{route("radnalista.retrieveFile")}}',
                         method: 'POST',
-                        data: {fajl: fileid},
+                        data: {fajl: fileid, nalog_id: {{$nalozi->id}}},
                         dataType: 'json',
                         success: function(result){
                             $(thisBtn).removeClass('retrieve-img');

@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Dokumenta;
 use App\Models\Fajlovi;
+use App\Models\Fajlpromene;
 use App\Models\Nalozi;
 use App\Models\Pozicije;
 use App\Models\Vozila;
@@ -300,16 +301,35 @@ class RadnaListaController extends Controller
 
     public function deleteFile(Request $request): JsonResponse
     {
-        Fajlovi::where('fajl', $request->fajl)->update(['aktivan' => 0]);
+        Fajlovi::where('id', $request->fajl)->update(['aktivan' => 0]);
+        DB::table('fajlpromene')
+            ->updateOrInsert(
+                ['nalog_id' => $request->nalog_id, 'fajl' => $request->fajl],
+                ['aktivan' => false]
+            );
+
 
         return response()->json(['success'=>'true']);
     }
 
     public function retrieveFile(Request $request): JsonResponse
     {
-        Fajlovi::where('fajl', $request->fajl)->update(['aktivan' => 1]);
+        Fajlovi::where('id', $request->fajl)->update(['aktivan' => 1]);
+        DB::table('fajlpromene')
+            ->updateOrInsert(
+                ['nalog_id' => $request->nalog_id, 'fajl' => $request->fajl],
+                ['aktivan' => true]
+            );
 
         return response()->json(['success'=>'true']);
+    }
+
+    public function getFileStatus(Request $request): JsonResponse
+    {
+        $fajlovi = Fajlpromene::where('nalog_id', $request->nalog_id)->get();
+        //Fajlpromene::where('nalog_id', $request->nalog_id)->delete();
+
+        return response()->json($fajlovi);
     }
 
     public function finishScan(Request $request): RedirectResponse

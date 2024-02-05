@@ -84,6 +84,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('/radnalista/storeFiles', [RadnaListaController::class, 'storeFiles'])->name('radnalista.storeFiles');
     Route::post('/radnalista/processPDFs', [RadnaListaController::class, 'processPDFs'])->name('radnalista.processPDFs');
     Route::post('/radnalista/getProc', [RadnaListaController::class, 'getProc'])->name('radnalista.getProc');
+    Route::post('/radnalista/getFileStatus', [RadnaListaController::class, 'getFileStatus'])->name('radnalista.getFileStatus');
     Route::resource('radnalista', RadnaListaController::class);
     Route::post('/vozila/addVozilo/{id}', [VozilaController::class, 'addVozilo'])->name('vozila.addVozilo');
     Route::post('/vozila/destroySaobracajnu/{id}', [VozilaController::class, 'destroySaobracajnu'])->name('vozila.destroySaobracajnu');

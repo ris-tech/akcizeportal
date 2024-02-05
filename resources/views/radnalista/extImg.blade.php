@@ -77,17 +77,31 @@
                             @foreach($fajlovi as $fajl)
                             @php($i++)
                             <div class="col-md-6 mb-2">
+                                @if($fajl->aktivan == 1)
                                 <img data-draggable="item" id="{{$i}}" src="{{$dokumenta_path.$fajl->folder.'/tmb/'.$fajl->fajl}}" original="{{$dokumenta_path.$fajl->folder.'/'.$fajl->fajl}}" data-fileId="{{$fajl->id}}" style="width:100%;" class="border open-img @if($i == 0) border-primary border-5 @else border-1 @endif">
                                 <div style="width:100%;" class="text-bg-secondary">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <button class="btn btn-danger btn-sm delete-img" id="{{$fajl->fajl}}">Izbriši</button> 
+                                            <button class="btn btn-danger btn-sm delete-img delete-retrive-btn" id="{{$fajl->id}}">Izbriši</button> 
                                         </div>
                                         <div class="col-md-6 pt-1" style="font-size:10pt;">
                                             {{$i}} / {{$cntFiles}}
                                         </div>
                                     </div>
                                 </div>
+                                @else
+                                <img data-draggable="item" id="{{$i}}" src="{{$dokumenta_path.$fajl->folder.'/tmb/'.$fajl->fajl}}" original="{{$dokumenta_path.$fajl->folder.'/'.$fajl->fajl}}" data-fileId="{{$fajl->id}}" style="width:100%;" class="border open-img border border-2 border-danger opacity-25 zoom-img">
+                                <div style="width:100%;" class="text-bg-secondary">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <button class="btn btn-info btn-sm retrieve-img delete-retrive-btn" id="{{$fajl->id}}">Povrati</button> 
+                                        </div>
+                                        <div class="col-md-6 pt-1" style="font-size:10pt;">
+                                            {{$i}} / {{$cntFiles}}
+                                        </div>
+                                    </div>
+                                </div>
+                                @endif
                             </div>
                         @endforeach
                         </div>
@@ -122,6 +136,97 @@
             }, false);
         })(); 
 
+        function getFajlStatus() {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': '{{csrf_token() }}'
+                }
+            });
+            var request = $.ajax({
+                url: '{{route("radnalista.getFileStatus")}}',
+                method: 'POST',
+                data: {nalog_id: {{$nalozi->id}}},
+                dataType: 'json',
+                success: function(result){
+                    $(result).each(function() {
+                        let thisBtn = $('body').find('button#'+$(this)[0].fajl);
+                        if($(this)[0].aktivan == '0') {
+                            $(thisBtn).removeClass('delete-img');
+                            $(thisBtn).removeClass('btn-danger');
+                            $(thisBtn).addClass('btn-info');
+                            $(thisBtn).addClass('retrieve-img');
+                            $(thisBtn).html('Povrati');
+                            $(thisBtn).parent().parent().parent().parent().find('img').addClass(['border-2','border-danger','opacity-25']);
+                            
+                        } else {
+                            $(thisBtn).removeClass('retrieve-img');
+                            $(thisBtn).removeClass('btn-info');
+                            $(thisBtn).addClass('btn-danger');
+                            $(thisBtn).addClass('delete-img');
+                            $(thisBtn).html('Izbriši');
+                            $(thisBtn).parent().parent().parent().parent().find('img').removeClass(['border-2','border-danger','opacity-25']);
+                        }
+                    });
+                    
+                }
+            });
+            setTimeout(() => {
+                getFajlStatus();                  
+            }, 1000);
+        }
+
+        getFajlStatus();    
+
+                $('body').on('click', '.delete-img', function() {
+                    var thisBtn = $(this);
+                    var fileid = $(this).attr('id');
+                    $('.overlay-loader').fadeIn();
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': '{{csrf_token() }}'
+                        }
+                    });
+                    var request = $.ajax({
+                        url: '{{route("radnalista.deleteFile")}}',
+                        method: 'POST',
+                        data: {nalog_id: {{$nalozi->id}}, fajl: fileid},
+                        dataType: 'json',
+                        success: function(result){
+                            $(thisBtn).removeClass('delete-img');
+                            $(thisBtn).removeClass('btn-danger');
+                            $(thisBtn).addClass('btn-info');
+                            $(thisBtn).addClass('retrieve-img');
+                            $(thisBtn).html('Povrati fajl');
+                            $(thisBtn).parent().parent().find('img').addClass(['border','border-2','border-danger','opacity-25']);
+                            $('.overlay-loader').fadeOut();
+                        }
+                    });
+                });
+                $('body').on('click', '.retrieve-img', function() {
+                    var thisBtn = $(this);
+                    var fileid = $(this).attr('id');
+                    $('.overlay-loader').fadeIn();
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': '{{csrf_token()}}'
+                        }
+                    });
+                    var request = $.ajax({
+                        url: '{{route("radnalista.retrieveFile")}}',
+                        method: 'POST',
+                        data: {nalog_id: {{$nalozi->id}}, fajl: fileid},
+                        dataType: 'json',
+                        success: function(result){
+                            $(thisBtn).removeClass('retrieve-img');
+                            $(thisBtn).removeClass('btn-info');
+                            $(thisBtn).addClass('btn-danger');
+                            $(thisBtn).addClass('delete-img');
+                            $(thisBtn).html('Izbriši');
+                            $(thisBtn).parent().parent().find('img').removeClass(['border','border-2','border-danger','opacity-25']);
+                            $('.overlay-loader').fadeOut();
+                        }
+                    });
+                });
                 $('.sitesearch').on('keypress', function (e) {
                     if(e.which === 13){
                         var imgId = e.target.value;

@@ -26,10 +26,69 @@
         .full-height {
             height:calc(100vh - 50px);
         }
+        .overlay-loader {
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			position: fixed;
+			background: rgba(0,0,0,0.7);
+			z-index:5000;
+			display:none;
+		}
+
+		.overlay__inner {
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			position: absolute;
+		}
+
+		.overlay__content {
+			left: 50%;
+			position: absolute;
+			top: 50%;
+			width:600px;			
+			transform: translate(-50%, -50%);
+		}
+
+		.spinner {
+			width: 75px;
+			height: 75px;
+			display: inline-block;
+			border-width: 2px;
+			border-color: rgba(255, 255, 255, 0.05);
+			border-top-color: #fff;
+			animation: spin 1s infinite linear;
+			border-radius: 100%;
+			border-style: solid;
+		}
+
+		@keyframes spin {
+		  100% {
+			transform: rotate(360deg);
+		  }
+		}
     </style>
     @yield('pagestyle')
 </head>
 <body class="bg-dark">
+    <div class="overlay-loader">
+        <div class="overlay__inner">
+            <div class="overlay__content"><div class="text-center"><span class="spinner"></span><br>
+                <span class="fs-3 text-light">Učitavanje...</span><br>
+                <span class="text-light">Molim te sačekaj</span></div><br>
+                <span class="process-details-global text-light">...</span>
+                <div class="progress">
+                    <div class="progress-bar progress-upload progress-bar-primary" role="progressbar" data-dz-uploadprogress>
+                        <span class="progress-text"></span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
     <div id="app">
         <main class="py-4 full-height">
             <div class="container-fluid full-height">
