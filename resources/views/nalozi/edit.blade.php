@@ -126,7 +126,7 @@
         </div>
     </div>
 	<div class="col-xs-3 col-sm-3 col-md-3">
-		<label for="preuzeto">Preuzeta dokumentacija</label>
+		<label for="preuzeto">Preuzeta dokumentacija test</label>
 		<input type="date" class="form-control" name="dokumentacija_in" id="preuzeto">
         <label for="vracenja">Komentar za preuzetu dokumentacijau</label>
 		<textarea class="form-control" name="dokumentacija_in_komentar"></textarea>
