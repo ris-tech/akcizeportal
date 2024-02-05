@@ -79,7 +79,7 @@
                     <option value="{{$user->id}}"  @if($nalozi->skener_ulazne_fakture_id == $user->id) selected @endif>{{$user->name}}</option>
                 @endforeach
             </select>
-        </div>
+        </div> 
         <div class="form-group">
             <label for="skener_izlazne_fakture_id"><strong>Izlazne fakture:</strong></label>
             <select name="skener_izlazne_fakture_id" class="form-select" id="skener_izlazne_fakture_id" required>
@@ -127,11 +127,13 @@
     </div>
 	<div class="col-xs-3 col-sm-3 col-md-3">
 		<label for="preuzeto">Preuzeta dokumentacija</label>
-		<input type="date" class="form-control" id="preuzeto">
-		<textarea class="form-control"></textarea>
+		<input type="date" class="form-control" name="dokumentacija_in" id="preuzeto">
+        <label for="vracenja">Komentar za preuzetu dokumentacijau</label>
+		<textarea class="form-control" name="dokumentacija_in_komentar"></textarea>
 		<label for="vracenja">Vraćenja dokumentacija</label>
-		<input type="date" class="form-control" id="vracenja">
-		<textarea class="form-control"></textarea>
+		<input type="date" class="form-control" id="vracenja" name="dokumentacija_out">
+        <label for="vracenja">Komentar za vraćenu dokumentacijau</label>
+		<textarea class="form-control" name="dokumentacija_out_komentar"></textarea>
 	</div>
 </div>
 

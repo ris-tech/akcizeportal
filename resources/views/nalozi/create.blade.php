@@ -119,12 +119,8 @@
         <div class="form-group">
             <label for="skener_knjizna_odobrenja_id"><strong>Knjizna odobrenja:</strong></label>
             <select name="skener_knjizna_odobrenja_id" class="form-select" id="skener_knjizna_odobrenja_id">
-<<<<<<< HEAD
                 <option disabled selected>Izaberi</option>
                 <option value="">Nema</option>
-=======
-                <option value="" disabled selected>Izaberi</option>
->>>>>>> 74dbb94bebb7de8f7cf36aabd037bf6e5f87eec9
                 @foreach($users as $user)
                     <option value="{{$user->id}}"  @selected(old('skener_knjizna_odobrenja_id') == $user->id)>{{$user->name}}</option>
                 @endforeach

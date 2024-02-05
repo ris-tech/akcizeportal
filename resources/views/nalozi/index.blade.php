@@ -57,7 +57,6 @@
                 </tr>
                 <tr>
                     <td><strong>Kompenzacije:</strong></td>
-<<<<<<< HEAD
                     <td>
 						@if($nalog->skener_kompenzacije_id != NULL)
 							{{ $nalog->skener_kompenzacije->name }}
@@ -74,13 +73,6 @@
 						@else
 							Nema
 						@endif</td>
-=======
-                    <td>@if($nalog->skener_kompenzacije != NULL) {{ $nalog->skener_kompenzacije->name }} @else Nema @endif</td>
-                </tr>
-                <tr>
-                    <td><strong>Knjižna odobrenja:</strong></td>
-                    <td>@if($nalog->skener_knjizna_odobrenja != NULL) {{ $nalog->skener_knjizna_odobrenja->name }} @else Nema @endif</td>
->>>>>>> 74dbb94bebb7de8f7cf36aabd037bf6e5f87eec9
                 </tr>
             </table>
         </td>
