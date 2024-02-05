@@ -119,7 +119,6 @@
         <div class="form-group">
             <label for="skener_knjizna_odobrenja_id"><strong>Knjizna odobrenja:</strong></label>
             <select name="skener_knjizna_odobrenja_id" class="form-select" id="skener_knjizna_odobrenja_id">
-<<<<<<< HEAD
                 <option disabled selected>Izaberi</option>
                 <option value="">Nema</option>
 =======
