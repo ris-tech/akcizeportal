@@ -105,7 +105,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                         <input type="hidden" name="tip" value="{{ $tip }}">
                         @foreach($fajlovi as $fajl)
                             <div class="dz-preview dz-processing dz-image-preview dz-success dz-complete">
-                                <div class="dz-image">
+                                <div class="dz-image @if(!$fajl->aktivan)border border-2 border-danger opacity-25 @endif">
                                     <img class="prw_img" data-dz-thumbnail="" alt="" src="{{ $dokumenta_path.$fajl->folder.'/tmb/'.$fajl->fajl }}" original="{{ $dokumenta_path.$fajl->folder.'/'.$fajl->fajl}}">
                                 </div>
                                 <div class="dz-details">
@@ -113,7 +113,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                                         <span data-dz-name="{{$fajl->id}}">{{$fajl->id}}</span>
                                     </div>
                                     <div class="dz-options">
-                                        <button type="button" class="btn btn-danger delete-img" file-id="{{$fajl->id}}"><i class="fa-solid fa-trash"></i></button>
+                                        <button type="button" class="btn @if($fajl->aktivan)btn-danger delete-img @else btn-info retrive-img @endif" file-id="{{$fajl->id}}"><i class="fa-solid fa-trash"></i></button>
                                     </div>
                                 </div>
                             </div>
