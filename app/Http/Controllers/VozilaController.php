@@ -130,7 +130,6 @@ class VozilaController extends Controller
             mkdir($docPath, 0777, true );
         }
         $uploaded_file = $request->file('upload');
-            
         $new_file = bin2hex(date('Y-m-d').'_'.$klijent->id.'_'.uniqid()).'.'.$uploaded_file->extension();
         $uploaded_file->move($docPath,$new_file);
 

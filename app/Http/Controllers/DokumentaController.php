@@ -68,8 +68,12 @@ class DokumentaController extends Controller
         $new_file = str_replace(' ','_',$request->filename);
         $thumb_file = str_replace('.pdf','.jpg',$new_file);
         $uploaded_file->move($docPath,$new_file);
-
-        exec("cp ".$docPath.$new_file." ".$docPathTmb.$new_file);
+        $os = php_uname('s');
+        if($os == 'Windows NT') {
+            exec("copy ".$docPath.$new_file." ".$docPathTmb.$new_file);
+        } else {
+            exec("cp ".$docPath.$new_file." ".$docPathTmb.$new_file);
+        }
 
         $thumb = new Imagick();
         $thumb->readImage($docPathTmb.$new_file.'[0]');
@@ -298,23 +302,18 @@ class DokumentaController extends Controller
         }
 
         $uploaded_file = $request->file('upload');
+                
+        $new_file = bin2hex(date('Y-m-d').'_'.$klijent->id.'_'.uniqid()).'.pdf';
 
-        if($uploaded_file->extension() == 'pdf') {
-            $pdf = new PdfImg($uploaded_file);
-            foreach (range(1, $pdf->getNumberOfPages()) as $pageNumber) {
-                $new_file = bin2hex(date('Y-m-d').'_'.$klijent->id.'_'.uniqid()).'.jpg';
-                $pdf->setPage($pageNumber)
-                    ->saveImage($docPath,$new_file);
+        $new_dokumenta = new Dokumenta();
+        $datum_fajla = date('Y-m-d');
+        $new_dokumenta->klijent_id = $request->id;
+        $new_dokumenta->tip = $request->docType;
+        $new_dokumenta->fajl = $new_file;
+        $new_dokumenta->datum_fajla = $datum_fajla;
+        $new_dokumenta->broj_fajla = 'upload';
 
-                $new_dokumenta = new Dokumenta();
-                $datum_fajla = date('Y-m-d');
-                $new_dokumenta->klijent_id = $request->id;
-                $new_dokumenta->tip = $request->docType;
-                $new_dokumenta->fajl = $new_file;
-                $new_dokumenta->datum_fajla = $datum_fajla;
-                $new_dokumenta->broj_fajla = 'upload';
-
-                $new_dokumenta->save();
+        $new_dokumenta->save();
 
 
         $uploaded_file->move($docPath,$new_file);
