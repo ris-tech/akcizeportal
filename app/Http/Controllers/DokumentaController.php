@@ -316,24 +316,8 @@ class DokumentaController extends Controller
 
                 $new_dokumenta->save();
 
-             }
-        } else {
-            $new_file = bin2hex(date('Y-m-d').'_'.$klijent->id.'_'.uniqid()).'.'.$uploaded_file->extension();
-            $uploaded_file->move($docPath,$new_file);
 
-            $new_dokumenta = new Dokumenta();
-            $datum_fajla = date('Y-m-d');
-            $new_dokumenta->klijent_id = $request->id;
-            $new_dokumenta->tip = $request->docType;
-            $new_dokumenta->fajl = $new_file;
-            $new_dokumenta->datum_fajla = $datum_fajla;
-            $new_dokumenta->broj_fajla = 'upload';
-
-            $new_dokumenta->save();
-        }
-
-        $dokumenta = Dokumenta::where('klijent_id', $request->id)->where('tip', $request->docType);
-        //dd($dokumenta->get());
+        $uploaded_file->move($docPath,$new_file);
 
         $new_dokumenta = new Dokumenta();
         $datum_fajla = date('Y-m-d');
