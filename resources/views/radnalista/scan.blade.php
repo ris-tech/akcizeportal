@@ -113,7 +113,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                                         <span data-dz-name="{{$fajl->id}}">{{$fajl->id}}</span>
                                     </div>
                                     <div class="dz-options">
-                                        <button type="button" class="btn btn-danger delete-img" file-id="{{$fajl->fajl}}"><i class="fa-solid fa-trash"></i></button>
+                                        <button type="button" class="btn btn-danger delete-img" file-id="{{$fajl->id}}"><i class="fa-solid fa-trash"></i></button>
                                     </div>
                                 </div>
                             </div>
@@ -160,6 +160,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
             </div>
             @section('pagescript')
             <script type="text/javascript">
+            
 				$('body').find('.progress').each(function() {
                     $(this).show();
                 });
