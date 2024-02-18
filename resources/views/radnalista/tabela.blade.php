@@ -1030,9 +1030,18 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                     var crr_row = event.target.closest('tr');
                 
                     var coneldTr = $(crr_row).clone();
+                    $(coneldTr).find('[name="br_opremnice[]"]').attr('value', '');
+                    $(coneldTr).find('[name="br_opremnice[]"]').val('');
                     $(coneldTr).find('[name="iznos[]"]').attr('value', '');
+                    $(coneldTr).find('[name="iznos[]"]').val('');
                     $(coneldTr).find('[name="kolicina[]"]').attr('value', '');
-                    $(coneldTr).find('[name="reg_vozila[]"]').attr('value', '');
+                    $(coneldTr).find('[name="kolicina[]"]').val('');
+                    $(coneldTr).find('[name="reg_vozila1[]"]').attr('value', '');
+                    $(coneldTr).find('[name="reg_vozila1[]"]').val('');
+                    $(coneldTr).find('[name="reg_vozila2[]"]').attr('value', '');
+                    $(coneldTr).find('[name="reg_vozila2[]"]').val('');
+                    $(coneldTr).find('[name="reg_vozila3[]"]').attr('value', '');
+                    $(coneldTr).find('[name="reg_vozila3[]"]').val('');
                     $(coneldTr).insertAfter($(crr_row));
 
                     $('.line-row').each(function() {
