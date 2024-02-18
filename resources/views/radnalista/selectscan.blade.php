@@ -2,8 +2,11 @@
 
 @section('content')
 <div class="row mb-3">
-    <div class="col-md-12">
+    <div class="col-md-10">
         <h1>Skeniranje</h1>
+    </div>
+    <div class="col-md-2 text-end">
+        <a class="btn btn-outline-secondary" href="{{ route('radnalista.index') }}"> Nazad</a>
     </div>
 </div>
     <div class="row">
