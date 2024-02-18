@@ -363,7 +363,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                     var request = $.ajax({
                         url: '{{route("radnalista.deleteFile")}}',
                         method: 'POST',
-                        data: {fajl: fileid},
+                        data: {fajl: fileid, nalog_id: '{{$nalozi->id}}'},
                         dataType: 'json',
                         success: function(result){
                             $(thisBtn).html('<i class="fa-solid fa-rotate-left"></i>');
