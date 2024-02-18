@@ -113,7 +113,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                                         <span data-dz-name="{{$fajl->id}}">{{$fajl->id}}</span>
                                     </div>
                                     <div class="dz-options">
-                                        <button type="button" class="btn @if($fajl->aktivan)btn-danger delete-img @else btn-info retrive-img @endif" file-id="{{$fajl->id}}"><i class="fa-solid fa-trash"></i></button>
+                                        <button type="button" class="btn @if($fajl->aktivan)btn-danger delete-img @else btn-info retrieve-img @endif" file-id="{{$fajl->id}}">@if($fajl->aktivan)<i class="fa-solid fa-trash"></i>@else<i class="fa-solid fa-rotate-left"></i>@endif</button>
                                     </div>
                                 </div>
                             </div>
