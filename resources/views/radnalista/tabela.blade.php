@@ -575,16 +575,17 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                     {
                         e.stopPropagation();
                         e.preventDefault();   
-                        console.log(e);                        
-                        $('.overlay-loader').fadeIn();
+                        console.log(e);           
                         if(e.target.dataset.draggable == 'target')
                         {
+                            
                             if(localStorage.getItem('currentDragElement') == e.target.dataset.fileid) {
                                 return;
                             }
                             
                             if(e.target.getAttribute('data-draggable') == 'target')
                             {
+                                $('.overlay-loader').fadeIn();
                                 let brfakture = e.target.getAttribute('faktura');
                                 let fajlId = localStorage.getItem('currentDragElement');
                                 
