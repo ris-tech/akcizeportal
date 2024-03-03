@@ -746,7 +746,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                         });
 
                     });
-                    
+                    $('.overlay-loader').fadeOut();
                 });
                 $('body').on('click', '.open-big', function() {
                     let url = $(this).attr('original');
