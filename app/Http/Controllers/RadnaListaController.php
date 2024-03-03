@@ -318,15 +318,22 @@ class RadnaListaController extends Controller
     {
         $fajlovi = Fajlovi::where('tip', $request->tip)->where('nalog_id', $request->nalog_id)->get();
         $countFajl = $fajlovi->count();
-        foreach($fajlovi as $fajl) {
-            $data[] = [
-                'fajl_id' => $fajl->id,
-                'folder' => $fajl->folder,
-                'fajl' => $fajl->fajl,
-                'aktivan' => $fajl->aktivan,
-                'countFajl' => $countFajl
-            ];
+        if($fajlovi->isNotEmpty()) {
+
+            foreach($fajlovi as $fajl) {
+                $data[] = [
+                    'fajl_id' => $fajl->id,
+                    'folder' => $fajl->folder,
+                    'fajl' => $fajl->fajl,
+                    'aktivan' => $fajl->aktivan,
+                    'countFajl' => $countFajl
+                ];
+            }
+        } else {
+            $data = [];
         }
+
+        
 
 
         

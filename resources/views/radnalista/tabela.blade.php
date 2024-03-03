@@ -1012,7 +1012,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                                     '<td colspan="3" class="text-bg-secondary">&nbsp;</td>' +
                                     '<td class="text-bg-secondary sumIznos ps-2">'+$.number(iznos,2,',','.')+' <span class="pe-1" style="float:right;">RSD</span></td>' +
                                     '<td colspan="2" class="text-bg-secondary ps-2"><span class="sumKolicina">'+$.number(kolicina,2,',','.')+'</span> L<span class="nv-icons"> / </span><span class="nv-kupljeno"></span><span class="nv-icons"> L<span class="nv-icons"> / </span></span> <span class="nv-total"></span><span class="nv-icons"> L</span></td>' +
-                                    '<td class="text-bg-secondary"><button type="button" class="btn btn-sm btn-outline-light py-0 nv-btn">NV</button></td>' +
+                                    '<td class="text-bg-secondary"><button type="button" class="btn btn-sm btn-outline-light py-0 nv-btn">NV</button><button type="button" class="btn btn-sm btn-outline-light py-0 nv-fajlovibtn  position-relative openBindDocModal" data-draggable="target" faktura="'+lastBrFakture+'">NV Fajlovi <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-info cntNVFajlovi">0</span></button></td>' +
                                     '</tr>');
                                     $(cloneRow).attr('id', brfakture);
                                     checkSumRow();
@@ -1084,7 +1084,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                             '<td colspan="3" class="text-bg-secondary">&nbsp;</td>' +
                             '<td class="text-bg-secondary sumIznos ps-2">0,00 <span class="pe-1" style="float:right;">RSD</span></td>' +
                             '<td colspan="2" class="text-bg-secondary ps-2"><span class="sumKolicina">0,00</span> L<span class="nv-icons"> / </span><span class="nv-kupljeno"></span><span class="nv-icons"> L<span class="nv-icons"> / </span></span> <span class="nv-total"></span><span class="nv-icons"> L</span></td>' +
-                            '<td class="text-bg-secondary"><button type="button" class="btn btn-sm btn-outline-light py-0 nv-btn">NV</button></td>' +
+                            '<td class="text-bg-secondary"><button type="button" class="btn btn-sm btn-outline-light py-0 nv-btn">NV</button><button type="button" class="btn btn-sm btn-outline-light py-0 nv-fajlovibtn  position-relative openBindDocModal" data-draggable="target" faktura="'+lastBrFakture+'">NV Fajlovi <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-info cntNVFajlovi">0</span></button></td>' +
                             '</tr>');
                             $(linerow).addClass('cloned');
                             $(linerow).find('.clone-row').after('<button type="button" class="btn btn-danger btn-sm del-row" data-bs-toggle="tooltip" data-bs-title="Izbriši red"><i class="fa-solid fa-minus"></i></button>');
