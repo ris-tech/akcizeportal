@@ -302,19 +302,6 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                                             </div>
                                         </div>
                                     </div>
-                                @else
-                                    <img id="{{$filepos}}" src="{{$dokumenta_path.$fajl->folder.'/tmb/'.$fajl->fajl}}" original="{{$dokumenta_path.$fajl->folder.'/'.$fajl->fajl}}" style="max-width:100%;" class="border border-2 border-danger opacity-25 zoom-img">
-                                    <div style="width:100%;" class="text-bg-secondary">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <button class="btn btn-info btn-sm retrieve-img delete-retrive-btn" id="{{$fajl->id}}">Povrati</button>
-                                            </div>
-                                            <div class="col-md-6 pt-1" style="font-size:10pt;">
-                                                {{$filepos}} / {{$cntFiles}}
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endif
                                 </div>
                             </div>
                             
@@ -472,6 +459,166 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
 
                 }
                 
+                $('.change-fajl-tip').change(function() {
+                    const fajltip = $(this).val();
+                    $('.overlay-loader').fadeIn();
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': '{{csrf_token() }}'
+                        }
+                    });
+                    let  request = $.ajax({
+                        url: '{{route("radnalista.changeFajlTip")}}',
+                        method: 'POST',
+                        data: {tip: fajltip, nalog_id: {{$nalozi->id}}},
+                        dataType: 'json',
+                        success: function(result){
+                            let fajlovi = result;
+                            let out = '';
+                            $(fajlovi).each(function(index, element) {
+                                let newIdx = index+1;
+                                if($(this)[0].aktivan == 1) {
+                                    out += '<div class="col-md-6 mb-2 text-center">' +
+                                        '<div style="width:100%">' +
+                                    '<img id="'+$(this)[0].fajl_id+'" src="{{$dokumenta_path}}'+$(this)[0].folder+'/tmb/'+$(this)[0].fajl+'"  data-draggable="item" draggable="true" data-fileid="'+$(this)[0].fajl_id+'"  original="{{$dokumenta_path}}'+$(this)[0].folder+'/'+$(this)[0].fajl+'" style="max-width:100%;" class="border border-1 zoom-img">' +
+                                        '<div style="width:100%;" class="text-bg-secondary">' +
+                                        '<div class="row">' +
+                                            '<div class="col-md-6">' +
+                                                '<button class="btn btn-danger btn-sm delete-img delete-retrive-btn" id="'+$(this)[0].fajl_id+'">Izbriši</button>' +
+                                            '</div>' +
+                                            '<div class="col-md-6 pt-1" style="font-size:10pt;">' +
+                                                newIdx+' / '+$(this)[0].countFajl +
+                                            '</div>' +
+                                        '</div>' +
+                                        '</div>' +
+                                        '</div>' +
+                                    '</div>';
+                                } else {
+                                    out += '<div class="col-md-6 mb-2 text-center">' +
+                                        '<div style="width:100%">' +
+                                            '<img id="'+$(this)[0].fajl_id+'" src="{{$dokumenta_path}}'+$(this)[0].folder+'/tmb/'+$(this)[0].fajl+'"  data-draggable="item" draggable="true" data-fileid="'+$(this)[0].fajl_id+'"  original="{{$dokumenta_path}}'+$(this)[0].folder+'/'+$(this)[0].fajl+'" style="max-width:100%;" class="border border-2 border-danger opacity-25 zoom-img">' +
+                                    '<div style="width:100%;" class="text-bg-secondary">' +
+                                        '<div class="row">' +
+                                            '<div class="col-md-6">' +
+                                                '<button class="btn btn-info btn-sm retrieve-img delete-retrive-btn" id="'+$(this)[0].fajl_id+'">Povrati</button>' +
+                                            '</div>' +
+                                            '<div class="col-md-6 pt-1" style="font-size:10pt;">' +
+                                                newIdx+' / '+$(this)[0].countFajl +
+                                            '</div>' +
+                                        '</div>' +
+                                        '</div>' +
+                                        '</div>' +
+                                    '</div>';
+                                }
+                            });
+                            $('.fajlcontainer').html(out);
+                            $('.overlay-loader').fadeOut();
+                        }
+                    });
+                });
+                
+                $(document).ready(function(){
+
+                    if (!document.querySelectorAll || !('draggable' in document.createElement('span')) || window.opera) { return; }
+
+                    //get the collection of draggable items and add their draggable attribute
+                    for(var items = document.querySelectorAll('[data-draggable="item"]'), len = items.length, i = 0; i < len; i ++)
+                    {
+                        items[i].setAttribute('draggable', 'true');
+                    }
+
+                    var item = null;
+
+                    //dragstart event to initiate mouse dragging
+                    document.addEventListener('dragstart', function(e)
+                    {
+                        localStorage.setItem('currentDragElement', e.target.id);
+                        e.dataTransfer.setData("text/plain", e.target.id);
+
+                    }, false);
+
+                    document.addEventListener('dragenter', function(e) {
+                        event.preventDefault();
+                    });
+
+                    document.addEventListener('dragover', function(e) {
+                        event.preventDefault();
+                    });
+
+                    document.addEventListener('drop', function(e)
+                    {
+                        e.stopPropagation();
+                        e.preventDefault();   
+                        console.log(e);                        
+                        
+                        if(e.target.dataset.draggable == 'target')
+                        {
+                            if(localStorage.getItem('currentDragElement') == e.target.dataset.fileid) {
+                                return;
+                            }
+                            
+                            if(e.target.getAttribute('data-draggable') == 'target')
+                            {
+                                let brfakture = e.target.getAttribute('faktura');
+                                let fajlId = localStorage.getItem('currentDragElement');
+                                
+                                addNvFajl(brfakture, fajlId);
+                                
+                                let sumCont = $('body').find('[id="'+brfakture+'"].sum');
+
+                                let CntNVFajlovi = getCntNvFajlovi(brfakture);
+                                $(sumCont).find('.cntNVFajlovi').html(CntNVFajlovi);
+
+                                console.log('CntNVFajlovi: '+CntNVFajlovi);
+                                console.log(brfakture);
+                                console.log(fajlId);
+
+                            }
+                        }
+                    });
+
+                });
+
+                function addNvFajl(brfakture, fajlId) {
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': '{{csrf_token() }}'
+                        }
+                    });
+                    let  request = $.ajax({
+                        url: '{{route("radnalista.addNvFajl")}}',
+                        method: 'POST',
+                        data: {nalog_id: '{{$nalozi->id}}', br_fakture: brfakture, fajl_id: fajlId},
+                        dataType: 'json',
+                        success: function(result){
+                            console.log(result);
+                        }
+                    });
+                }
+
+                function getCntNvFajlovi(brfakture) {
+                    console.log('brfakture: '+brfakture);
+                    let cntNvFajlovi = 0;
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': '{{csrf_token() }}'
+                        }
+                    });
+                   $.ajax({
+                        url: '{{route("radnalista.getCntNvFajlovi")}}',
+                        method: 'POST',
+                        async: false,
+                        data: {nalog_id: '{{$nalozi->id}}', br_fakture: brfakture},
+                        dataType: 'json',
+                        success: function(result){
+                            cntNvFajlovi = result;
+                            //getCntNvFajlovi(result); 
+                        }
+                    });
+                    return cntNvFajlovi;
+                }
+
+                $.when(
                 $('input[name="br_fakture[]"]').each(function() {
                     var crrBrFakture = $(this).val();
                     
