@@ -83,6 +83,14 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('/radnalista/finishUnos', [RadnaListaController::class, 'finishUnos'])->name('radnalista.finishUnos');    
     Route::post('/radnalista/storeFiles', [RadnaListaController::class, 'storeFiles'])->name('radnalista.storeFiles');
     Route::post('/radnalista/processPDFs', [RadnaListaController::class, 'processPDFs'])->name('radnalista.processPDFs');
+    Route::post('/radnalista/addNV', [RadnaListaController::class, 'addNV'])->name('radnalista.addNV');
+    Route::post('/radnalista/removeNvFajl', [RadnaListaController::class, 'removeNvFajl'])->name('radnalista.removeNvFajl');
+    Route::post('/radnalista/getNvFajlovi', [RadnaListaController::class, 'getNvFajlovi'])->name('radnalista.getNvFajlovi');
+    Route::post('/radnalista/addNvFajl', [RadnaListaController::class, 'addNvFajl'])->name('radnalista.addNvFajl');
+    Route::post('/radnalista/getCntNvFajlovi', [RadnaListaController::class, 'getCntNvFajlovi'])->name('radnalista.getCntNvFajlovi');
+    Route::post('/radnalista/getNV', [RadnaListaController::class, 'getNV'])->name('radnalista.getNV');
+    Route::post('/radnalista/removeNV', [RadnaListaController::class, 'removeNV'])->name('radnalista.removeNV');
+    Route::post('/radnalista/changeFajlTip', [RadnaListaController::class, 'changeFajlTip'])->name('radnalista.changeFajlTip');
     Route::post('/radnalista/getProc', [RadnaListaController::class, 'getProc'])->name('radnalista.getProc');
     Route::post('/radnalista/getFileStatus', [RadnaListaController::class, 'getFileStatus'])->name('radnalista.getFileStatus');
     Route::resource('radnalista', RadnaListaController::class);

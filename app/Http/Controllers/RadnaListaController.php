@@ -18,6 +18,8 @@ use App\Models\Dokumenta;
 use App\Models\Fajlovi;
 use App\Models\Fajlpromene;
 use App\Models\Nalozi;
+use App\Models\NVFajlovi;
+use App\Models\NVIznosi;
 use App\Models\Pozicije;
 use App\Models\Vozila;
 use Exception;
@@ -312,6 +314,40 @@ class RadnaListaController extends Controller
         return response()->json(['success'=>'true']);
     }
 
+    public function changeFajlTip(Request $request): JsonResponse
+    {
+        $fajlovi = Fajlovi::where('tip', $request->tip)->where('nalog_id', $request->nalog_id)->get();
+        $countFajl = $fajlovi->count();
+        foreach($fajlovi as $fajl) {
+            $data[] = [
+                'fajl_id' => $fajl->id,
+                'folder' => $fajl->folder,
+                'fajl' => $fajl->fajl,
+                'aktivan' => $fajl->aktivan,
+                'countFajl' => $countFajl
+            ];
+        }
+
+
+        
+        return response()->json($data);
+    }
+
+    public function addNV(Request $request): void
+    {
+
+        DB::table('nv_iznosi')
+            ->updateOrInsert(
+                ['nalog_id' => $request->nalog_id, 'br_fakture' => $request->br_fakture],
+                ['kupljeno' => $request->kupljeno]
+            );
+    }
+
+    public function removeNV(Request $request): void
+    {
+        DB::table('nv_iznosi')->where('nalog_id', $request->nalog_id)->where('br_fakture', $request->br_fakture)->delete();
+    }
+
     public function retrieveFile(Request $request): JsonResponse
     {
         Fajlovi::where('id', $request->fajl)->update(['aktivan' => 1]);
@@ -348,6 +384,46 @@ class RadnaListaController extends Controller
         return redirect()->route('radnalista.index');
     }
 
+    public function getNV(Request $request) : JsonResponse {
+        $nv = NVIznosi::where('nalog_id', $request->nalog_id)->where('br_fakture', $request->br_fakture)->get();
+        return response()->json($nv);
+    }
+
+    public function getCntNvFajlovi(Request $request) : JsonResponse {
+        $nv = NVFajlovi::where('nalog_id', $request->nalog_id)->where('faktura', $request->br_fakture)->count();
+        return response()->json($nv);
+    }
+
+    public function getNvFajlovi(Request $request) : JsonResponse {
+        $nv = NVFajlovi::where('nalog_id', $request->nalog_id)->where('faktura', $request->br_fakture)->with('fajl')->get();
+
+        $nalozi = Nalozi::where('id', $request->nalog_id)->first();
+        $klijent_pod = Klijenti::find($nalozi->klijent_id);
+        $klijent_token = $klijent_pod->token;
+        $hiddenFolder=substr($klijent_token,0,8);
+        $dokumenta_path = '/storage/'.$hiddenFolder.'/'.$request->nalog_id.'/';
+
+        return response()->json(['nv' => $nv, 'dokumenta_path' => $dokumenta_path]);
+    }
+
+    public function removeNvFajl(Request $request) : JsonResponse {
+        $nv = NVFajlovi::where('nalog_id', $request->nalog_id)->where('faktura', $request->br_fakture)->where('fajl_id', $request->fajl_id)->delete();
+
+        return response()->json(['ok']);
+    }
+
+    public function addNvFajl(Request $request) : JsonResponse {
+       
+        $nvFajlovi = NVFajlovi::updateOrCreate(
+            ['nalog_id' => $request->nalog_id, 'faktura' => $request->br_fakture, 'fajl_id' => $request->fajl_id],
+            ['nalog_id' => $request->nalog_id, 'faktura' => $request->br_fakture, 'fajl_id' => $request->fajl_id]
+        );
+
+        return response()->json(['ok']);
+    }
+
+    
+
     public function tabela($id, ?string $tipVar = NULL, ?int $tipId = NULL, ): View
     {
         //dd($tipId);
@@ -360,6 +436,8 @@ class RadnaListaController extends Controller
                 ->with('unosilac')
                 ->with('kvartal')
                 ->first();
+
+
         if($tipVar == 'poVozilu' && $tipId != NULL) {
             $pozicije = Pozicije::where('nalog_id', $id)
             ->where('vozila', $tipId)

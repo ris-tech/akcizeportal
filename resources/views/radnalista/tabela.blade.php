@@ -283,19 +283,23 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                     {!! Form::close() !!}
                 </div>
                 <div class="col-md-3 border-start border-3 imgContainer">
+                    <select class="form-select change-fajl-tip">
+                            <option value="sken_ulazne_fakture">Ulazne fakture</option>
+                            <option value="sken_ulazne_fakture_nv">Ulazne fakture na veliko</option>
+                        </select>
                     <div class="full-height" style="overflow-y: auto;overflow-x: hidden;">
+                        
                         <div class="img-preview-cont text-center p-3" style="display: none;width:100%;width: -webkit-fill-available;width: -moz-available;width: stretch;">&nbsp;</div>
-                        <div class="row mt-5">
+                        <div class="row mt-5 fajlcontainer">
                             @foreach($fajlovi as $fajl)
                             @php($filepos++)
                             <div class="col-md-6 mb-2 text-center">
                                 <div style="width:100%">
-                                @if($fajl->aktivan == 1)
-                                    <img id="{{$filepos}}" src="{{$dokumenta_path.$fajl->folder.'/tmb/'.$fajl->fajl}}" original="{{$dokumenta_path.$fajl->folder.'/'.$fajl->fajl}}" style="max-width:100%;" class="border border-1 zoom-img">
+                                    <img id="{{$fajl->id}}" src="{{$dokumenta_path.$fajl->folder.'/tmb/'.$fajl->fajl}}"  data-draggable="item" draggable="true" data-fileid="{{$fajl->id}}" original="{{$dokumenta_path.$fajl->folder.'/'.$fajl->fajl}}" style="max-width:100%;" class="border @if($fajl->aktivan == 1) border-1 @else border-2 border-danger opacity-25 @endif zoom-img">
                                     <div style="width:100%;" class="text-bg-secondary">
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <button class="btn btn-danger btn-sm delete-img delete-retrive-btn" id="{{$fajl->id}}">Izbriši</button> 
+                                                <button class="btn btn-sm @if($fajl->aktivan == 1) btn-danger btn-sm delete-img  @else btn-info retrieve-img @endif delete-retrive-btn" id="{{$fajl->id}}">Povrati</button>
                                             </div>
                                             <div class="col-md-6 pt-1" style="font-size:10pt;">
                                                 {{$filepos}} / {{$cntFiles}}
@@ -328,6 +332,27 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
                                 <button type="button" class="btn btn-success save-nv">Unesi</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade h-100" id="bindDocModal" tabindex="-1" aria-labelledby="bindDocModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-xl h-100">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="bindDocModalLabel">Nakačeni Fajilovi</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-0" style="min-height:calc(100vh - 200px);">
+                                <div class="big-img-cont" style="position: absolute;width:100%;height:100%;background-color: rgba(0,0,0,0.7);z-index:99999999;display:none;text-align:center;" class="text-center">
+                                    <img src="" style="height:100%;">
+                                </div>
+                                <div class="row bindDocModalCont">
+                
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
                             </div>
                         </div>
                     </div>
@@ -370,18 +395,19 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
             
             @section('pagescript')
             <script type="text/javascript">
-                var lastBrFakture = '';
-                var lastIznos = 0;
-                var lastKolicina = 0;
-                var crrIznos = 0;
-                var crrKolicina = 0;
-                var startSum = 0;
+                $('.overlay-loader').fadeIn();
+                let  lastBrFakture = '';
+                let  lastIznos = 0;
+                let  lastKolicina = 0;
+                let  crrIznos = 0;
+                let  crrKolicina = 0;
+                let  startSum = 0;
 
                 function makeFilterOptions(filter,sField) {
-                    var options = [];
-                    var output = '<option value="">Izaberi</option>';
+                    let  options = [];
+                    let  output = '<option value="">Izaberi</option>';
                     $(filter).each(function() {
-                        var crrBrFakture = $(this).val();
+                        let  crrBrFakture = $(this).val();
                         if (crrBrFakture != ''){
                             if(!options.includes(crrBrFakture)) {
                                 options.push(crrBrFakture);
@@ -399,14 +425,14 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                             'X-CSRF-TOKEN': '{{csrf_token() }}'
                         }
                     });
-                    var request = $.ajax({
+                    let  request = $.ajax({
                         url: '{{route("radnalista.getFileStatus")}}',
                         method: 'POST',
                         data: {nalog_id: {{$nalozi->id}}},
                         dataType: 'json',
                         success: function(result){
                             $(result).each(function() {
-                                let thisBtn = $('body').find('button#'+$(this)[0].fajl);
+                                let thisBtn = $('body').find('button#'+$(this)[0].fajl+'.delete-retrive-btn');
                                 if($(this)[0].aktivan == '0') {
                                     $(thisBtn).removeClass('delete-img');
                                     $(thisBtn).removeClass('btn-danger');
@@ -453,7 +479,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                             lastKolicina = lastKolicina + crrKolicina;
                         }
                     });
-
+                    
                     $('.total-suma-iznos').html($.number(lastIznos,2,',','.') + '<span class="pe-1" style="float:right;">RSD</span>');
                     $('.total-suma-kolicina').html($.number(lastKolicina,2,',','.') + '<span class="pe-1" style="float:right;">L</span>');
 
@@ -550,7 +576,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                         e.stopPropagation();
                         e.preventDefault();   
                         console.log(e);                        
-                        
+                        $('.overlay-loader').fadeIn();
                         if(e.target.dataset.draggable == 'target')
                         {
                             if(localStorage.getItem('currentDragElement') == e.target.dataset.fileid) {
@@ -572,7 +598,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                                 console.log('CntNVFajlovi: '+CntNVFajlovi);
                                 console.log(brfakture);
                                 console.log(fajlId);
-
+                                $('.overlay-loader').fadeOut();
                             }
                         }
                     });
@@ -580,6 +606,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                 });
 
                 function addNvFajl(brfakture, fajlId) {
+                    $('.overlay-loader').fadeIn();
                     $.ajaxSetup({
                         headers: {
                             'X-CSRF-TOKEN': '{{csrf_token() }}'
@@ -588,10 +615,11 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                     let  request = $.ajax({
                         url: '{{route("radnalista.addNvFajl")}}',
                         method: 'POST',
+                        async: false,
                         data: {nalog_id: '{{$nalozi->id}}', br_fakture: brfakture, fajl_id: fajlId},
                         dataType: 'json',
                         success: function(result){
-                            console.log(result);
+                            console.log(result);                            
                         }
                     });
                 }
@@ -619,65 +647,190 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                 }
 
                 $.when(
-                $('input[name="br_fakture[]"]').each(function() {
-                    var crrBrFakture = $(this).val();
-                    
-                    var lineRow = $(this).parent().parent();
-                    if(lastBrFakture != crrBrFakture) {
-                        if(startSum == 0) {
-                            startSum = 1;
-                        } else {
-                            $(lineRow).before('<tr class="sum" id="'+lastBrFakture+'">' +
-                                '<td colspan="2" class="text-bg-secondary"><b>Suma</b></td>' +
-                                '<td class="text-bg-secondary">'+lastBrFakture+'</td>' +
-                                '<td colspan="3" class="text-bg-secondary">&nbsp;</td>' +
-                                '<td class="text-bg-secondary sumIznos ps-2">'+$.number(lastIznos, 2, ',', '.')+' <span class="pe-1" style="float:right;">RSD</span></td>' +
-                                '<td colspan="2" class="text-bg-secondary ps-2"><span class="sumKolicina">'+$.number(lastKolicina, 2, ',', '.')+'</span> L<span class="nv-icons"> / </span><span class="nv-kupljeno"></span><span class="nv-icons"> L<span class="nv-icons"> / </span></span> <span class="nv-total"></span><span class="nv-icons"> L</span></td>' +
-                                '<td class="text-bg-secondary"><button type="button" class="btn btn-sm btn-outline-light py-0 nv-btn">NV</button></td>' +
-                                '</tr>');
-                            
-                        }
-                        lastIznos = 0;
-                        lastKolicina = 0;
+                    $('input[name="br_fakture[]"]').each(function() {
+                        let  crrBrFakture = $(this).val();
                         
-                        var preIznos = $(lineRow).find('input[name="iznos[]"]').val();
-                        if (preIznos != '') {
-                            lastIznos = parseFloat($(lineRow).find('input[name="iznos[]"]').val().replace(',', '.'));
-                        } else {
+                        let  lineRow = $(this).parent().parent();
+                        if(lastBrFakture != crrBrFakture) {
+                            if(startSum == 0) {
+                                startSum = 1;
+                            } else {
+                                $(lineRow).before('<tr class="sum" id="'+lastBrFakture+'">' +
+                                        '<td colspan="2" class="text-bg-secondary"><b>Suma</b></td>' +
+                                        '<td class="text-bg-secondary">'+lastBrFakture+'</td>' +
+                                        '<td colspan="3" class="text-bg-secondary">&nbsp;</td>' +
+                                        '<td class="text-bg-secondary sumIznos ps-2">'+$.number(lastIznos, 2, ',', '.')+' <span class="pe-1" style="float:right;">RSD</span></td>' +
+                                        '<td colspan="2" class="text-bg-secondary ps-2"><span class="sumKolicina">'+$.number(lastKolicina, 2, ',', '.')+'</span> L<span class="nv-icons"> / </span><span class="nv-kupljeno"></span><span class="nv-icons"> L<span class="nv-icons"> / </span></span> <span class="nv-total"></span><span class="nv-icons"> L</span></td>' +
+                                        '<td class="text-bg-secondary"><button type="button" class="btn btn-sm btn-outline-light py-0 nv-btn" faktura="'+lastBrFakture+'">NV</button><button type="button" class="btn btn-sm btn-outline-light py-0 nv-fajlovibtn  position-relative openBindDocModal" data-draggable="target" faktura="'+lastBrFakture+'">NV Fajlovi <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-info cntNVFajlovi">0</span></button></td>' +
+                                        '</tr>');
+                                
+                            }
+
                             lastIznos = 0;
-                        }
-
-                        var preKolicina = $(lineRow).find('input[name="kolicina[]"]').val();
-                        if (preKolicina != '') {
-                            lastKolicina = parseFloat($(lineRow).find('input[name="kolicina[]"]').val().replace(',', '.'));
-                        } else {
                             lastKolicina = 0;
-                        } 
-                        lastBrFakture = crrBrFakture;
-                    } else {
+                            
+                            let  preIznos = $(lineRow).find('input[name="iznos[]"]').val();
+                            if (preIznos != '') {
+                                lastIznos = parseFloat($(lineRow).find('input[name="iznos[]"]').val().replace(',', '.'));
+                            } else {
+                                lastIznos = 0;
+                            }
 
-                        var preIznos = $(lineRow).find('input[name="iznos[]"]').val();
-                        if (preIznos != '') {
-                            crrIznos = parseFloat($(lineRow).find('input[name="iznos[]"]').val().replace(',', '.'));
+                            let  preKolicina = $(lineRow).find('input[name="kolicina[]"]').val();
+                            if (preKolicina != '') {
+                                lastKolicina = parseFloat($(lineRow).find('input[name="kolicina[]"]').val().replace(',', '.'));
+                            } else {
+                                lastKolicina = 0;
+                            } 
+                            lastBrFakture = crrBrFakture;
+                            
                         } else {
-                            crrIznos = 0;
+
+                            let  preIznos = $(lineRow).find('input[name="iznos[]"]').val();
+                            if (preIznos != '') {
+                                crrIznos = parseFloat($(lineRow).find('input[name="iznos[]"]').val().replace(',', '.'));
+                            } else {
+                                crrIznos = 0;
+                            }
+                            lastIznos = lastIznos+crrIznos;
+
+
+                            let  preKolicina = $(lineRow).find('input[name="kolicina[]"]').val();
+                            if (preKolicina != '') {
+                                crrKolicina = parseFloat($(lineRow).find('input[name="kolicina[]"]').val().replace(',', '.'));
+                            } else {
+                                crrKolicina = 0;
+                            }                   
+                            lastKolicina = lastKolicina+crrKolicina;
                         }
-                        lastIznos = lastIznos+crrIznos;
+                    })
+                ).then(function() {
+                    $('body').find('.sum').each(function (params) {
+                        let  sumCont = $(this);
+                        let  brfakture = $(this).attr('id');
+                        let  lastKolicina = parseFloat($(this).find('.sumKolicina').html().replace(',', '.'));
 
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': '{{csrf_token() }}'
+                            }
+                        });
+                        let  request = $.ajax({
+                            url: '{{route("radnalista.getNV")}}',
+                            method: 'POST',
+                            async: false,
+                            data: {nalog_id: '{{$nalozi->id}}', br_fakture: brfakture},
+                            dataType: 'json',
+                            success: function(result){
+                                if(result != '') {
+                                    kupljeno = result[0].kupljeno;             
+                                } else {
+                                    kupljeno = '';
+                                }
+                                let  sumkolicina = '';
+                                if(kupljeno != '') {
+                                    sumkolicina = parseFloat(lastKolicina)-parseFloat(kupljeno);
+                                    $(sumCont).find('.nv-kupljeno').html($.number(kupljeno,2,',',''));
+                                    $(sumCont).find('.nv-total').html($.number(sumkolicina,2,',',''));
 
-                        var preKolicina = $(lineRow).find('input[name="kolicina[]"]').val();
-                        if (preKolicina != '') {
-                            crrKolicina = parseFloat($(lineRow).find('input[name="kolicina[]"]').val().replace(',', '.'));
-                        } else {
-                            crrKolicina = 0;
-                        }                   
-                        lastKolicina = lastKolicina+crrKolicina;
-                    }
+                                    $(sumCont).find('.nv-icons').each(function() {
+                                        $(this).show();
+                                    });
+                                    let CntNVFajlovi = getCntNvFajlovi(brfakture);
+                                    $(sumCont).find('.cntNVFajlovi').html(CntNVFajlovi);
+
+                                }
+                                $('.overlay-loader').fadeOut();
+                            }
+                            
+                        });
+
+                    });
+                    
+                });
+                $('body').on('click', '.open-big', function() {
+                    let url = $(this).attr('original');
+                    $('.big-img-cont').find('img').attr('src', url);
+                    $('.big-img-cont').fadeIn();
                 });
 
+                $('.big-img-cont').click(function() {
+                    $('.big-img-cont').fadeOut();
+                    $('.big-img-cont').find('img').attr('src', '');
+                });
+
+                $("#bindDocModal").on('hide.bs.modal', function(){
+                    $('.big-img-cont').find('img').attr('src', '');
+                    $('.big-img-cont').fadeOut();
+                    $('.bindDocModalCont').html('');
+                });
+
+                $('body').on('click', '.remove-bindDoc', function() {
+                    $('.overlay-loader').fadeIn();
+                    let fajl_id = $(this).attr('id');
+                    let brfakture = $(this).attr('faktura');
+                    
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': '{{csrf_token()}}'
+                        }
+                    });
+                    var request = $.ajax({
+                        url: '{{route("radnalista.removeNvFajl")}}',
+                        method: 'POST',
+                        async: false,
+                        data: {nalog_id: '{{$nalozi->id}}', br_fakture: brfakture, fajl_id: fajl_id},
+                        dataType: 'json',
+                        success: function(response){
+                            $('body').find('#'+fajl_id+'.tmb-img').remove();
+                            let sumCont = $('body').find('[id="'+brfakture+'"].sum');
+                            let CntNVFajlovi = getCntNvFajlovi(brfakture);
+                            $(sumCont).find('.cntNVFajlovi').html(CntNVFajlovi);
+
+                            $('.overlay-loader').fadeOut();
+                        }
+                    });       
+
+                });
+
+                $('body').on('click', '.openBindDocModal', function() {
+                    $('.overlay-loader').fadeIn();
+                        var brfakture = $(this).attr('faktura');
+                        let content = '';
+
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': '{{csrf_token()}}'
+                            }
+                        });
+                        var request = $.ajax({
+                            url: '{{route("radnalista.getNvFajlovi")}}',
+                            method: 'POST',
+                            async: false,
+                            data: {nalog_id: '{{$nalozi->id}}', br_fakture: brfakture},
+                            dataType: 'json',
+                            success: function(response){
+                                console.log(response);
+                                let docPath = "{{asset('/')}}"+response.dokumenta_path;
+                                console.log(response.nv);
+                                if(response.nv.length == 0) {
+                                    content += '<div class="col-md-12 text-center"><div class="alert alert-warning text-center" role="alert">Nema Fajlova</div></div>';
+                                } else {
+                                    $(response.nv).each(function() {
+                                        console.log($(this));
+                                        content += '<div class="col-md-3 position-relative tmb-img" id="'+$(this)[0].fajl_id+'"><div class="position-absolute"><button type="button" class="btn btn-sm btn-danger remove-bindDoc" id="'+$(this)[0].fajl_id+'" faktura="'+brfakture+'">Otkači</button></div><img class="shadow border border-3 open-big" src="'+docPath+$(this)[0].fajl.folder+'/tmb/'+$(this)[0].fajl.fajl+'" original="'+docPath+$(this)[0].fajl.folder+'/'+$(this)[0].fajl.fajl+'" style="width:100%;">' +
+                                            '</div>';
+                                    });
+                                }
+                                $('.bindDocModalCont').html(content);
+                                $('.overlay-loader').fadeOut();
+                            }
+                        });            
+                        $('#bindDocModal').modal('show');
+                    });
                  
                 $('.s_id').keyup(function() { 
-                    var sval = $(this).val();
+                    let  sval = $(this).val();
                     if (sval == '') {
                         $('.unos-tabela').find('[name="br_pos[]').each(function() {
                             $(this).parent().parent().show();
@@ -695,30 +848,51 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                 });
 
                 function reCalcIznos(brfakture) {
-                    var iznos = 0;
-                    var kolicina = 0;
-                    var sumRow = $('body').find('[id="'+brfakture+'"].sum');
-                    var sumIznos = $(sumRow).find('.sumIznos');
-                    var sumKolicina = $(sumRow).find('.sumKolicina');
-                    var iznosRow = $('body').find('[id="'+brfakture+'"].line-row').find('[name="iznos[]"]');
-                    var kolicinaRow = $('body').find('[id="'+brfakture+'"].line-row').find('[name="kolinica[]"]');
+                    let iznos = 0;
+                    let kolicina = 0;
+                    let crrIznos = 0;
+                    let crrKolicina = 0;
+
+                    let sumRow = $('body').find('[id="'+brfakture+'"].sum');
+                    let sumIznos = $(sumRow).find('.sumIznos');
+                    let sumKolicina = $(sumRow).find('.sumKolicina');
+                    let lineRow = $('body').find('[id="'+brfakture+'"].line-row');
+                    let iznosRow = $(lineRow).find('[name="iznos[]"]');
+                    let kolicinaRow = $(lineRow).find('[name="kolicina[]"]');
 
                     $(iznosRow).each(function() {
-                        var crrIznos = parseFloat($(this).val().replace(',','.'));
+                        if($(this).val() != '') {
+                            crrIznos = parseFloat($(this).val().replace(',','.'));
+                        } else {
+                            crrIznos = 0;
+                        }
                         iznos = iznos+crrIznos;
                     });
                     $(kolicinaRow).each(function() {
-                        var crrKolicina = parseFloat($(this).val().replace(',','.'));
+                        console.log($(this).val());
+                        if($(this).val() != '') {
+                            crrKolicina = parseFloat($(this).val().replace(',','.'));
+                        } else {
+                            crrKolicina = 0;
+                        }
                         kolicina = kolicina+crrKolicina;
                     });
                     $(sumIznos).html($.number(iznos,2,',','.')+' <span class="pe-1" style="float:right;">RSD</span>');
                     $(sumKolicina).html($.number(kolicina,2,',','.'));
+                    let nvKupljeno = $(sumRow).find('.nv-kupljeno').html();
+                    if(nvKupljeno != '') {
+                        let  nvKupljenoVal = parseFloat(nvKupljeno.replace('.','').replace(',','.'));
+                        let  total = kolicina-nvKupljenoVal;
+                        let  nvTotal = $(sumRow).find('.nv-total').html($.number(total,2,',','.'));
+                    }
+
+
                 };
 
                 function checkSumRow(){
                     $('body').find('.sum').each(function() {
-                        var crrRow = $(this);
-                        var prevRowHc = $(crrRow).prev().hasClass('line-row');
+                        let  crrRow = $(this);
+                        let  prevRowHc = $(crrRow).prev().hasClass('line-row');
                         if (!prevRowHc) {
                             $(this).remove();
                         }
@@ -726,12 +900,13 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                 }
 
                 function reCalcPos() {
-                    var i=1;
+                    let  i=1;
                     $('body').find('[name="br_pos[]"]').each(function() {
                         $(this).val(i);
                         i++;        
                     });
                 }
+
                 $('body').on('keyup', '[name="reg_broj1[]"]', function() {
                     $(this).val($(this).val().toUpperCase());
                 });
@@ -743,10 +918,10 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                 });
 
                 function chk_otpremnice() {
-                    var unique_values = {};
+                    let  unique_values = {};
                     let success = true;
                     $('body').find('[name="br_opremnice[]"]').each(function() {
-                        var crrVal = $(this).val();
+                        let  crrVal = $(this).val();
                         if(crrVal != '') {
                             if ( ! unique_values[crrVal] ) {
                                 unique_values[crrVal] = true;
@@ -782,18 +957,18 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                 });
 
                 $('body').on('focusout', '[name="br_fakture[]"]', function() {
-                    var thisfaktura = $(this);
-                    var brfakture = $(this).val();
+                    let  thisfaktura = $(this);
+                    let  brfakture = $(this).val();
                     if (brfakture != '') {
-                        var linerow = $(this).parent().parent();
-                        var lastBrFakture = $(linerow).attr('id');
-                        var hC = $(linerow).hasClass('cloned');
-                        var hA = false;
-                        var attr = $(linerow).attr('id');
+                        let  linerow = $(this).parent().parent();
+                        let  lastBrFakture = $(linerow).attr('id');
+                        let  hC = $(linerow).hasClass('cloned');
+                        let  hA = false;
+                        let  attr = $(linerow).attr('id');
                         
                         if (hC) {
                             if($(linerow).attr('id') != brfakture) {
-                                var findRows = $('body').find('[id="'+brfakture+'"]');
+                                let  findRows = $('body').find('[id="'+brfakture+'"]');
                                 if(findRows.length > 0) {
                                     swal({
                                         title: "Duplikat!",
@@ -811,8 +986,8 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                                         }
                                     }).then((result) => {
                                         if (result) {
-                                            var exBlock = $('body').find('[id="'+brfakture+'"].sum').first();
-                                            var clonedRow = $(linerow).clone();
+                                            let  exBlock = $('body').find('[id="'+brfakture+'"].sum').first();
+                                            let  clonedRow = $(linerow).clone();
                                             $(clonedRow).attr('id', brfakture);
                                             $(exBlock).before(clonedRow);
                                             $(linerow).remove();
@@ -826,10 +1001,10 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                                         }
                                     });
                                 } else {
-                                    var cloneRow = $(linerow);
-                                    var iznos = parseFloat($(cloneRow).find('[name="iznos[]"]').val().replace(',','.'));
-                                    var kolicina = parseFloat($(cloneRow).find('[name="kolicina[]"]').val().replace(',','.'));
-                                    var crrRowId = $(linerow).attr('id');
+                                    let  cloneRow = $(linerow);
+                                    let  iznos = parseFloat($(cloneRow).find('[name="iznos[]"]').val().replace(',','.'));
+                                    let  kolicina = parseFloat($(cloneRow).find('[name="kolicina[]"]').val().replace(',','.'));
+                                    let  crrRowId = $(linerow).attr('id');
                                     $('body').find('#'+crrRowId+'.sum').after(cloneRow);
                                     $(cloneRow).after('<tr class="sum" id="'+brfakture+'">' +
                                     '<td colspan="2" class="text-bg-secondary"><b>Suma</b></td>' +
@@ -852,7 +1027,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                             }
                         } else {
 
-                            var findRows = $('body').find('[id="'+brfakture+'"]');
+                            let  findRows = $('body').find('[id="'+brfakture+'"]');
                             if(findRows.length > 0) {
                                 swal({
                                     title: "Duplikat!",
@@ -870,22 +1045,24 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                                     },
                                 }).then((result) => {
                                     if (result) {
-                                        var exBlock = $('body').find('[id="'+brfakture+'"].sum').first();
-                                        var clonedRow = $(linerow).clone();
+                                        let  exBlock = $('body').find('[id="'+brfakture+'"].sum').first();
+                                        let  clonedRow = $(linerow).clone();
                                         $(clonedRow).attr('id', brfakture);
                                         $(exBlock).before(clonedRow);
-                                        
+                                        $(linerow).remove();
                                         $('body').find('[id="'+brfakture+'"].sum').first();
+                                        console.log('reCalc');
                                         checkSumRow();
                                         reCalcIznos(lastBrFakture);
                                         reCalcIznos(brfakture);
+                                        reCalcPos();
                                     } else {
                                         $(thisfaktura).val('');
                                     }
                                 });
                             }
                             $(linerow).attr('id', brfakture);
-                            var coneldTr = $(linerow).clone();
+                            let  coneldTr = $(linerow).clone();
                             $(coneldTr).removeAttr('id');
                             $(coneldTr).find('[name="datum[]"]').val('');
                             $(coneldTr).find('[name="br_fakture[]"]').val('');
@@ -913,7 +1090,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                             $(linerow).find('.clone-row').after('<button type="button" class="btn btn-danger btn-sm del-row" data-bs-toggle="tooltip" data-bs-title="Izbriši red"><i class="fa-solid fa-minus"></i></button>');
                             
                                 
-                            var i=1;
+                            let  i=1;
                             $('body').find('[name="br_pos[]"]').each(function() {
                                 $(this).val(i);
                                 i++;        
@@ -923,10 +1100,10 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
 
                 });
                 $('body').on('focusout', '[name="iznos[]"]', function() {
-                    var brfakture = $(this).parent().parent().parent().attr('id');
-                    var iznos = 0;
-                    var rows = $('body').find('[id="'+brfakture+'"].line-row').each(function() {
-                        var crriznos = $(this).find('input[name="iznos[]"]').val();
+                    let  brfakture = $(this).parent().parent().parent().attr('id');
+                    let  iznos = 0;
+                    let  rows = $('body').find('[id="'+brfakture+'"].line-row').each(function() {
+                        let  crriznos = $(this).find('input[name="iznos[]"]').val();
                         if (crriznos == '') {
                             crriznos = parseFloat(0.00);
                         } else {
@@ -935,16 +1112,16 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                         iznos = iznos+crriznos;
                     });
                     
-                    var sumline = $('body').find('[id="'+brfakture+'"].sum > .sumIznos').html($.number(iznos, 2, ',', '.')+' <span class="pe-1" style="float:right;">RSD</span>');
+                    let  sumline = $('body').find('[id="'+brfakture+'"].sum > .sumIznos').html($.number(iznos, 2, ',', '.')+' <span class="pe-1" style="float:right;">RSD</span>');
 
                 });
                 $('body').on('focusout', '[name="kolicina[]"]', function() {
-                    var brfakture = $(this).parent().parent().parent().attr('id');
-                    var nvKupljeno = $('body').find('[id="'+brfakture+'"].sum').find('.nv-kupljeno').html();
+                    let  brfakture = $(this).parent().parent().parent().attr('id');
+                    let  nvKupljeno = $('body').find('[id="'+brfakture+'"].sum').find('.nv-kupljeno').html();
                     
-                    var kolicina = 0;
-                    var rows = $('body').find('[id="'+brfakture+'"].line-row').each(function() {
-                        var crrkolicina = $(this).find('input[name="kolicina[]"]').val();
+                    let  kolicina = 0;
+                    let  rows = $('body').find('[id="'+brfakture+'"].line-row').each(function() {
+                        let  crrkolicina = $(this).find('input[name="kolicina[]"]').val();
                         if (crrkolicina == '') {
                             crrkolicina = parseFloat(0.00);
                         } else {
@@ -953,18 +1130,18 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                         kolicina = kolicina+crrkolicina;
                     });
                     
-                    var sumline = $('body').find('[id="'+brfakture+'"].sum').find('.sumKolicina').html($.number(kolicina, 2, ',', '.'));
+                    let  sumline = $('body').find('[id="'+brfakture+'"].sum').find('.sumKolicina').html($.number(kolicina, 2, ',', '.'));
                     if(nvKupljeno != '') {
                         
-                        var nvKupljenoVal = parseFloat(nvKupljeno.replace('.','').replace(',','.'));
-                        var total = kolicina-nvKupljenoVal;
-                        var nvTotal = $('body').find('[id="'+brfakture+'"].sum').find('.nv-total').html($.number(total,2,',','.'));
+                        let  nvKupljenoVal = parseFloat(nvKupljeno.replace('.','').replace(',','.'));
+                        let  total = kolicina-nvKupljenoVal;
+                        let  nvTotal = $('body').find('[id="'+brfakture+'"].sum').find('.nv-total').html($.number(total,2,',','.'));
                     }
                 });
-                $('[name="datum[]"]').focusout(function() {
-                    var inpDate = new Date($(this).val());
-                    var odDate = new Date("{{$nalozi->kvartal['od']}}");
-                    var doDate = new Date("{{$nalozi->kvartal['do']}}");
+                $('body').on('focusout', '[name="datum[]"]', function() {
+                    let  inpDate = new Date($(this).val());
+                    let  odDate = new Date("{{$nalozi->kvartal['od']}}");
+                    let  doDate = new Date("{{$nalozi->kvartal['do']}}");
                     if (inpDate < odDate){
                         $(this).addClass('is-invalid');
                     }
@@ -978,8 +1155,8 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                     
                 });
                 $('.save-table').click(function() {
-                    var cnt_tr = $('body').find('.line-row');
-                    var errDate = 0;
+                    let  cnt_tr = $('body').find('.line-row');
+                    let  errDate = 0;
                     if(!chk_otpremnice()) {
                         msg_otpremnice();
                     }
@@ -1000,13 +1177,13 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                             confirmButtonText: 'Ok!'
                         });
                     } else {
-                        var last_tr = $('.unos-tabela').find('tr').last();
-                        var datum = $(last_tr).find('[name="datum[]"]').val();
-                        var br_fakture = $(last_tr).find('[name="br_fakture[]"]').val();
-                        var kolicina = $(last_tr).find('[name="kolicina[]"]').val();
-                        var reg_broj1 = $(last_tr).find('[name="reg_broj1[]"]').val();
-                        var reg_broj2 = $(last_tr).find('[name="reg_broj2[]"]').val();
-                        var reg_broj3 = $(last_tr).find('[name="reg_broj3[]"]').val();
+                        let  last_tr = $('.unos-tabela').find('tr').last();
+                        let  datum = $(last_tr).find('[name="datum[]"]').val();
+                        let  br_fakture = $(last_tr).find('[name="br_fakture[]"]').val();
+                        let  kolicina = $(last_tr).find('[name="kolicina[]"]').val();
+                        let  reg_broj1 = $(last_tr).find('[name="reg_broj1[]"]').val();
+                        let  reg_broj2 = $(last_tr).find('[name="reg_broj2[]"]').val();
+                        let  reg_broj3 = $(last_tr).find('[name="reg_broj3[]"]').val();
                         if (cnt_tr.length > 1) {
                             @if(!$nalozi->taxi)
                             if(datum == '' && br_fakture == '' &&  kolicina == '' && reg_broj1 == '' && reg_broj2 == '' && reg_broj3 == '') {
@@ -1047,7 +1224,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                                         $(this).find('[name="reg_broj3[]"]').removeClass('is-invalid');
                                     }
                                 });
-                                var invalidInputs = $('body').find('.is-invalid');
+                                let  invalidInputs = $('body').find('.is-invalid');
                                 if (invalidInputs.length > 0) {
                                     swal({
                                         title: "Pažnja!",
@@ -1082,8 +1259,8 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                     }					
 
                 });
-                $('.zoom-img').click(function() {
-                    var img = $(this).attr('original');
+                $('body').on('click', '.zoom-img', function() {
+                    let  img = $(this).attr('original');
                     $('.img-preview-cont').html('<img src="'+img+'" style="max-width:100%;">');
                     $('.img-preview-cont').fadeIn();
                 });
@@ -1092,14 +1269,14 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                 });
 
                 $('body').on('click', '.delete-img', function() {
-                    var thisBtn = $(this);
-                    var fileid = $(this).attr('id');
+                    let  thisBtn = $(this);
+                    let  fileid = $(this).attr('id');
                     $.ajaxSetup({
                         headers: {
-                            'X-CSRF-TOKEN': $('input[name="_token"]').val()
+                            'X-CSRF-TOKEN': '{{csrf_token() }}'
                         }
                     });
-                    var request = $.ajax({
+                    let  request = $.ajax({
                         url: '{{route("radnalista.deleteFile")}}',
                         method: 'POST',
                         data: {fajl: fileid, nalog_id: {{$nalozi->id}}},
@@ -1116,14 +1293,14 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                 });
 
                 $('body').on('click', '.retrieve-img', function() {
-                    var thisBtn = $(this);
-                    var fileid = $(this).attr('id');
+                    let  thisBtn = $(this);
+                    let  fileid = $(this).attr('id');
                     $.ajaxSetup({
                         headers: {
-                            'X-CSRF-TOKEN': $('input[name="_token"]').val()
+                            'X-CSRF-TOKEN': '{{csrf_token() }}'
                         }
                     });
-                    var request = $.ajax({
+                    let  request = $.ajax({
                         url: '{{route("radnalista.retrieveFile")}}',
                         method: 'POST',
                         data: {fajl: fileid, nalog_id: {{$nalozi->id}}},
@@ -1140,18 +1317,18 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                 });
 
                 $('body').find('.unos-tabel').keyup(function(event) {
-                    var crr_row = event.target.closest('tr');
-                    var hC = $(crr_row).hasClass('cloned');
-                    var datum = $(crr_row).find('[name="datum[]"]').val();
-                    var br_fakture = $(crr_row).find('[name="br_fakture[]"]').val();
-                    var gorivo = $(crr_row).find('[name="gorivo[]"] option:selected').val();
-                    var dobavljac = $(crr_row).find('[name="dobavljac[]"] option:selected').val();
-                    var iznos = $(crr_row).find('[name="iznos[]"]').val();
-                    var kolicina = $(crr_row).find('[name="kolicina[]"]').val();
-                    var reg_vozila = $(crr_row).find('[name="reg_vozila[]"]').val();
+                    let  crr_row = event.target.closest('tr');
+                    let  hC = $(crr_row).hasClass('cloned');
+                    let  datum = $(crr_row).find('[name="datum[]"]').val();
+                    let  br_fakture = $(crr_row).find('[name="br_fakture[]"]').val();
+                    let  gorivo = $(crr_row).find('[name="gorivo[]"] option:selected').val();
+                    let  dobavljac = $(crr_row).find('[name="dobavljac[]"] option:selected').val();
+                    let  iznos = $(crr_row).find('[name="iznos[]"]').val();
+                    let  kolicina = $(crr_row).find('[name="kolicina[]"]').val();
+                    let  reg_vozila = $(crr_row).find('[name="reg_vozila[]"]').val();
                 
                     if(datum != '' && br_fakture != '' && gorivo != '' && dobavljac != '' && iznos != '' && kolicina != '' && kolicina != '' && reg_vozila != '' && !hC) {
-                        var coneldTr = $(crr_row).clone();
+                        let  coneldTr = $(crr_row).clone();
                         $(crr_row).addClass('cloned');
                         $(coneldTr).removeClass('cloned');
                         $(coneldTr).find('[name="iznos[]"]').attr('value', '');
@@ -1174,9 +1351,9 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
 
                 $('body').on('click', '.clone-row', function(event) {
                     
-                    var crr_row = event.target.closest('tr');
+                    let  crr_row = event.target.closest('tr');
                 
-                    var coneldTr = $(crr_row).clone();
+                    let  coneldTr = $(crr_row).clone();
                     $(coneldTr).find('[name="br_opremnice[]"]').attr('value', '');
                     $(coneldTr).find('[name="br_opremnice[]"]').val('');
                     $(coneldTr).find('[name="iznos[]"]').attr('value', '');
@@ -1199,7 +1376,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                     findNoDeleteButton();
                 });
                 $('body').on('change', 'select[name="dobavljac[]"]', function() {
-                    var selOption = $(this).children("option:selected").val();
+                    let  selOption = $(this).children("option:selected").val();
                     $(this).find("option").each(function() {
                         $(this).removeAttr('selected');
                     });
@@ -1207,9 +1384,9 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                 });
 
                 $('body').on('click', '.del-row', function(event) {
-                    var crr_row = event.target.closest('tr');
-                    var brfakture = $(crr_row).attr('id');
-                    var posId = $(crr_row).find('input[name="posId[]"]').clone();
+                    let  crr_row = event.target.closest('tr');
+                    let  brfakture = $(crr_row).attr('id');
+                    let  posId = $(crr_row).find('input[name="posId[]"]').clone();
                     @if($tipVar != 'null')
                         $(posId).attr('name', 'delPos[]');
                         $('.deletedRows').append(posId);    
@@ -1223,47 +1400,60 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                     });
                     $('body').find('.line-row').last().removeClass('cloned');
                     reCalcPos();
-
-                    var iznos = 0;
-                    var rows = $('body').find('[id="'+brfakture+'"].line-row').each(function() {
-                        var crriznos = $(this).find('input[name="iznos[]"]').val();
-                        if (crriznos == '') {
-                            crriznos = parseFloat(0.00);
-                        } else {
-                            crriznos = parseFloat($(this).find('input[name="iznos[]"]').val().replace(',','.'));
-                        }
-                        iznos = iznos+crriznos;
-                    });
-                    
-                    var sumline = $('body').find('[id="'+brfakture+'"].sum > .sumIznos').html($.number(iznos, 2, ',', '.')+' RSD');
+                    reCalcIznos(brfakture);
                     checkSumRow();
 
                 });
 
 
                 $('body').on('click', '.nv-btn', function() {
-                    var brfakture = $(this).parent().parent().attr('id');
+                    let  brfakture = $(this).parent().parent().attr('id');
+                    let  kupljeno = $(this).parent().parent().find('.nv-kupljeno').html();
                     $('[name="nv-brfakture"]').val(brfakture);
                     $('.nv-modal').modal('show');
+                    $('[name="nv-input"]').val(kupljeno);
                     $('[name="nv-input"]').focus();
                 });
 
                 $('.save-nv').click(function() {
-                    var nv = parseFloat($('[name="nv-input"]').val().replace(',','.'));
-                    var brfakture = $('[name="nv-brfakture"]').val();
+                    let  nv = parseFloat($('[name="nv-input"]').val().replace(',','.'));
+                    let  brfakture = $('[name="nv-brfakture"]').val();
                     if (nv != '0') {
-                        var sumKolicina = parseFloat($('body').find('[id="'+brfakture+'"].sum').find('.sumKolicina').html().replace('.','').replace(',','.'));
-                        var calcNV = sumKolicina-nv;
+                        let  sumKolicina = parseFloat($('body').find('[id="'+brfakture+'"].sum').find('.sumKolicina').html().replace('.','').replace(',','.'));
+                        let  calcNV = sumKolicina-nv;
                         $('body').find('[id="'+brfakture+'"].sum').find('.nv-kupljeno').html($.number(nv,2,',','.'));
                         $('body').find('[id="'+brfakture+'"].sum').find('.nv-total').html($.number(calcNV,2,',','.'));
                         $('body').find('[id="'+brfakture+'"].sum').find('.nv-icons').each(function() {
                             $(this).show();
                         });
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': '{{csrf_token() }}'
+                            }
+                        });
+                        let  request = $.ajax({
+                            url: '{{route("radnalista.addNV")}}',
+                            method: 'POST',
+                            data: {nalog_id: {{$nalozi->id}}, br_fakture: brfakture, kupljeno: nv},
+                            dataType: 'html'
+                        });
+
                     } else {
                         $('body').find('[id="'+brfakture+'"].sum').find('.nv-kupljeno').html('');
                         $('body').find('[id="'+brfakture+'"].sum').find('.nv-total').html('');
                         $('body').find('[id="'+brfakture+'"].sum').find('.nv-icons').each(function() {
                             $(this).hide();
+                        });
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': '{{csrf_token() }}'
+                            }
+                        });
+                        let  request = $.ajax({
+                            url: '{{route("radnalista.removeNV")}}',
+                            method: 'POST',
+                            data: {nalog_id: {{$nalozi->id}}, br_fakture: brfakture},
+                            dataType: 'html'
                         });
                     }
                     $('.nv-modal').modal('hide');
