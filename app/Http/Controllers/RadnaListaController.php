@@ -589,6 +589,7 @@ class RadnaListaController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        
         $nalog = Nalozi::where('id', $request->nalog_id)->first();
         $klijent_id = $nalog->klijent_id;
         $nalog_id = $request->nalog_id;
@@ -696,6 +697,17 @@ class RadnaListaController extends Controller
                 
             }
         }
+
+        NVIznosi::where('nalog_id', $nalog_id)->delete();
+
+        foreach($request->nvIznos as $faktura =>$nvIznos) {
+            $NVIznosi = new NVIznosi;
+            $NVIznosi->nalog_id = $nalog_id;
+            $NVIznosi->br_fakture = $faktura;
+            $NVIznosi->kupljeno = $nvIznos;
+            $NVIznosi->save();
+        }   
+
         if(isset($request->tipVar) && $request->tipVar != '') {
             return redirect()->route('radnalista.tabela', ['id' => $nalog_id,'tip' => $request->tipVar, 'tipId' => $request->tipId])
                         ->with('success','Sačuvano');

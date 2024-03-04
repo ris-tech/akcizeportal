@@ -29,6 +29,9 @@
 
 
     <style>
+        input::placeholder {
+            opacity: 0.2 !important;
+        }
         .navbar > .container-fluid {
             display:unset !important;
         }

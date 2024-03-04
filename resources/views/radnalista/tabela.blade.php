@@ -136,12 +136,12 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                             <th width="">Datum</th>
                             <th width="">BR. FAKTURE</th>
                             <th width="">BR. OTPREMNICE</th>
-                            <th width="15%">VRSTA GORIVA</th>
+                            <th width="10%">VRSTA GORIVA</th>
                             <th width="15%">DOBAVLJAČ</th>
                             <th width="">IZNOS</th>
                             <th width="">KOLIČINA</th>
                             @if(!$nalozi->taxi)
-                                <th width="14%">REG. BROJ</th>
+                                <th width="19%">REG. BROJ</th>
                             @endif
                             <th width="9%">&nbsp;</th>
                         </tr>
@@ -419,6 +419,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                     }
                     $(sField).html(output);
                 }
+
                 function getFajlStatus() {
                     $.ajaxSetup({
                         headers: {
@@ -457,34 +458,187 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                         getFajlStatus();                  
                     }, 1000);
                 }
+                getFajlStatus();
 
-                getFajlStatus();         
-
-                function calc_total_sum() {
-                    let lastIznos = 0;
-                    let lastKolicina = 0;
-
-                    $('body').find('input[name="iznos[]"]').each(function() {
-                        if ($(this).val() != '') {
-                            let crrIznos = parseFloat($(this).val().replace(',', '.'));
-                            console.log(crrIznos);
-                            lastIznos = lastIznos + crrIznos;
+                function addNvFajl(brfakture, fajlId) {
+                    $('.overlay-loader').fadeIn();
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': '{{csrf_token() }}'
                         }
                     });
+                    let  request = $.ajax({
+                        url: '{{route("radnalista.addNvFajl")}}',
+                        method: 'POST',
+                        async: false,
+                        data: {nalog_id: '{{$nalozi->id}}', br_fakture: brfakture, fajl_id: fajlId},
+                        dataType: 'json',
+                        success: function(result){
+                            console.log(result);                            
+                        }
+                    });
+                }
 
-                    $('body').find('input[name="kolicina[]"]').each(function() {
-                        if ($(this).val() != '') {
-                            let crrKolicina = parseFloat($(this).val().replace(',', '.'));
-                            console.log(crrKolicina);
-                            lastKolicina = lastKolicina + crrKolicina;
+                function getCntNvFajlovi(brfakture) {
+                    console.log('brfakture: '+brfakture);
+                    let cntNvFajlovi = 0;
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': '{{csrf_token() }}'
+                        }
+                    });
+                   $.ajax({
+                        url: '{{route("radnalista.getCntNvFajlovi")}}',
+                        method: 'POST',
+                        async: false,
+                        data: {nalog_id: '{{$nalozi->id}}', br_fakture: brfakture},
+                        dataType: 'json',
+                        success: function(result){
+                            cntNvFajlovi = result;
+                            //getCntNvFajlovi(result); 
+                        }
+                    });
+                    return cntNvFajlovi;
+                }
+
+                function reCalcIznos(brfakture) {
+                    let iznos = 0;
+                    let kolicina = 0;
+                    let crrIznos = 0;
+                    let crrKolicina = 0;
+
+                    let sumRow = $('body').find('[id="'+brfakture+'"].sum');
+                    let sumIznos = $(sumRow).find('.sumIznos');
+                    let sumKolicina = $(sumRow).find('.sumKolicina');
+                    let lineRow = $('body').find('[id="'+brfakture+'"].line-row');
+                    let iznosRow = $(lineRow).find('[name="iznos[]"]');
+                    let kolicinaRow = $(lineRow).find('[name="kolicina[]"]');
+
+                    $(iznosRow).each(function() {
+                        if($(this).val() != '') {
+                            crrIznos = parseFloat($(this).val().replace(',','.'));
+                        } else {
+                            crrIznos = 0;
+                        }
+                        iznos = iznos+crrIznos;
+                    });
+                    $(kolicinaRow).each(function() {
+                        console.log($(this).val());
+                        if($(this).val() != '') {
+                            crrKolicina = parseFloat($(this).val().replace(',','.'));
+                        } else {
+                            crrKolicina = 0;
+                        }
+                        kolicina = kolicina+crrKolicina;
+                    });
+                    $(sumIznos).html($.number(iznos,2,',','.')+' <span class="pe-1" style="float:right;">RSD</span>');
+                    $(sumKolicina).html($.number(kolicina,2,',','.'));
+                    let nvKupljeno = $(sumRow).find('.nv-kupljeno').html();
+                    if(nvKupljeno != '') {
+                        let  nvKupljenoVal = parseFloat(nvKupljeno.replace('.','').replace(',','.'));
+                        let  total = kolicina-nvKupljenoVal;
+                        $(sumRow).find('.nv-total').html($.number(total,2,',','.'));
+                        $(sumRow).find('input[nvIznos['+brfakture+']]').val(nvKupljenoVal);
+                        
+                    }
+
+
+                };
+
+                function checkSumRow(){
+                    $('body').find('.sum').each(function() {
+                        let  crrRow = $(this);
+                        let  prevRowHc = $(crrRow).prev().hasClass('line-row');
+                        if (!prevRowHc) {
+                            $(this).remove();
+                        }
+                    });
+                }
+
+                function reCalcPos() {
+                    let  i=1;
+                    $('body').find('[name="br_pos[]"]').each(function() {
+                        $(this).val(i);
+                        i++;        
+                    });
+                }
+
+                function chk_otpremnice() {
+                    let  unique_values = {};
+                    let success = true;
+                    $('body').find('[name="br_opremnice[]"]').each(function() {
+                        let  crrVal = $(this).val();
+                        if(crrVal != '') {
+                            if ( ! unique_values[crrVal] ) {
+                                unique_values[crrVal] = true;
+                                $(this).removeClass('is-invalid');
+                            } else {
+                                success = false;
+                                $('body').find('input[name="br_opremnice[]"]').each(function() {
+                                    if ($(this).val() == crrVal) {
+                                        $(this).addClass('is-invalid');
+                                    }
+                                });
+                            }
+                        }
+                    });
+                    return success;
+                }
+
+                function msg_otpremnice() {
+                    swal({
+                        title: "Duplikat otpremince!",
+                        text: "Duple otpremince nisu dozvoljene!",
+                        icon: "error",
+                        showConfirmButton:false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Ok!'
+                    });
+                }
+
+                function recalc_TotalSum() {
+                    let iznos = 0;
+                    let kolicina = 0;
+                    let singleIznos = '';
+                    let singlekolicina = '';
+                    $('body').find('input[name="iznos[]"]').each(function() {
+                        let singleIznosVal = $(this).val();
+                        if(singleIznosVal != '') {
+                            if(singleIznosVal.includes(',')) {
+                                singleIznos = singleIznosVal.replace('.','');
+                                singleIznos = singleIznos.replace(',','.');
+                            } else {
+                                singleIznos = singleIznosVal;
+                            }
+                            iznos = iznos+parseFloat(singleIznos);
                         }
                     });
                     
-                    $('.total-suma-iznos').html($.number(lastIznos,2,',','.') + '<span class="pe-1" style="float:right;">RSD</span>');
-                    $('.total-suma-kolicina').html($.number(lastKolicina,2,',','.') + '<span class="pe-1" style="float:right;">L</span>');
-
+                    $('body').find('input[name="kolicina[]"]').each(function() {
+                        let singlekolicinaVal = $(this).val();
+                        if(singlekolicinaVal != '') {
+                            if(singlekolicinaVal.includes(',')) {
+                                singlekolicina = singlekolicinaVal.replace('.','');
+                                singlekolicina = singlekolicina.replace(',','.');
+                            } else {
+                                singlekolicina = singlekolicinaVal;
+                            }
+                            kolicina = kolicina+parseFloat(singlekolicina);
+                        }
+                    });
+                    $('body').find('.total-suma-iznos').html($.number(iznos,2,',','.')+'<span class="pe-1" style="float:right;">RSD</span>');
+                    $('body').find('.total-suma-kolicina').html($.number(kolicina,2,',','.')+'<span class="pe-1" style="float:right;">L</span>');
                 }
                 
+                function findNoDeleteButton() {
+                    let deleteBtn = $('body').find('.cloned').find('.buttonCol').each(function() {
+                        let deleteBtn = $(this).find('.del-row');
+                        if (deleteBtn.length == 0) {
+                            $(this).append('<button type="button" class="btn btn-danger btn-sm del-row" data-bs-toggle="tooltip" data-bs-title="Izbriši red"><i class="fa-solid fa-minus"></i></button>');
+                        }
+                    });
+                }
+
                 $('.change-fajl-tip').change(function() {
                     const fajltip = $(this).val();
                     $('.overlay-loader').fadeIn();
@@ -605,48 +759,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                     });
 
                 });
-
-                function addNvFajl(brfakture, fajlId) {
-                    $('.overlay-loader').fadeIn();
-                    $.ajaxSetup({
-                        headers: {
-                            'X-CSRF-TOKEN': '{{csrf_token() }}'
-                        }
-                    });
-                    let  request = $.ajax({
-                        url: '{{route("radnalista.addNvFajl")}}',
-                        method: 'POST',
-                        async: false,
-                        data: {nalog_id: '{{$nalozi->id}}', br_fakture: brfakture, fajl_id: fajlId},
-                        dataType: 'json',
-                        success: function(result){
-                            console.log(result);                            
-                        }
-                    });
-                }
-
-                function getCntNvFajlovi(brfakture) {
-                    console.log('brfakture: '+brfakture);
-                    let cntNvFajlovi = 0;
-                    $.ajaxSetup({
-                        headers: {
-                            'X-CSRF-TOKEN': '{{csrf_token() }}'
-                        }
-                    });
-                   $.ajax({
-                        url: '{{route("radnalista.getCntNvFajlovi")}}',
-                        method: 'POST',
-                        async: false,
-                        data: {nalog_id: '{{$nalozi->id}}', br_fakture: brfakture},
-                        dataType: 'json',
-                        success: function(result){
-                            cntNvFajlovi = result;
-                            //getCntNvFajlovi(result); 
-                        }
-                    });
-                    return cntNvFajlovi;
-                }
-
+          
                 $.when(
                     $('input[name="br_fakture[]"]').each(function() {
                         let  crrBrFakture = $(this).val();
@@ -661,7 +774,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                                         '<td class="text-bg-secondary">'+lastBrFakture+'</td>' +
                                         '<td colspan="3" class="text-bg-secondary">&nbsp;</td>' +
                                         '<td class="text-bg-secondary sumIznos ps-2">'+$.number(lastIznos, 2, ',', '.')+' <span class="pe-1" style="float:right;">RSD</span></td>' +
-                                        '<td colspan="2" class="text-bg-secondary ps-2"><span class="sumKolicina">'+$.number(lastKolicina, 2, ',', '.')+'</span> L<span class="nv-icons"> / </span><span class="nv-kupljeno"></span><span class="nv-icons"> L<span class="nv-icons"> / </span></span> <span class="nv-total"></span><span class="nv-icons"> L</span></td>' +
+                                        '<td colspan="2" class="text-bg-secondary ps-2"><span class="sumKolicina">'+$.number(lastKolicina, 2, ',', '.')+'</span> L<span class="nv-icons"> / </span><span class="nv-kupljeno"></span><span class="nv-icons"> L<span class="nv-icons"> / </span></span> <span class="nv-total"></span><span class="nv-icons"> L</span><input type="hidden" name="nvIznos['+lastBrFakture+']" value=""></td>' +
                                         '<td class="text-bg-secondary"><button type="button" class="btn btn-sm btn-outline-light py-0 nv-btn" faktura="'+lastBrFakture+'">NV</button><button type="button" class="btn btn-sm btn-outline-light py-0 nv-fajlovibtn  position-relative openBindDocModal" data-draggable="target" faktura="'+lastBrFakture+'">NV Fajlovi <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-info cntNVFajlovi">0</span></button></td>' +
                                         '</tr>');
                                 
@@ -709,7 +822,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                     $('body').find('.sum').each(function (params) {
                         let  sumCont = $(this);
                         let  brfakture = $(this).attr('id');
-                        let  lastKolicina = parseFloat($(this).find('.sumKolicina').html().replace(',', '.'));
+                        let  lastKolicina = $(this).find('.sumKolicina').html();
 
                         $.ajaxSetup({
                             headers: {
@@ -730,8 +843,17 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                                 }
                                 let  sumkolicina = '';
                                 if(kupljeno != '') {
+                                    if(lastKolicina.includes(',')) {
+                                        lastKolicina = lastKolicina.replace('.','');
+                                        lastKolicina = lastKolicina.replace(',','.');
+                                    }
+                                    if(kupljeno.includes(',')) {
+                                        kupljeno = kupljeno.replace('.','');
+                                        kupljeno = kupljeno.replace(',','.');
+                                    }
                                     sumkolicina = parseFloat(lastKolicina)-parseFloat(kupljeno);
                                     $(sumCont).find('.nv-kupljeno').html($.number(kupljeno,2,',',''));
+                                    $(sumCont).find('input[name="nvIznos['+brfakture+']"]').val(kupljeno);
                                     $(sumCont).find('.nv-total').html($.number(sumkolicina,2,',',''));
 
                                     $(sumCont).find('.nv-icons').each(function() {
@@ -747,8 +869,10 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                         });
 
                     });
+                    recalc_TotalSum();
                     $('.overlay-loader').fadeOut();
                 });
+
                 $('body').on('click', '.open-big', function() {
                     let url = $(this).attr('original');
                     $('.big-img-cont').find('img').attr('src', url);
@@ -830,7 +954,8 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                         $('#bindDocModal').modal('show');
                     });
                  
-                $('.s_id').keyup(function() { 
+                
+                    $('.s_id').keyup(function() { 
                     let  sval = $(this).val();
                     if (sval == '') {
                         $('.unos-tabela').find('[name="br_pos[]').each(function() {
@@ -847,67 +972,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                     }
 
                 });
-
-                function reCalcIznos(brfakture) {
-                    let iznos = 0;
-                    let kolicina = 0;
-                    let crrIznos = 0;
-                    let crrKolicina = 0;
-
-                    let sumRow = $('body').find('[id="'+brfakture+'"].sum');
-                    let sumIznos = $(sumRow).find('.sumIznos');
-                    let sumKolicina = $(sumRow).find('.sumKolicina');
-                    let lineRow = $('body').find('[id="'+brfakture+'"].line-row');
-                    let iznosRow = $(lineRow).find('[name="iznos[]"]');
-                    let kolicinaRow = $(lineRow).find('[name="kolicina[]"]');
-
-                    $(iznosRow).each(function() {
-                        if($(this).val() != '') {
-                            crrIznos = parseFloat($(this).val().replace(',','.'));
-                        } else {
-                            crrIznos = 0;
-                        }
-                        iznos = iznos+crrIznos;
-                    });
-                    $(kolicinaRow).each(function() {
-                        console.log($(this).val());
-                        if($(this).val() != '') {
-                            crrKolicina = parseFloat($(this).val().replace(',','.'));
-                        } else {
-                            crrKolicina = 0;
-                        }
-                        kolicina = kolicina+crrKolicina;
-                    });
-                    $(sumIznos).html($.number(iznos,2,',','.')+' <span class="pe-1" style="float:right;">RSD</span>');
-                    $(sumKolicina).html($.number(kolicina,2,',','.'));
-                    let nvKupljeno = $(sumRow).find('.nv-kupljeno').html();
-                    if(nvKupljeno != '') {
-                        let  nvKupljenoVal = parseFloat(nvKupljeno.replace('.','').replace(',','.'));
-                        let  total = kolicina-nvKupljenoVal;
-                        let  nvTotal = $(sumRow).find('.nv-total').html($.number(total,2,',','.'));
-                    }
-
-
-                };
-
-                function checkSumRow(){
-                    $('body').find('.sum').each(function() {
-                        let  crrRow = $(this);
-                        let  prevRowHc = $(crrRow).prev().hasClass('line-row');
-                        if (!prevRowHc) {
-                            $(this).remove();
-                        }
-                    });
-                }
-
-                function reCalcPos() {
-                    let  i=1;
-                    $('body').find('[name="br_pos[]"]').each(function() {
-                        $(this).val(i);
-                        i++;        
-                    });
-                }
-
+                
                 $('body').on('keyup', '[name="reg_broj1[]"]', function() {
                     $(this).val($(this).val().toUpperCase());
                 });
@@ -918,38 +983,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                     $(this).val($(this).val().toUpperCase());
                 });
 
-                function chk_otpremnice() {
-                    let  unique_values = {};
-                    let success = true;
-                    $('body').find('[name="br_opremnice[]"]').each(function() {
-                        let  crrVal = $(this).val();
-                        if(crrVal != '') {
-                            if ( ! unique_values[crrVal] ) {
-                                unique_values[crrVal] = true;
-                                $(this).removeClass('is-invalid');
-                            } else {
-                                success = false;
-                                $('body').find('input[name="br_opremnice[]"]').each(function() {
-                                    if ($(this).val() == crrVal) {
-                                        $(this).addClass('is-invalid');
-                                    }
-                                });
-                            }
-                        }
-                    });
-                    return success;
-                }
-
-                function msg_otpremnice() {
-                    swal({
-                        title: "Duplikat otpremince!",
-                        text: "Duple otpremince nisu dozvoljene!",
-                        icon: "error",
-                        showConfirmButton:false,
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'Ok!'
-                    });
-                }
+                
 
                 $('body').on('focusout', '[name="br_opremnice[]"]', function() {
                     if(!chk_otpremnice()) {
@@ -1012,7 +1046,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                                     '<td class="text-bg-secondary">'+brfakture+'</td>' +
                                     '<td colspan="3" class="text-bg-secondary">&nbsp;</td>' +
                                     '<td class="text-bg-secondary sumIznos ps-2">'+$.number(iznos,2,',','.')+' <span class="pe-1" style="float:right;">RSD</span></td>' +
-                                    '<td colspan="2" class="text-bg-secondary ps-2"><span class="sumKolicina">'+$.number(kolicina,2,',','.')+'</span> L<span class="nv-icons"> / </span><span class="nv-kupljeno"></span><span class="nv-icons"> L<span class="nv-icons"> / </span></span> <span class="nv-total"></span><span class="nv-icons"> L</span></td>' +
+                                    '<td colspan="2" class="text-bg-secondary ps-2"><span class="sumKolicina">'+$.number(kolicina,2,',','.')+'</span> L<span class="nv-icons"> / </span><span class="nv-kupljeno"></span><span class="nv-icons"> L<span class="nv-icons"> / </span></span> <span class="nv-total"></span><span class="nv-icons"> L</span><input type="hidden" name="nvIznos['+lastBrFakture+']" value=""></td>' +
                                     '<td class="text-bg-secondary"><button type="button" class="btn btn-sm btn-outline-light py-0 nv-btn">NV</button><button type="button" class="btn btn-sm btn-outline-light py-0 nv-fajlovibtn  position-relative openBindDocModal" data-draggable="target" faktura="'+lastBrFakture+'">NV Fajlovi <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-info cntNVFajlovi">0</span></button></td>' +
                                     '</tr>');
                                     $(cloneRow).attr('id', brfakture);
@@ -1084,7 +1118,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                             '<td class="text-bg-secondary">'+brfakture+'</td>' +
                             '<td colspan="3" class="text-bg-secondary">&nbsp;</td>' +
                             '<td class="text-bg-secondary sumIznos ps-2">0,00 <span class="pe-1" style="float:right;">RSD</span></td>' +
-                            '<td colspan="2" class="text-bg-secondary ps-2"><span class="sumKolicina">0,00</span> L<span class="nv-icons"> / </span><span class="nv-kupljeno"></span><span class="nv-icons"> L<span class="nv-icons"> / </span></span> <span class="nv-total"></span><span class="nv-icons"> L</span></td>' +
+                            '<td colspan="2" class="text-bg-secondary ps-2"><span class="sumKolicina">0,00</span> L<span class="nv-icons"> / </span><span class="nv-kupljeno"></span><span class="nv-icons"> L<span class="nv-icons"> / </span></span> <span class="nv-total"></span><span class="nv-icons"> L</span><input type="hidden" name="nvIznos['+brfakture+']" value=""></td>' +
                             '<td class="text-bg-secondary"><button type="button" class="btn btn-sm btn-outline-light py-0 nv-btn">NV</button><button type="button" class="btn btn-sm btn-outline-light py-0 nv-fajlovibtn  position-relative openBindDocModal" data-draggable="target" faktura="'+lastBrFakture+'">NV Fajlovi <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-info cntNVFajlovi">0</span></button></td>' +
                             '</tr>');
                             $(linerow).addClass('cloned');
@@ -1114,7 +1148,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                     });
                     
                     let  sumline = $('body').find('[id="'+brfakture+'"].sum > .sumIznos').html($.number(iznos, 2, ',', '.')+' <span class="pe-1" style="float:right;">RSD</span>');
-
+                    recalc_TotalSum();
                 });
                 $('body').on('focusout', '[name="kolicina[]"]', function() {
                     let  brfakture = $(this).parent().parent().parent().attr('id');
@@ -1138,6 +1172,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                         let  total = kolicina-nvKupljenoVal;
                         let  nvTotal = $('body').find('[id="'+brfakture+'"].sum').find('.nv-total').html($.number(total,2,',','.'));
                     }
+                    recalc_TotalSum();
                 });
                 $('body').on('focusout', '[name="datum[]"]', function() {
                     let  inpDate = new Date($(this).val());
@@ -1340,14 +1375,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                     }
 
                 });
-                function findNoDeleteButton() {
-                    let deleteBtn = $('body').find('.cloned').find('.buttonCol').each(function() {
-                        let deleteBtn = $(this).find('.del-row');
-                        if (deleteBtn.length == 0) {
-                            $(this).append('<button type="button" class="btn btn-danger btn-sm del-row" data-bs-toggle="tooltip" data-bs-title="Izbriši red"><i class="fa-solid fa-minus"></i></button>');
-                        }
-                    });
-                }
+                
                 
 
                 $('body').on('click', '.clone-row', function(event) {
@@ -1375,6 +1403,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                     $('body').find('.line-row').last().removeClass('cloned');
                     reCalcPos();
                     findNoDeleteButton();
+                    recalc_TotalSum();
                 });
                 $('body').on('change', 'select[name="dobavljac[]"]', function() {
                     let  selOption = $(this).children("option:selected").val();
@@ -1403,6 +1432,7 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                     reCalcPos();
                     reCalcIznos(brfakture);
                     checkSumRow();
+                    recalc_TotalSum();
 
                 });
 
@@ -1419,15 +1449,17 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                 $('.save-nv').click(function() {
                     let  nv = parseFloat($('[name="nv-input"]').val().replace(',','.'));
                     let  brfakture = $('[name="nv-brfakture"]').val();
+                    let sumRow = $('body').find('[id="'+brfakture+'"].sum');
                     if (nv != '0') {
                         let  sumKolicina = parseFloat($('body').find('[id="'+brfakture+'"].sum').find('.sumKolicina').html().replace('.','').replace(',','.'));
-                        let  calcNV = sumKolicina-nv;
-                        $('body').find('[id="'+brfakture+'"].sum').find('.nv-kupljeno').html($.number(nv,2,',','.'));
-                        $('body').find('[id="'+brfakture+'"].sum').find('.nv-total').html($.number(calcNV,2,',','.'));
-                        $('body').find('[id="'+brfakture+'"].sum').find('.nv-icons').each(function() {
+                        let  calcNV = sumKolicina-nv;                        
+                        $(sumRow).find('.nv-kupljeno').html($.number(nv,2,',','.'));
+                        $(sumRow).find('input[name="nvIznos['+brfakture+']"]').val(nv);
+                        $(sumRow).find('.nv-total').html($.number(calcNV,2,',','.'));
+                        $(sumRow).find('.nv-icons').each(function() {
                             $(this).show();
                         });
-                        $.ajaxSetup({
+                        /*$.ajaxSetup({
                             headers: {
                                 'X-CSRF-TOKEN': '{{csrf_token() }}'
                             }
@@ -1437,14 +1469,16 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                             method: 'POST',
                             data: {nalog_id: {{$nalozi->id}}, br_fakture: brfakture, kupljeno: nv},
                             dataType: 'html'
-                        });
+                        });*/
 
                     } else {
-                        $('body').find('[id="'+brfakture+'"].sum').find('.nv-kupljeno').html('');
-                        $('body').find('[id="'+brfakture+'"].sum').find('.nv-total').html('');
-                        $('body').find('[id="'+brfakture+'"].sum').find('.nv-icons').each(function() {
+                        $(sumRow).find('.nv-kupljeno').html('');
+                        $(sumRow).find('.nv-total').html('');
+                        $(sumRow).find('input[name="nvIznos['+brfakture+']"]').val('');
+                        $(sumRow).find('.nv-icons').each(function() {
                             $(this).hide();
                         });
+                        /*
                         $.ajaxSetup({
                             headers: {
                                 'X-CSRF-TOKEN': '{{csrf_token() }}'
@@ -1455,14 +1489,12 @@ box-shadow: 0 .625rem 1.25rem #0000001a;
                             method: 'POST',
                             data: {nalog_id: {{$nalozi->id}}, br_fakture: brfakture},
                             dataType: 'html'
-                        });
+                        });*/
                     }
                     $('.nv-modal').modal('hide');
                     $('[name="nv-input"]').val('');
                     $('[name="nv-brfakture"]').val('');
                 });
-
-                calc_total_sum();
                 
             </script>
             @stop
