@@ -109,7 +109,6 @@ class KlijentiController extends Controller
         $this->validate($request, [
             'naziv' => 'required|unique:klijenti,naziv',
             'pib' => 'required|unique:klijenti,pib',
-            'maticni_broj' => 'required',
             'ulica' => 'required',
             'broj_ulice' => 'required',
             'postanski_broj' => 'required',
