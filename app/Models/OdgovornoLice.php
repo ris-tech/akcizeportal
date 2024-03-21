@@ -15,6 +15,5 @@ class OdgovornoLice extends Model
         'prezime',
         'telefon',
         'email',
-        'jmbg',
     ];
 }

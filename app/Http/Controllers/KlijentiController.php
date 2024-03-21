@@ -118,7 +118,6 @@ class KlijentiController extends Controller
             'ime' => 'required',
             'prezime' => 'required',
             'telefon' => 'required',
-            'jmbg' => 'required',
             'pocetak_obrade' => 'required',
             'poreska_filijala_id' => 'required',
             'knjigovodja_id' => 'required',
