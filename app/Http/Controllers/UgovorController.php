@@ -79,7 +79,6 @@ class UgovorController extends Controller
         $klijent = Klijenti::find($request->clientId);
         $odgovorno_lice = OdgovornoLice::find($klijent->odgovorno_lice_id);
         $banka = Banke::find($klijent->banka_id);
-        $klijent->naziv = Transliterator::toCyrillic($klijent->naziv);
         $hiddenfolder_enc = md5($klijent->naziv);
         Klijenti::find($request->clientId)
         ->update(
