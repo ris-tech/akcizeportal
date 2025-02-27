@@ -30,7 +30,7 @@ class DokumentaController extends Controller
 		$klijent = $request->klijent;
 		$tip = $request->tip;
 		$uid = $request->uid;
-		
+
 		$url = "http://207.180.235.62:8182/getProcess.php?klijent=".$klijent."&nalog=".$tip."&uid=".$uid;
 		//dd($url);
 		$default_socket_timeout = ini_get('default_socket_timeout');
@@ -38,9 +38,9 @@ class DokumentaController extends Controller
 		ini_set('default_socket_timeout', 1200);
 		$cntFiles = file_get_contents($url);
 		ini_set('default_socket_timeout', $default_socket_timeout);
-		
+
 		$resp_json['files'] = $cntFiles;
-		
+
 		return response()->json($resp_json);
 	}
 
@@ -81,7 +81,7 @@ class DokumentaController extends Controller
         //$thumb->resizeImage(0, 320,Imagick::FILTER_LANCZOS,1);
         $thumb->writeImage($docPathTmb.$thumb_file);
         $thumb->clear();
-        $thumb->destroy(); 
+        $thumb->destroy();
 
         $thumb = new Imagick();
         $thumb->readImage($docPathTmb.$thumb_file);
@@ -100,27 +100,27 @@ class DokumentaController extends Controller
         $resp_json['resp']['new_file'] = $new_file;
         $resp_json['resp']['klijent_id'] = $request->klijent_id;
         $resp_json['resp']['tip'] = $request->tip;
-        
+
         /*
         if($ext == 'pdf') {
 			$zip_uid = uniqid();
-			set_time_limit(0);			
-			
+			set_time_limit(0);
+
 			$pdftext = file_get_contents($docPath.$new_file);
 			$num = preg_match_all("/\/Page\W/", $pdftext, $dummy);
-			 
+
 			$resp_json['resp']['hiddenFolder'] = $hiddenFolder;
 			$resp_json['resp']['new_file'] = $new_file;
-			$resp_json['resp']['zip_uid'] = $zip_uid; 
+			$resp_json['resp']['zip_uid'] = $zip_uid;
 			$resp_json['resp']['klijent_id'] = $request->klijent_id;
 			$resp_json['resp']['tip'] = $request->tip;
 			$resp_json['resp']['uuid'] = $request->uuid;
 			$resp_json['resp']['filename'] = $request->filename;
 			$resp_json['resp']['cntFiles'] = $num;
 			$resp_json['resp']['ext'] = $ext;
-            
+
         } else {
-            
+
             if (!is_dir($docPath.'tmb'.DIRECTORY_SEPARATOR)) {
                 mkdir($docPath.'tmb'.DIRECTORY_SEPARATOR, 0777, true );
             }
@@ -131,8 +131,8 @@ class DokumentaController extends Controller
             $thumb->resizeImage(0, 320,Imagick::FILTER_LANCZOS,1);
             $thumb->writeImage($docPath."tmb".DIRECTORY_SEPARATOR.$new_file);
             $thumb->clear();
-            $thumb->destroy(); 
-            
+            $thumb->destroy();
+
             $dokumenta = new Dokumenta;
             $dokumenta->klijent_id = $request->klijent_id;
             $dokumenta->tip = $request->tip;
@@ -143,7 +143,7 @@ class DokumentaController extends Controller
 			$resp_json['resp']['new_file'] = $new_file;
 			$resp_json['resp']['klijent_id'] = $request->klijent_id;
 			$resp_json['resp']['tip'] = $request->tip;
-			
+
         }*/
 
         return response()->json($resp_json);
@@ -159,7 +159,7 @@ class DokumentaController extends Controller
 		$docStoragePath = storage_path('app/public').DIRECTORY_SEPARATOR.$hiddenFolder.DIRECTORY_SEPARATOR.$request->tip.DIRECTORY_SEPARATOR;
 
         $tmpDocPath = $docPath.$request->zip_uid.DIRECTORY_SEPARATOR;
-		
+
 		if (!is_dir($tmpDocPath)) {
             mkdir($tmpDocPath, 0777, true );
         }
@@ -167,23 +167,23 @@ class DokumentaController extends Controller
         if (!is_dir($tmpDocPath.'zip')) {
             mkdir($tmpDocPath.'zip', 0777, true );
         }
-		
+
 		$zip_uid = $request->zip_uid;
 		$new_file = $request->new_file;
-		
+
 		$url = "http://ocr.ristic-office.de:8182";
 		$zip = "/convert/".$hiddenFolder."/".$request->tip."/".$zip_uid.".zip";
 		$newZip = $docPath.$request->zip_uid.DIRECTORY_SEPARATOR.$zip_uid.".zip";
 		$newZipStorage = $docStoragePath.$request->zip_uid.DIRECTORY_SEPARATOR.$zip_uid.".zip";
-		
+
 		$default_socket_timeout = ini_get('default_socket_timeout');
 		set_time_limit(0);
 		ini_set('default_socket_timeout', 1200);
 		file_get_contents($url."/index.php?file=".$new_file."&klijent=".$hiddenFolder."&nalog=".$request->tip."&tip=".$request->tip."&uid=".$zip_uid);
 		ini_set('default_socket_timeout', $default_socket_timeout);
-				
+
 		$zip_resource = fopen($newZip, "w");
-		
+
 		$ch_start = curl_init();
 		curl_setopt($ch_start, CURLOPT_URL, $url.$zip);
 		curl_setopt($ch_start, CURLOPT_FAILONERROR, true);
@@ -193,7 +193,7 @@ class DokumentaController extends Controller
 		curl_setopt($ch_start, CURLOPT_BINARYTRANSFER,true);
 		curl_setopt($ch_start, CURLOPT_TIMEOUT, 10);
 		curl_setopt($ch_start, CURLOPT_SSL_VERIFYHOST, 0);
-		curl_setopt($ch_start, CURLOPT_SSL_VERIFYPEER, 0); 
+		curl_setopt($ch_start, CURLOPT_SSL_VERIFYPEER, 0);
 		curl_setopt($ch_start, CURLOPT_FILE, $zip_resource);
 		$page = curl_exec($ch_start);
 		if(!$page)
@@ -211,13 +211,13 @@ class DokumentaController extends Controller
 		} else {
 			$unzipError = true;
 		}
-		
+
 		if($unzipError) {
 			$resp_json['resp'] = 'Fehler beim unzip';
 		} else {
             exec("mv ".$newZipStorage." ".$docStoragePath.$zip_uid.DIRECTORY_SEPARATOR.'zip'.DIRECTORY_SEPARATOR);
-			$scanned_directory = array_diff(scandir($docStoragePath.$zip_uid), array('..', '.', 'tmb', 'zip')); 
-			
+			$scanned_directory = array_diff(scandir($docStoragePath.$zip_uid), array('..', '.', 'tmb', 'zip'));
+
 
 			$cnt_files = 0;
 			foreach($scanned_directory as $scaned_file) {
@@ -231,11 +231,11 @@ class DokumentaController extends Controller
 
                 $fajlovi->save();
             }
-			
-            
+
+
 			//exec("mv ".$tmpDocUrl."* ".$docStoragePath);
-			
-			
+
+
 			$pdftext = file_get_contents($docPath.$new_file);
 			$num = preg_match_all("/\/Page\W/", $pdftext, $dummy);
 			$num = $num;
@@ -302,7 +302,7 @@ class DokumentaController extends Controller
         }
 
         $uploaded_file = $request->file('upload');
-                
+
         $new_file = bin2hex(date('Y-m-d').'_'.$klijent->id.'_'.uniqid()).'.pdf';
 
         $new_dokumenta = new Dokumenta();
@@ -490,6 +490,15 @@ class DokumentaController extends Controller
 
         Mail::send('Mailovi.mail', $data, function($message)use($docTypeName, $email, $odgovorno_lice, $file) {
             $message->to($email)
+            ->bcc(['office@akcize.rs','akcize.rs1@gmail.com'])
+            ->subject('Akcize.rs | '.$docTypeName);
+            $message->attach($file, [
+                'as' => $docTypeName.'.pdf',
+                'mime' => 'application/pdf'
+            ]);
+        });
+        Mail::send('Mailovi.mail', $data, function($message)use($docTypeName, $email, $odgovorno_lice, $file) {
+            $message->to('office@akcize.rs')
             ->subject('Akcize.rs | '.$docTypeName);
             $message->attach($file, [
                 'as' => $docTypeName.'.pdf',
